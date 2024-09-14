@@ -1,0 +1,23 @@
+# ninja log v6
+22	170	7480491211904626	SAPR_autogen/timestamp	ce5318bf0ab43d19
+22	170	7480491211904626	SAPR_autogen/mocs_compilation.cpp	ce5318bf0ab43d19
+22	170	7480491211904626	C:/Users/pyanc/Desktop/qt/SAPR/SAPR/build/Desktop_Qt_6_7_0_MinGW_64_bit-Release/SAPR_autogen/timestamp	ce5318bf0ab43d19
+22	170	7480491211904626	C:/Users/pyanc/Desktop/qt/SAPR/SAPR/build/Desktop_Qt_6_7_0_MinGW_64_bit-Release/SAPR_autogen/mocs_compilation.cpp	ce5318bf0ab43d19
+1055	4059	7480334018555704	CMakeFiles/SAPR.dir/SAPR_autogen/mocs_compilation.cpp.obj	3e3afb624fba25bf
+608	2267	7473564899288470	CMakeFiles/SAPR.dir/mainwindow.cpp.obj	55023278d478a11d
+166	2316	7480351886488727	CMakeFiles/SAPR.dir/src/mainwindow.cpp.obj	29dc338210a895dc
+1060	3953	7480334018610905	CMakeFiles/SAPR.dir/main.cpp.obj	489ebbbba9cd2b04
+1793	1956	7480491229609608	SAPR.exe	3c0b33d378caea32
+376	2525	7479165859461082	CMakeFiles/SAPR.dir/src/sizetablemodel.cpp.obj	e2a5dcb68132b311
+19	852	7479683145808016	build.ninja	8537b1660c5d10d1
+171	1793	7480491213392154	CMakeFiles/SAPR.dir/src/scalablegraphicsview.cpp.obj	9fc8f3daa1485b5c
+17	41	7474051878494300	CMakeFiles/clean.additional	321391b2684b2653
+41	49	7474051878732628	clean	577b940aee94fbd7
+610	2397	7479672996749067	CMakeFiles/SAPR.dir/src/app.cpp.obj	6b0eb215a9d40dd6
+176	1835	7480335984875913	CMakeFiles/SAPR.dir/src/settingsdialog.cpp.obj	60b4573d697c73ba
+25	177	7480491592384502	SAPR_autogen/timestamp	ce5318bf0ab43d19
+25	177	7480491592384502	SAPR_autogen/mocs_compilation.cpp	ce5318bf0ab43d19
+25	177	7480491592384502	C:/Users/pyanc/Desktop/qt/SAPR/SAPR/build/Desktop_Qt_6_7_0_MinGW_64_bit-Release/SAPR_autogen/timestamp	ce5318bf0ab43d19
+25	177	7480491592384502	C:/Users/pyanc/Desktop/qt/SAPR/SAPR/build/Desktop_Qt_6_7_0_MinGW_64_bit-Release/SAPR_autogen/mocs_compilation.cpp	ce5318bf0ab43d19
+178	1796	7480491593914008	CMakeFiles/SAPR.dir/src/scalablegraphicsview.cpp.obj	9fc8f3daa1485b5c
+1796	1965	7480491610090279	SAPR.exe	3c0b33d378caea32

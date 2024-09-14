@@ -1,0 +1,23 @@
+# ninja log v6
+39	2676	7479167380540975	SAPR_autogen/timestamp	92f65fc02345eb09
+39	2676	7479167380540975	SAPR_autogen/mocs_compilation.cpp	92f65fc02345eb09
+39	2676	7479167380540975	C:/Users/pyanc/Desktop/qt/SAPR/SAPR/build/Desktop_Qt_6_7_0_MinGW_64_bit-debug/SAPR_autogen/timestamp	92f65fc02345eb09
+39	2676	7479167380540975	C:/Users/pyanc/Desktop/qt/SAPR/SAPR/build/Desktop_Qt_6_7_0_MinGW_64_bit-debug/SAPR_autogen/mocs_compilation.cpp	92f65fc02345eb09
+2724	6173	7479167383723674	CMakeFiles/SAPR.dir/src/sizetablemodel.cpp.obj	6dd308e8d574d205
+2714	6825	7479167383628315	CMakeFiles/SAPR.dir/src/scalablegraphicsview.cpp.obj	3c2974bc5e030519
+2695	7359	7479167383437676	CMakeFiles/SAPR.dir/main.cpp.obj	93bce9c1d294062f
+2685	7437	7479167383337408	CMakeFiles/SAPR.dir/SAPR_autogen/mocs_compilation.cpp.obj	943f2f37eff5f9f0
+2705	8200	7479167383538116	CMakeFiles/SAPR.dir/src/mainwindow.cpp.obj	6de1ec3dc3581866
+8200	8950	7479167438492853	SAPR.exe	6dedde6cd933f00f
+37	399	7479167944736726	SAPR_autogen/timestamp	92f65fc02345eb09
+37	399	7479167944736726	SAPR_autogen/mocs_compilation.cpp	92f65fc02345eb09
+37	399	7479167944736726	C:/Users/pyanc/Desktop/qt/SAPR/SAPR/build/Desktop_Qt_6_7_0_MinGW_64_bit-debug/SAPR_autogen/timestamp	92f65fc02345eb09
+37	399	7479167944736726	C:/Users/pyanc/Desktop/qt/SAPR/SAPR/build/Desktop_Qt_6_7_0_MinGW_64_bit-debug/SAPR_autogen/mocs_compilation.cpp	92f65fc02345eb09
+401	3599	7479167948387634	CMakeFiles/SAPR.dir/src/mainwindow.cpp.obj	6de1ec3dc3581866
+3600	4117	7479167980369700	SAPR.exe	6dedde6cd933f00f
+50	370	7479168295431166	SAPR_autogen/timestamp	92f65fc02345eb09
+50	370	7479168295431166	SAPR_autogen/mocs_compilation.cpp	92f65fc02345eb09
+50	370	7479168295431166	C:/Users/pyanc/Desktop/qt/SAPR/SAPR/build/Desktop_Qt_6_7_0_MinGW_64_bit-debug/SAPR_autogen/timestamp	92f65fc02345eb09
+50	370	7479168295431166	C:/Users/pyanc/Desktop/qt/SAPR/SAPR/build/Desktop_Qt_6_7_0_MinGW_64_bit-debug/SAPR_autogen/mocs_compilation.cpp	92f65fc02345eb09
+372	3351	7479168298660471	CMakeFiles/SAPR.dir/src/mainwindow.cpp.obj	6de1ec3dc3581866
+3351	3930	7479168328443877	SAPR.exe	6dedde6cd933f00f
