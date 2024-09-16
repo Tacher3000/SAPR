@@ -1,7 +1,7 @@
 #include "sizetablemodel.h"
 
 SizeTableModel::SizeTableModel(QObject *pobj)
-    : QAbstractTableModel(pobj), m_nRows(1), m_nColumns(3) {
+    : QAbstractTableModel(pobj), m_nRows(1), m_nColumns(4) {
 }
 
 QVariant SizeTableModel::data(const QModelIndex& index, int nRole) const
@@ -54,6 +54,8 @@ QVariant SizeTableModel::headerData(int section, Qt::Orientation orientation, in
                 return "Сечение";
             case 2:
                 return "Распределенная продольная нагрузка";
+            case 3:
+                return "Опора";
             default:
                 return QVariant();
             }

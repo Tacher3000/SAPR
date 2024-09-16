@@ -35,29 +35,16 @@ void ScalableGraphicsView::mousePressEvent(QMouseEvent *event){
     event->accept();
 }
 
-// void ScalableGraphicsView::mouseMoveEvent(QMouseEvent *event){
-//     if (m_isDragging) {
-//         QPoint delta = event->pos() - m_lastMousePos;
-//         if (horizontalScrollBar() && verticalScrollBar()) {
-//             horizontalScrollBar()->setValue(horizontalScrollBar()->value() - delta.x());
-//             verticalScrollBar()->setValue(verticalScrollBar()->value() - delta.y());
-//         }
-//         m_lastMousePos = event->pos();
-//     }
-//     event->accept();
-// }
+
 
 void ScalableGraphicsView::mouseMoveEvent(QMouseEvent *event){
     if (m_isDragging) {
         QPoint delta = event->pos() - m_lastMousePos;
 
-        // Проверяем, зажата ли клавиша Ctrl
         if (event->modifiers() & Qt::ControlModifier) {
-            // Вращаем сцену при движении мыши по оси X
-            qreal rotationAngle = -delta.x();  // Используем изменение по X для вращения
+            qreal rotationAngle = -delta.x();
             rotate(rotationAngle);
         } else {
-            // Обычное перемещение сцены
             if (horizontalScrollBar() && verticalScrollBar()) {
                 horizontalScrollBar()->setValue(horizontalScrollBar()->value() - delta.x());
                 verticalScrollBar()->setValue(verticalScrollBar()->value() - delta.y());
