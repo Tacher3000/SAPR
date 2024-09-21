@@ -23,9 +23,11 @@ public:
     // bool removeRows(int row, int count, const QModelIndex &parent) override;
     // bool removeRow(int row, const QModelIndex &parent);
     // bool insertRows(int row, int count, const QModelIndex &parent) override;
+    double getMaxSection() const;
 private:
     int m_nRows;
     int m_nColumns;
+    double m_maxSection;
     QHash<QModelIndex, QVariant> m_hash;
 };
 

@@ -26,6 +26,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/sizetablemodel.h src/sizetablemodel.cpp
         src/app.h src/app.cpp
         src/settingsdialog.h src/settingsdialog.cpp
+        src/preprocessor.h src/preprocessor.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET SAPR APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

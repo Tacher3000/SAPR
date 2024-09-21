@@ -1,7 +1,7 @@
 #include "sizetablemodel.h"
 
 SizeTableModel::SizeTableModel(QObject *pobj)
-    : QAbstractTableModel(pobj), m_nRows(1), m_nColumns(4) {
+    : QAbstractTableModel(pobj), m_nRows(1), m_nColumns(4), m_maxSection(0.0) {
 }
 
 QVariant SizeTableModel::data(const QModelIndex& index, int nRole) const
@@ -22,6 +22,13 @@ bool SizeTableModel::setData(const QModelIndex& index, const QVariant& value, in
             beginInsertRows(QModelIndex(), m_nRows - 1, m_nRows - 1);
             ++m_nRows;
             endInsertRows();
+        }
+
+        if (index.column() == 1) { // Столбец "Сечение"
+            double sectionValue = value.toDouble();
+            if (sectionValue > m_maxSection) {
+                m_maxSection = sectionValue;
+            }
         }
 
         m_hash[index] = value;
@@ -66,5 +73,7 @@ QVariant SizeTableModel::headerData(int section, Qt::Orientation orientation, in
     return QVariant();
 }
 
-
+double SizeTableModel::getMaxSection() const {
+    return m_maxSection;
+}
 

@@ -5,6 +5,8 @@
 #include "sizetablemodel.h"
 #include "settingsdialog.h"
 
+#include "preprocessor.h"
+
 #include <QMainWindow>
 #include <QHBoxLayout>
 #include <QGraphicsRectItem>
@@ -12,6 +14,7 @@
 #include <QSplitter>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QStackedWidget>
 
 
 class MainWindow : public QMainWindow
@@ -21,16 +24,11 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void updateScene();
+
     void openSettings();
     void showAboutDialog();
-    void drawNode(qreal maxHeight);
-    void drawKernel(qreal maxHeight);
-private:
-    SizeTableModel *model;
-    QTableView *tableView;
 
-    QGraphicsScene *m_scene;
-    ScalableGraphicsView *m_view;
+private:
+    Preprocessor *m_preprocessor;
 };
 #endif // MAINWINDOW_H

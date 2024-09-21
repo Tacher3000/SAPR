@@ -179,5 +179,4 @@ void SettingsDialog::updateButtonColor(QPushButton* button, const QColor& color)
 {
     QString style = QString("background-color: %1").arg(color.name());
     button->setStyleSheet(style);
-    qDebug() << style;
 }
