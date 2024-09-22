@@ -3,33 +3,43 @@
 Preprocessor::Preprocessor(QWidget *parent) {
     QSplitter *splitter = new QSplitter(Qt::Horizontal, this);
     QHBoxLayout *mainLayput = new QHBoxLayout(this);
+    QVBoxLayout *tablesLayput = new QVBoxLayout(this);
+    QWidget *tablesWidget = new QWidget(this);
 
-    model = new SizeTableModel;
-    connect(model, &SizeTableModel::dataChanged, this, &Preprocessor::updateScene);
+    m_sizeModel = new SizeTableModel;
+    connect(m_sizeModel, &SizeTableModel::dataChanged, this, &Preprocessor::updateScene);
+    m_sizeTableView = new QTableView(this);
+    m_sizeTableView->setModel(m_sizeModel);
+    m_sizeTableView->resizeRowsToContents();
+    m_sizeTableView->resizeColumnsToContents();
+    tablesLayput->addWidget(m_sizeTableView);
 
+    m_nodeModel = new NodeModel;
+    connect(m_nodeModel, &SizeTableModel::dataChanged, this, &Preprocessor::updateScene);
+    m_nodeTableView = new QTableView(this);
+    m_nodeTableView->setModel(m_nodeModel);
+    m_nodeTableView->resizeRowsToContents();
+    m_nodeTableView->resizeColumnsToContents();
+    tablesLayput->addWidget(m_nodeTableView);
 
-    tableView = new QTableView(this);
-    tableView->setModel(model);
-    tableView->resizeRowsToContents();
-    tableView->resizeColumnsToContents();
-    splitter->addWidget(tableView);
+    tablesWidget->setLayout(tablesLayput);
+    splitter->addWidget(tablesWidget);
 
     m_scene = new QGraphicsScene(this);
     m_view = new ScalableGraphicsView (this);
     m_view->setScene(m_scene);
     splitter->addWidget(m_view);
 
-    tableView->setMinimumWidth(300);
+    tablesWidget->setMinimumWidth(400);
 
-    m_view->setMinimumWidth(300);
+    m_view->setMinimumWidth(400);
 
     QList<int> sizes;
-    sizes << 300 << 400;
+    sizes << 400 << 1500;
     splitter->setSizes(sizes);
 
 
     mainLayput->addWidget(splitter);
-    // setLayout(QSplitter);
 }
 
 Preprocessor::~Preprocessor()
@@ -44,25 +54,25 @@ void Preprocessor::updateScene()
     App* app = App::theApp();
     QSettings* settings = app->settings();
 
-    qreal maxHeight = 50 * model->getMaxSection();
+    qreal maxHeight = 50 * m_sizeModel->getMaxSection();
 
-    if(settings->value("checkBoxKernel", false).toBool())
+
+
+    if(settings->value("checkBoxSupport", false).toBool())
     {
-        drawKernel();
-    }
-    if(settings->value("checkBoxNodeN", false).toBool())
+        drawSupport();
+    }if(settings->value("checkBoxNodeN", false).toBool())
     {
         drawNode(maxHeight);
-    }
-    if(settings->value("checkBoxKernelN", false).toBool())
+    }if(settings->value("checkBoxKernelN", false).toBool())
     {
         drawKernelN(maxHeight);
     }if(settings->value("checkBoxDistributedLoad", false).toBool())
     {
         drawDistributedLoad();
-    }if(settings->value("checkBoxSupport", false).toBool())
+    }if(settings->value("checkBoxKernel", false).toBool())
     {
-        drawSupport();
+        drawKernel();
     }
 
 
@@ -89,12 +99,12 @@ void Preprocessor::drawKernel()
     App* app = App::theApp();
     QSettings* settings = app->settings();
     qreal currentX = 0;
-    qreal maxHeight = 50 * model->getMaxSection();
-    int rowCount = model->rowCount();
+    qreal maxHeight = 50 * m_sizeModel->getMaxSection();
+    int rowCount = m_sizeModel->rowCount();
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = model->data(model->index(row, 0)).toInt() * 100;
-        int height = model->data(model->index(row, 1)).toInt() * 50;
+        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * 100;
+        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * 50;
 
         if(width == 0 || height == 0){
             continue;
@@ -121,9 +131,9 @@ void Preprocessor::drawNode(qreal maxHeight)
     QColor nodeColorN(nodeNString);
 
     qreal currentX = 0;
-    for (int row = 0; row < model->rowCount(); ++row) {
-        int width = model->data(model->index(row, 0)).toInt() * 100;
-        int height = model->data(model->index(row, 1)).toInt() * 100;
+    for (int row = 0; row < m_sizeModel->rowCount(); ++row) {
+        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * 100;
+        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * 100;
         if(width == 0 || height == 0){
             continue;
         }
@@ -166,9 +176,9 @@ void Preprocessor::drawKernelN(qreal maxHeight)
     QColor kernelColorN(kernelNString);
 
     qreal currentX = 0;
-    for (int row = 0; row < model->rowCount() - 1; ++row) {
-        int width = model->data(model->index(row, 0)).toInt() * 100;
-        int height = model->data(model->index(row, 1)).toInt() * 100;
+    for (int row = 0; row < m_sizeModel->rowCount() - 1; ++row) {
+        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * 100;
+        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * 100;
         if(width == 0 || height == 0){
             continue;
         }
@@ -195,12 +205,12 @@ void Preprocessor::drawDistributedLoad()
     QSettings* settings = app->settings();
 
     qreal currentX = 0;
-    int rowCount = model->rowCount();
+    int rowCount = m_sizeModel->rowCount();
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = model->data(model->index(row, 0)).toInt() * 100;
-        int height = model->data(model->index(row, 1)).toInt() * 50;
-        int direction = model->data(model->index(row, 2)).toInt();
+        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * 100;
+        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * 50;
+        int direction = m_sizeModel->data(m_sizeModel->index(row, 2)).toInt();
 
         if(width == 0 || height == 0){
             continue;
@@ -245,12 +255,12 @@ void Preprocessor::drawSupport()
     QSettings* settings = app->settings();
 
     qreal currentX = 0;
-    int rowCount = model->rowCount();
+    int rowCount = m_sizeModel->rowCount();
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = model->data(model->index(row, 0)).toInt() * 100;
-        int height = model->data(model->index(row, 1)).toInt() * 50;
-        QString support = model->data(model->index(row, 3)).toString();
+        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * 100;
+        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * 50;
+        QString support = m_sizeModel->data(m_sizeModel->index(row, 3)).toString();
 
         if(width == 0 || height == 0){
             continue;

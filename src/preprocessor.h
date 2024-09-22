@@ -5,6 +5,7 @@
 #include "scalablegraphicsview.h"
 #include "sizetablemodel.h"
 #include "settingsdialog.h"
+#include "nodemodel.h"
 
 #include <QWidget>
 #include <QMainWindow>
@@ -31,8 +32,11 @@ public:
     void drawSupport();
 
 private:
-    SizeTableModel *model;
-    QTableView *tableView;
+    NodeModel *m_nodeModel;
+    QTableView *m_nodeTableView;
+
+    SizeTableModel *m_sizeModel;
+    QTableView *m_sizeTableView;
 
     QGraphicsScene *m_scene;
     ScalableGraphicsView *m_view;

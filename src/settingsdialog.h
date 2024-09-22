@@ -33,7 +33,7 @@ private slots:
     void onNodeColorNClicked();
     void onKernelColorNClicked();
     void onDistributedLoadColorClicked();
-    void onLongitudinalLoadColorClicked();
+    void onFocusedLoadColorClicked();
     void onSupportColorClicked();
 
 
@@ -45,7 +45,7 @@ private:
     QCheckBox *m_checkBoxNodeN;
     QCheckBox *m_checkBoxKernelN;
     QCheckBox *m_checkBoxDistributedLoad;
-    QCheckBox *m_checkBoxLongitudinalLoad;
+    QCheckBox *m_checkBoxFocusedlLoad;
     QCheckBox *m_checkBoxSupport;
 
     QDialogButtonBox *m_buttonBox;
@@ -55,14 +55,14 @@ private:
     QPushButton *m_buttonNodeColorN;
     QPushButton *m_buttonKernelColorN;
     QPushButton *m_buttonDistributedLoadColor;
-    QPushButton *m_buttonLongitudinalLoadColor;
+    QPushButton *m_buttonFocusedLoadColor;
     QPushButton *m_buttonSupportColor;
 
     QColor m_kernelColor;
     QColor m_nodeColorN;
     QColor m_kernelColorN;
     QColor m_distributedLoadColor;
-    QColor m_longitudinalLoadColor;
+    QColor m_focusedLoadColor;
     QColor m_supportColor;
 
     void saveSettings();
