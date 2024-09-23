@@ -22,6 +22,7 @@ class Preprocessor : public QWidget
 public:
     Preprocessor(QWidget *parent = nullptr);
     ~Preprocessor();
+    void updateNodeModel();
     void updateScene();
     void openSettings();
     void showAboutDialog();
@@ -30,7 +31,7 @@ public:
     void drawKernelN(qreal maxHeight);
     void drawDistributedLoad();
     void drawSupport();
-
+    void drawFocusedLoad();
 private:
     NodeModel *m_nodeModel;
     QTableView *m_nodeTableView;

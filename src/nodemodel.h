@@ -18,6 +18,7 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
+    void setRowCount(int nColumns);
 private:
     int m_nRows;
     int m_nColumns;

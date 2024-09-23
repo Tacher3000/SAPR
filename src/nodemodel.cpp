@@ -58,3 +58,11 @@ QVariant NodeModel::headerData(int section, Qt::Orientation orientation, int rol
     return QVariant();
 }
 
+void NodeModel::setRowCount(int nRows) {
+    if (nRows != m_nRows) {
+        beginResetModel();
+        m_nRows = nRows;
+        endResetModel();
+    }
+}
+

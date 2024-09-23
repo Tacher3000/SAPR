@@ -7,7 +7,7 @@ Preprocessor::Preprocessor(QWidget *parent) {
     QWidget *tablesWidget = new QWidget(this);
 
     m_sizeModel = new SizeTableModel;
-    connect(m_sizeModel, &SizeTableModel::dataChanged, this, &Preprocessor::updateScene);
+    connect(m_sizeModel, &SizeTableModel::dataChanged, this, &Preprocessor::updateNodeModel);
     m_sizeTableView = new QTableView(this);
     m_sizeTableView->setModel(m_sizeModel);
     m_sizeTableView->resizeRowsToContents();
@@ -47,6 +47,12 @@ Preprocessor::~Preprocessor()
 
 }
 
+void Preprocessor::updateNodeModel()
+{
+    m_nodeModel->setRowCount(m_sizeModel->rowCount());
+    updateScene();
+}
+
 void Preprocessor::updateScene()
 {
     m_scene->clear();
@@ -58,12 +64,9 @@ void Preprocessor::updateScene()
 
 
 
-    if(settings->value("checkBoxSupport", false).toBool())
+    if(settings->value("checkBoxFocusedLoad", false).toBool())
     {
-        drawSupport();
-    }if(settings->value("checkBoxNodeN", false).toBool())
-    {
-        drawNode(maxHeight);
+        drawFocusedLoad();
     }if(settings->value("checkBoxKernelN", false).toBool())
     {
         drawKernelN(maxHeight);
@@ -73,6 +76,12 @@ void Preprocessor::updateScene()
     }if(settings->value("checkBoxKernel", false).toBool())
     {
         drawKernel();
+    }if(settings->value("checkBoxSupport", false).toBool())
+    {
+        drawSupport();
+    }if(settings->value("checkBoxNodeN", false).toBool())
+    {
+        drawNode(maxHeight);
     }
 
 
@@ -249,21 +258,23 @@ void Preprocessor::drawDistributedLoad()
     }
 }
 
+//можно сделать красивее код(говнокод)
 void Preprocessor::drawSupport()
 {
     App* app = App::theApp();
     QSettings* settings = app->settings();
 
     qreal currentX = 0;
-    int rowCount = m_sizeModel->rowCount();
+    int rowCount = m_nodeModel->rowCount();
+    int lastHeight = 0;
 
     for (int row = 0; row < rowCount; ++row) {
         int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * 100;
         int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * 50;
-        QString support = m_sizeModel->data(m_sizeModel->index(row, 3)).toString();
+        QString support = m_nodeModel->data(m_nodeModel->index(row, 1)).toString();
 
-        if(width == 0 || height == 0){
-            continue;
+        if(height != 0){
+            lastHeight = height;
         }
 
         QString supportString = settings->value("supportColor", QColor(Qt::black).name()).toString();
@@ -288,14 +299,14 @@ void Preprocessor::drawSupport()
             }
         }
         // Правая вертикальная опора
-        if(row == rowCount - 2 && !support.isEmpty()){
+        if((row == (rowCount - 1)) && !support.isEmpty()){
             qreal rightX = currentX + width;
-            qreal topY = -height / 2 - 10;
-            qreal bottomY = height / 2 + 10;
+            qreal topY = -lastHeight / 2 - 10;
+            qreal bottomY = lastHeight / 2 + 10;
             m_scene->addLine(QLineF(rightX, topY, rightX, bottomY), QPen(supportColor));
 
-            int arrowCount = (height + 20) / 10;
-            qreal arrowSpacing = (height + 20) / arrowCount;
+            int arrowCount = (lastHeight + 20) / 10;
+            qreal arrowSpacing = (lastHeight + 20) / arrowCount;
 
             for (int i = 0; i <= arrowCount; ++i) {
                 qreal arrowY = topY + i * arrowSpacing;
@@ -304,6 +315,48 @@ void Preprocessor::drawSupport()
                 m_scene->addLine(arrowHead1, QPen(supportColor));
             }
         }
+
+        currentX += width;
+    }
+}
+
+void Preprocessor::drawFocusedLoad()
+{
+    App* app = App::theApp();
+    QSettings* settings = app->settings();
+
+    QString FocusedColorString = settings->value("focusedLoadColor", QColor(Qt::black).name()).toString();
+    QColor focusedColor(FocusedColorString);
+
+    qreal currentX = 0;
+
+    int rowCount = m_sizeModel->rowCount();
+
+    qreal arrowY = 0;
+    qreal arrowX = 0;
+
+    for (int row = 0; row < rowCount; ++row) {
+        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * 100;
+        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * 50;
+        int focusedDirection = m_nodeModel->data(m_nodeModel->index(row, 0)).toInt();
+        int direction = m_sizeModel->data(m_sizeModel->index(row, 2)).toInt();
+
+        if (focusedDirection != 0) {
+            if(direction != 0){
+                m_scene->addLine(currentX, arrowY, currentX + (focusedDirection > 0 ? 50 : -50), arrowY, QPen(focusedColor));
+
+                m_scene->addLine(currentX + (focusedDirection > 0 ? 50 : -50), arrowY, currentX + (focusedDirection > 0 ? 30 : -30), arrowY - 10, QPen(focusedColor));
+                m_scene->addLine(currentX + (focusedDirection > 0 ? 50 : -50), arrowY, currentX + (focusedDirection > 0 ? 30 : -30), arrowY + 10, QPen(focusedColor));
+            }else{
+                m_scene->addLine(currentX, arrowY, currentX + (focusedDirection > 0 ? 50 : -50), arrowY, QPen(focusedColor));
+
+                m_scene->addLine(currentX + (focusedDirection > 0 ? 50 : -50), arrowY, currentX + (focusedDirection > 0 ? 30 : -30), arrowY - 10, QPen(focusedColor));
+                m_scene->addLine(currentX + (focusedDirection > 0 ? 50 : -50), arrowY, currentX + (focusedDirection > 0 ? 30 : -30), arrowY + 10, QPen(focusedColor));
+            }
+
+
+        }
+
 
         currentX += width;
     }
