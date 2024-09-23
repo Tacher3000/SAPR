@@ -16,7 +16,20 @@ MainWindow::MainWindow(QWidget *parent)
     QAction *openSettings = new QAction("Настройки", this);
     connect(openSettings, &QAction::triggered, this, &MainWindow::openSettings);
     mainMenu->addAction(openSettings);
+    QAction *loadAction = new QAction("Загрузить", this);
+    connect(loadAction, &QAction::triggered, this, &MainWindow::loadFile);
+    mainMenu->addAction(loadAction);
+
+    QAction *saveAction = new QAction("Сохранить", this);
+    connect(saveAction, &QAction::triggered, this, &MainWindow::saveFile);
+    mainMenu->addAction(saveAction);
+
+    QAction *saveAsAction = new QAction("Сохранить как", this);
+    connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveAsFile);
+    mainMenu->addAction(saveAsAction);
+
     QAction *exitAction = new QAction("Выход", this);
+    connect(exitAction, &QAction::triggered, this, &MainWindow::close);
     mainMenu->addAction(exitAction);
     menuBar->addMenu(mainMenu);
 
@@ -26,10 +39,10 @@ MainWindow::MainWindow(QWidget *parent)
     helpMenu->addAction(aboutAction);
     menuBar->addMenu(helpMenu);
 
+
     setMenuBar(menuBar);
 }
 
-MainWindow::~MainWindow() {}
 
 
 void MainWindow::openSettings()
@@ -44,4 +57,37 @@ void MainWindow::openSettings()
 void MainWindow::showAboutDialog()
 {
     QMessageBox::information(this, "О программе", "Эта программа демонстрирует работу с QGraphicsScene.");
+}
+
+
+void MainWindow::loadFile()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, "Загрузить файл", "", "All Files (*)");
+    if (!filePath.isEmpty()) {
+        m_preprocessor->loadModels(filePath);
+        m_currentFilePath = filePath;
+    }
+}
+
+void MainWindow::saveFile()
+{
+    QString filePath = m_currentFilePath;
+    if (!filePath.isEmpty()) {
+        m_preprocessor->saveModels(filePath);
+    } else {
+        saveAsFile();
+    }
+}
+
+void MainWindow::saveAsFile()
+{
+    QString filePath = QFileDialog::getSaveFileName(this, "Сохранить файл как", "", "All Files (*)");
+    if (!filePath.isEmpty()) {
+        m_preprocessor->saveModels(filePath);
+        m_currentFilePath = filePath;
+    }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    event->accept();
 }

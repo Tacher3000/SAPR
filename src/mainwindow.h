@@ -15,6 +15,8 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QStackedWidget>
+#include <QCloseEvent>
+#include <QFileDialog>
 
 
 class MainWindow : public QMainWindow
@@ -22,13 +24,21 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    explicit MainWindow(QWidget *parent = nullptr);
 
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
+private slots:
     void openSettings();
     void showAboutDialog();
 
+    void loadFile();
+    void saveFile();
+    void saveAsFile();
+
 private:
     Preprocessor *m_preprocessor;
+    QString m_currentFilePath;
 };
 #endif // MAINWINDOW_H

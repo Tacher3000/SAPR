@@ -19,6 +19,7 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
     void setRowCount(int nColumns);
+    void setColumnCount(int nColumns);
 private:
     int m_nRows;
     int m_nColumns;

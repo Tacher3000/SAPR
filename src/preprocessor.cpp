@@ -361,3 +361,65 @@ void Preprocessor::drawFocusedLoad()
         currentX += width;
     }
 }
+
+void Preprocessor::saveModels(const QString &filePath) {
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly)) {
+        QDataStream out(&file);
+
+        int sizeRowCount = m_sizeModel->rowCount();
+        int sizeColCount = m_sizeModel->columnCount();
+        out << sizeRowCount << sizeColCount;
+        for (int row = 0; row < sizeRowCount; ++row) {
+            for (int col = 0; col < sizeColCount; ++col) {
+                QVariant data = m_sizeModel->data(m_sizeModel->index(row, col));
+                out << data;
+            }
+        }
+
+        int nodeRowCount = m_nodeModel->rowCount();
+        int nodeColCount = m_nodeModel->columnCount();
+        out << nodeRowCount << nodeColCount;
+        for (int row = 0; row < nodeRowCount; ++row) {
+            for (int col = 0; col < nodeColCount; ++col) {
+                QVariant data = m_nodeModel->data(m_nodeModel->index(row, col));
+                out << data;
+            }
+        }
+
+        file.close();
+    }
+}
+
+void Preprocessor::loadModels(const QString &filePath) {
+    QFile file(filePath);
+    if (file.open(QIODevice::ReadOnly)) {
+        QDataStream in(&file);
+
+        int sizeRowCount, sizeColCount;
+        in >> sizeRowCount >> sizeColCount;
+        m_sizeModel->setRowCount(sizeRowCount);
+        m_sizeModel->setColumnCount(sizeColCount);
+        for (int row = 0; row < sizeRowCount; ++row) {
+            for (int col = 0; col < sizeColCount; ++col) {
+                QVariant data;
+                in >> data;
+                m_sizeModel->setData(m_sizeModel->index(row, col), data);
+            }
+        }
+
+        int nodeRowCount, nodeColCount;
+        in >> nodeRowCount >> nodeColCount;
+        m_nodeModel->setRowCount(nodeRowCount);
+        m_nodeModel->setColumnCount(nodeColCount);
+        for (int row = 0; row < nodeRowCount; ++row) {
+            for (int col = 0; col < nodeColCount; ++col) {
+                QVariant data;
+                in >> data;
+                m_nodeModel->setData(m_nodeModel->index(row, col), data);
+            }
+        }
+
+        file.close();
+    }
+}

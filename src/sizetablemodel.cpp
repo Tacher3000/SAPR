@@ -81,4 +81,18 @@ double SizeTableModel::getMaxSection() const {
     return maxSection;
 }
 
+void SizeTableModel::setRowCount(int nRows) {
+    if (nRows != m_nRows) {
+        beginResetModel();
+        m_nRows = nRows;
+        endResetModel();
+    }
+}
 
+void SizeTableModel::setColumnCount(int nColumns) {
+    if (nColumns != m_nColumns) {
+        beginResetModel();
+        m_nColumns = nColumns;
+        endResetModel();
+    }
+}

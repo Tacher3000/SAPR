@@ -66,3 +66,10 @@ void NodeModel::setRowCount(int nRows) {
     }
 }
 
+void NodeModel::setColumnCount(int nColumns) {
+    if (nColumns != m_nColumns) {
+        beginResetModel();
+        m_nColumns = nColumns;
+        endResetModel();
+    }
+}

@@ -15,6 +15,8 @@
 #include <QSplitter>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QFile>
+#include <QDataStream>
 
 class Preprocessor : public QWidget
 {
@@ -32,6 +34,8 @@ public:
     void drawDistributedLoad();
     void drawSupport();
     void drawFocusedLoad();
+    void saveModels(const QString &filePath);
+    void loadModels(const QString &filePath);
 private:
     NodeModel *m_nodeModel;
     QTableView *m_nodeTableView;
