@@ -20,6 +20,8 @@ public:
     double getMaxSection() const;
     void setRowCount(int nRows);
     void setColumnCount(int nColumns);
+    void clearData();
+    bool removeRows(int position, int rows, const QModelIndex &parent) override;
 private:
     int m_nRows;
     int m_nColumns;

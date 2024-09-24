@@ -15,21 +15,43 @@ QVariant SizeTableModel::data(const QModelIndex& index, int nRole) const
                : QVariant();
 }
 
+
 bool SizeTableModel::setData(const QModelIndex& index, const QVariant& value, int nRole)
 {
     if (index.isValid() && nRole == Qt::EditRole) {
-        if (index.row() == m_nRows - 1) {
-            beginInsertRows(QModelIndex(), m_nRows - 1, m_nRows - 1);
+        QVariant oldValue = m_hash.value(index, QVariant(""));
+
+        m_hash[index] = value;
+
+        if (index.row() == m_nRows - 1 && !value.toString().isEmpty() && oldValue.toString().isEmpty()) {
+            beginInsertRows(QModelIndex(), m_nRows, m_nRows);
             ++m_nRows;
             endInsertRows();
         }
 
-        m_hash[index] = value;
+        if (index.row() == m_nRows - 2 && value.toString().isEmpty()) {
+            bool isRowEmpty = true;
+            for (int col = 0; col < m_nColumns; ++col) {
+                QModelIndex checkIndex = this->index(index.row(), col);
+                if (!m_hash.value(checkIndex, QVariant("")).toString().isEmpty()) {
+                    isRowEmpty = false;
+                    break;
+                }
+            }
+
+            if (isRowEmpty) {
+                beginRemoveRows(QModelIndex(), m_nRows - 1, m_nRows - 1);
+                --m_nRows;
+                endRemoveRows();
+            }
+        }
         emit dataChanged(index, index);
 
         return true;
     }
+    return false;
 }
+
 
 
 int SizeTableModel::rowCount(const QModelIndex & /*parent*/) const {
@@ -95,4 +117,29 @@ void SizeTableModel::setColumnCount(int nColumns) {
         m_nColumns = nColumns;
         endResetModel();
     }
+}
+
+void SizeTableModel::clearData() {
+    beginResetModel();
+    m_hash.clear();
+    m_nRows = 1;
+    m_nColumns = 3;
+    endResetModel();
+}
+
+bool SizeTableModel::removeRows(int position, int rows, const QModelIndex &parent) {
+    if (position < 0 || position >= m_nRows || rows <= 0 || (position + rows) > m_nRows) {
+        return false;
+    }
+
+    beginRemoveRows(parent, position, position + rows - 1);
+    for (int row = 0; row < rows; ++row) {
+        for (int col = 0; col < m_nColumns; ++col) {
+            QModelIndex index = this->index(position + row, col);
+            m_hash.remove(index);
+        }
+    }
+    m_nRows -= rows;
+    endRemoveRows();
+    return true;
 }

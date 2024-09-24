@@ -337,22 +337,21 @@ void Preprocessor::drawFocusedLoad()
 
     for (int row = 0; row < rowCount; ++row) {
         int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * 100;
-        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * 50;
         int focusedDirection = m_nodeModel->data(m_nodeModel->index(row, 0)).toInt();
         int direction = m_sizeModel->data(m_sizeModel->index(row, 2)).toInt();
 
         if (focusedDirection != 0) {
-            if(direction != 0){
+            // if(direction != 0){
+            //     m_scene->addLine(currentX, arrowY, currentX + (focusedDirection > 0 ? 50 : -50), arrowY, QPen(focusedColor));
+
+            //     m_scene->addLine(currentX + (focusedDirection > 0 ? 50 : -50), arrowY, currentX + (focusedDirection > 0 ? 20 : -20), arrowY - 15, QPen(focusedColor));
+            //     m_scene->addLine(currentX + (focusedDirection > 0 ? 50 : -50), arrowY, currentX + (focusedDirection > 0 ? 20 : -20), arrowY + 15, QPen(focusedColor));
+            // }else{
                 m_scene->addLine(currentX, arrowY, currentX + (focusedDirection > 0 ? 50 : -50), arrowY, QPen(focusedColor));
 
-                m_scene->addLine(currentX + (focusedDirection > 0 ? 50 : -50), arrowY, currentX + (focusedDirection > 0 ? 30 : -30), arrowY - 10, QPen(focusedColor));
-                m_scene->addLine(currentX + (focusedDirection > 0 ? 50 : -50), arrowY, currentX + (focusedDirection > 0 ? 30 : -30), arrowY + 10, QPen(focusedColor));
-            }else{
-                m_scene->addLine(currentX, arrowY, currentX + (focusedDirection > 0 ? 50 : -50), arrowY, QPen(focusedColor));
-
-                m_scene->addLine(currentX + (focusedDirection > 0 ? 50 : -50), arrowY, currentX + (focusedDirection > 0 ? 30 : -30), arrowY - 10, QPen(focusedColor));
-                m_scene->addLine(currentX + (focusedDirection > 0 ? 50 : -50), arrowY, currentX + (focusedDirection > 0 ? 30 : -30), arrowY + 10, QPen(focusedColor));
-            }
+                m_scene->addLine(currentX + (focusedDirection > 0 ? 50 : -50), arrowY, currentX + (focusedDirection > 0 ? 20 : -20), arrowY - 15, QPen(focusedColor));
+                m_scene->addLine(currentX + (focusedDirection > 0 ? 50 : -50), arrowY, currentX + (focusedDirection > 0 ? 20 : -20), arrowY + 15, QPen(focusedColor));
+            // }
 
 
         }
