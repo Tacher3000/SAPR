@@ -20,6 +20,7 @@ public:
 
     void setRowCount(int nColumns);
     void setColumnCount(int nColumns);
+    void clearData();
 private:
     int m_nRows;
     int m_nColumns;

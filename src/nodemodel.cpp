@@ -73,3 +73,11 @@ void NodeModel::setColumnCount(int nColumns) {
         endResetModel();
     }
 }
+
+void NodeModel::clearData() {
+    beginResetModel();
+    m_hash.clear();
+    m_nRows = 1;
+    m_nColumns = 2;
+    endResetModel();
+}

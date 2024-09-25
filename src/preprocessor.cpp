@@ -422,3 +422,11 @@ void Preprocessor::loadModels(const QString &filePath) {
         file.close();
     }
 }
+
+void Preprocessor::clearData()
+{
+    m_nodeModel->clearData();
+    m_sizeModel->clearData();
+    m_scene->clear();
+}
+

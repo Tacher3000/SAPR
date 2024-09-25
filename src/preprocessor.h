@@ -36,6 +36,7 @@ public:
     void drawFocusedLoad();
     void saveModels(const QString &filePath);
     void loadModels(const QString &filePath);
+    void clearData();
 private:
     NodeModel *m_nodeModel;
     QTableView *m_nodeTableView;

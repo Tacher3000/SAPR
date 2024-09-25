@@ -15,6 +15,7 @@ class ScalableGraphicsView : public QGraphicsView
 public:
     ScalableGraphicsView(QWidget *parent = nullptr);
 
+    void resetView();
 protected:
     // Обработка событий колеса мыши для изменения масштаба
     void wheelEvent(QWheelEvent *event) override;

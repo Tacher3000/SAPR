@@ -16,6 +16,11 @@ MainWindow::MainWindow(QWidget *parent)
     QAction *openSettings = new QAction("Настройки", this);
     connect(openSettings, &QAction::triggered, this, &MainWindow::openSettings);
     mainMenu->addAction(openSettings);
+
+    QAction *clearAction = new QAction("Очистить", this);
+    connect(clearAction, &QAction::triggered, m_preprocessor, &Preprocessor::clearData);
+    mainMenu->addAction(clearAction);
+
     QAction *loadAction = new QAction("Загрузить", this);
     connect(loadAction, &QAction::triggered, this, &MainWindow::loadFile);
     mainMenu->addAction(loadAction);
@@ -56,7 +61,7 @@ void MainWindow::openSettings()
 
 void MainWindow::showAboutDialog()
 {
-    QMessageBox::information(this, "О программе", "Эта программа демонстрирует работу с QGraphicsScene.");
+    QMessageBox::information(this, "О программе", "Эта программа SAPR3000(остальное позже)");
 }
 
 

@@ -63,3 +63,13 @@ void ScalableGraphicsView::mouseReleaseEvent(QMouseEvent *event){
     }
     event->accept();
 }
+
+void ScalableGraphicsView::resetView()
+{
+    resetTransform();
+
+    if (horizontalScrollBar() && verticalScrollBar()) {
+        horizontalScrollBar()->setValue(0);
+        verticalScrollBar()->setValue(0);
+    }
+}
