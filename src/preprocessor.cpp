@@ -26,7 +26,11 @@ Preprocessor::Preprocessor(QWidget *parent) {
     splitter->addWidget(tablesWidget);
 
     m_scene = new QGraphicsScene(this);
+    m_scene->setSceneRect(0, 0, 1450, 900);
+
     m_view = new ScalableGraphicsView (this);
+    m_view->setRenderHint(QPainter::Antialiasing);
+    m_view->setFrameStyle(0);
     m_view->setScene(m_scene);
     splitter->addWidget(m_view);
 
@@ -38,6 +42,12 @@ Preprocessor::Preprocessor(QWidget *parent) {
     sizes << 400 << 1500;
     splitter->setSizes(sizes);
 
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, m_scene, &QGraphicsScene::advance);
+    timer->start(16);
+
+    //сделать возможность задвать в настройках
+    flyText(5);
 
     mainLayput->addWidget(splitter);
 }
@@ -45,6 +55,22 @@ Preprocessor::Preprocessor(QWidget *parent) {
 Preprocessor::~Preprocessor()
 {
 
+}
+
+void Preprocessor::flyText(int count)
+{
+    for (int i = 0; i < count; ++i) {
+        BouncingText* textItem = new BouncingText("SAPR3000");
+        QFont font = textItem->font();
+        font.setPointSize(20);
+        textItem->setFont(font);
+
+        qreal startX = QRandomGenerator::global()->bounded(m_scene->width() - textItem->boundingRect().width());
+        qreal startY = QRandomGenerator::global()->bounded(m_scene->height() - textItem->boundingRect().height());
+        textItem->setPos(startX, startY);
+
+        m_scene->addItem(textItem);
+    }
 }
 
 void Preprocessor::updateNodeModel()
@@ -55,7 +81,9 @@ void Preprocessor::updateNodeModel()
 
 void Preprocessor::updateScene()
 {
+    m_scene->setSceneRect(0, 0, 0, 0);
     m_scene->clear();
+
 
     struct DrawFunction {
         QString setting;

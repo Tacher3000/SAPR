@@ -6,6 +6,8 @@
 #include "sizetablemodel.h"
 #include "settingsdialog.h"
 #include "nodemodel.h"
+#include "bouncingtext.h"
+
 
 #include <QWidget>
 #include <QMainWindow>
@@ -28,6 +30,7 @@ class Preprocessor : public QWidget
 public:
     Preprocessor(QWidget *parent = nullptr);
     ~Preprocessor();
+    void flyText(int count);
     void updateNodeModel();
     void updateScene();
     void openSettings();
@@ -50,6 +53,8 @@ private:
 
     QGraphicsScene *m_scene;
     ScalableGraphicsView *m_view;
+
+    QTimer* timer;
 };
 
 #endif // PREPROCESSOR_H

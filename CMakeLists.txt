@@ -28,6 +28,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/settingsdialog.h src/settingsdialog.cpp
         src/preprocessor.h src/preprocessor.cpp
         src/nodemodel.h src/nodemodel.cpp
+        src/modelmanager.h src/modelmanager.cpp
+        src/scenemanager.h src/scenemanager.cpp
+        src/bouncingtext.h src/bouncingtext.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET SAPR APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

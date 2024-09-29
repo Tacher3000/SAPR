@@ -4,6 +4,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent)
 {
     m_labelDisplay = new QLabel("Отображения", this);
+    m_labelDisplay->setStyleSheet("font-size: 16px; font-weight: bold;");
+    m_labelDisplay->setAlignment(Qt::AlignCenter);
+
     m_checkBoxKernel = new QCheckBox("Стержни", this);
     m_checkBoxNodeN = new QCheckBox("Номера узлов", this);
     m_checkBoxKernelN = new QCheckBox("Номера стержней", this);
@@ -12,6 +15,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     m_checkBoxSupport = new QCheckBox("Опора", this);
 
     m_labelColor = new QLabel("Цвет", this);
+    m_labelColor->setStyleSheet("font-size: 16px; font-weight: bold;");
+    m_labelColor->setAlignment(Qt::AlignCenter);
+
     m_buttonKernelColor = new QPushButton(this);
     m_buttonNodeColorN = new QPushButton(this);
     m_buttonKernelColorN = new QPushButton(this);
