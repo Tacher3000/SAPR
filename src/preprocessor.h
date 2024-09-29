@@ -18,6 +18,10 @@
 #include <QFile>
 #include <QDataStream>
 
+const int RECT_WIDTH_MULTIPLIER = 100;
+const int RECT_HEIGHT_MULTIPLIER = 50;
+
+
 class Preprocessor : public QWidget
 {
     Q_OBJECT

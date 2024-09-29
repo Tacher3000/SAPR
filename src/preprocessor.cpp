@@ -57,35 +57,31 @@ void Preprocessor::updateScene()
 {
     m_scene->clear();
 
+    struct DrawFunction {
+        QString setting;
+        std::function<void()> function;
+    };
+
     App* app = App::theApp();
     QSettings* settings = app->settings();
+    qreal maxHeight = RECT_HEIGHT_MULTIPLIER * m_sizeModel->getMaxSection();
 
-    qreal maxHeight = 50 * m_sizeModel->getMaxSection();
+    std::vector<DrawFunction> drawFunctions = {
+                                               {"checkBoxFocusedLoad", std::bind(&Preprocessor::drawFocusedLoad, this)},
+                                               {"checkBoxKernelN", std::bind(&Preprocessor::drawKernelN, this, maxHeight)},
+                                               {"checkBoxDistributedLoad", std::bind(&Preprocessor::drawDistributedLoad, this)},
+                                               {"checkBoxKernel", std::bind(&Preprocessor::drawKernel, this)},
+                                               {"checkBoxSupport", std::bind(&Preprocessor::drawSupport, this)},
+                                               {"checkBoxNodeN", std::bind(&Preprocessor::drawNode, this, maxHeight)},
+                                               };
 
-
-
-    if(settings->value("checkBoxFocusedLoad", false).toBool())
-    {
-        drawFocusedLoad();
-    }if(settings->value("checkBoxKernelN", false).toBool())
-    {
-        drawKernelN(maxHeight);
-    }if(settings->value("checkBoxDistributedLoad", false).toBool())
-    {
-        drawDistributedLoad();
-    }if(settings->value("checkBoxKernel", false).toBool())
-    {
-        drawKernel();
-    }if(settings->value("checkBoxSupport", false).toBool())
-    {
-        drawSupport();
-    }if(settings->value("checkBoxNodeN", false).toBool())
-    {
-        drawNode(maxHeight);
+    for (const auto& drawFunction : drawFunctions) {
+        if (settings->value(drawFunction.setting, false).toBool()) {
+            drawFunction.function();
+        }
     }
-
-
 }
+
 
 void Preprocessor::openSettings()
 {
@@ -112,8 +108,8 @@ void Preprocessor::drawKernel()
     int rowCount = m_sizeModel->rowCount();
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * 100;
-        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * 50;
+        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
+        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
 
         if(width == 0 || height == 0){
             continue;
@@ -141,8 +137,8 @@ void Preprocessor::drawNode(qreal maxHeight)
 
     qreal currentX = 0;
     for (int row = 0; row < m_sizeModel->rowCount(); ++row) {
-        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * 100;
-        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * 100;
+        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
+        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
         if(width == 0 || height == 0){
             continue;
         }
@@ -186,8 +182,8 @@ void Preprocessor::drawKernelN(qreal maxHeight)
 
     qreal currentX = 0;
     for (int row = 0; row < m_sizeModel->rowCount() - 1; ++row) {
-        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * 100;
-        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * 100;
+        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
+        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
         if(width == 0 || height == 0){
             continue;
         }
@@ -217,8 +213,8 @@ void Preprocessor::drawDistributedLoad()
     int rowCount = m_sizeModel->rowCount();
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * 100;
-        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * 50;
+        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
+        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
         int direction = m_sizeModel->data(m_sizeModel->index(row, 2)).toInt();
 
         if(width == 0 || height == 0){
@@ -269,8 +265,8 @@ void Preprocessor::drawSupport()
     int lastHeight = 0;
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * 100;
-        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * 50;
+        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
+        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
         QString support = m_nodeModel->data(m_nodeModel->index(row, 1)).toString();
 
         if(height != 0){
@@ -336,7 +332,7 @@ void Preprocessor::drawFocusedLoad()
     qreal arrowX = 0;
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * 100;
+        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
         int focusedDirection = m_nodeModel->data(m_nodeModel->index(row, 0)).toInt();
         int direction = m_sizeModel->data(m_sizeModel->index(row, 2)).toInt();
 
@@ -393,6 +389,9 @@ void Preprocessor::saveModels(const QString &filePath) {
 void Preprocessor::loadModels(const QString &filePath) {
     QFile file(filePath);
     if (file.open(QIODevice::ReadOnly)) {
+        m_nodeModel->clearData();
+        m_sizeModel->clearData();
+
         QDataStream in(&file);
 
         int sizeRowCount, sizeColCount;
@@ -423,10 +422,16 @@ void Preprocessor::loadModels(const QString &filePath) {
     }
 }
 
+// по идее можно по другому(не знаю как)
 void Preprocessor::clearData()
 {
     m_nodeModel->clearData();
     m_sizeModel->clearData();
+
     m_scene->clear();
+    delete m_scene;
+
+    m_scene = new QGraphicsScene(this);
+    m_view->setScene(m_scene);
 }
 
