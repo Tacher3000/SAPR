@@ -40,6 +40,7 @@ private slots:
 private:
     QLabel *m_labelDisplay;
     QLabel *m_labelColor;
+    QLabel *m_labelDifferent;
 
     QCheckBox *m_checkBoxKernel;
     QCheckBox *m_checkBoxNodeN;
@@ -47,6 +48,8 @@ private:
     QCheckBox *m_checkBoxDistributedLoad;
     QCheckBox *m_checkBoxFocusedlLoad;
     QCheckBox *m_checkBoxSupport;
+
+    QCheckBox *m_checkBoxWidget;
 
     QDialogButtonBox *m_buttonBox;
     QGridLayout *m_layout;

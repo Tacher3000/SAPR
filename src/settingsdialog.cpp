@@ -25,6 +25,12 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     m_buttonFocusedLoadColor = new QPushButton(this);
     m_buttonSupportColor = new QPushButton(this);
 
+    m_labelDifferent = new QLabel("Разное", this);
+    m_labelDifferent->setStyleSheet("font-size: 16px; font-weight: bold;");
+    m_labelDifferent->setAlignment(Qt::AlignCenter);
+
+    m_checkBoxWidget = new QCheckBox("Виджеты", this);
+
     m_buttonBox = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel, this);
 
     m_layout = new QGridLayout(this);
@@ -43,6 +49,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     m_layout->addWidget(m_checkBoxSupport, 6, 0, 1, 1);
     m_layout->addWidget(m_buttonSupportColor, 6, 1, 1, 1);
     m_layout->addWidget(m_buttonBox, 7, 0, 1, 2);
+
+    m_layout->addWidget(m_labelDifferent, 0, 3, 1, 1);
+    m_layout->addWidget(m_checkBoxWidget, 1, 3, 1, 1);
 
     setLayout(m_layout);
 
@@ -91,6 +100,7 @@ void SettingsDialog::saveSettings()
     settings->setValue("checkBoxDistributedLoad", m_checkBoxDistributedLoad->isChecked());
     settings->setValue("checkBoxFocusedLoad", m_checkBoxFocusedlLoad->isChecked());
     settings->setValue("checkBoxSupport", m_checkBoxSupport->isChecked());
+    settings->setValue("checkBoxWidget", m_checkBoxWidget->isChecked());
 
     settings->setValue("kernelColor", m_kernelColor.name());
     settings->setValue("nodeColorN", m_nodeColorN.name());
@@ -111,6 +121,7 @@ void SettingsDialog::loadSettings()
     m_checkBoxDistributedLoad->setChecked(settings->value("checkBoxDistributedLoad", false).toBool());
     m_checkBoxFocusedlLoad->setChecked(settings->value("checkBoxFocusedLoad", false).toBool());
     m_checkBoxSupport->setChecked(settings->value("checkBoxSupport", false).toBool());
+    m_checkBoxWidget->setChecked(settings->value("checkBoxWidget", false).toBool());
 
     m_kernelColor = QColor(settings->value("kernelColor", QColor(Qt::black).name()).toString());
     m_nodeColorN = QColor(settings->value("nodeColorN", QColor(Qt::black).name()).toString());

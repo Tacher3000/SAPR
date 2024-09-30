@@ -19,6 +19,10 @@
 #include <QMessageBox>
 #include <QFile>
 #include <QDataStream>
+#include <QTextEdit>
+#include <QGraphicsProxyWidget>
+#include <QProgressBar>
+#include <QPropertyAnimation>
 
 const int RECT_WIDTH_MULTIPLIER = 100;
 const int RECT_HEIGHT_MULTIPLIER = 50;
@@ -44,6 +48,8 @@ public:
     void saveModels(const QString &filePath);
     void loadModels(const QString &filePath);
     void clearData();
+    void drawKernelWidget();
+    void drawDistributedLoadWidget();
 private:
     NodeModel *m_nodeModel;
     QTableView *m_nodeTableView;

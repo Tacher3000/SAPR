@@ -94,18 +94,33 @@ void Preprocessor::updateScene()
     QSettings* settings = app->settings();
     qreal maxHeight = RECT_HEIGHT_MULTIPLIER * m_sizeModel->getMaxSection();
 
-    std::vector<DrawFunction> drawFunctions = {
-                                               {"checkBoxFocusedLoad", std::bind(&Preprocessor::drawFocusedLoad, this)},
-                                               {"checkBoxKernelN", std::bind(&Preprocessor::drawKernelN, this, maxHeight)},
-                                               {"checkBoxDistributedLoad", std::bind(&Preprocessor::drawDistributedLoad, this)},
-                                               {"checkBoxKernel", std::bind(&Preprocessor::drawKernel, this)},
-                                               {"checkBoxSupport", std::bind(&Preprocessor::drawSupport, this)},
-                                               {"checkBoxNodeN", std::bind(&Preprocessor::drawNode, this, maxHeight)},
-                                               };
-
-    for (const auto& drawFunction : drawFunctions) {
-        if (settings->value(drawFunction.setting, false).toBool()) {
-            drawFunction.function();
+    if(settings->value("checkBoxWidget", false).toBool()){
+        std::vector<DrawFunction> drawFunctions = {
+                                                    {"checkBoxFocusedLoad", std::bind(&Preprocessor::drawFocusedLoad, this)},
+                                                    {"checkBoxKernelN", std::bind(&Preprocessor::drawKernelN, this, maxHeight)},
+                                                    {"checkBoxKernel", std::bind(&Preprocessor::drawKernelWidget, this)},
+                                                    {"checkBoxDistributedLoad", std::bind(&Preprocessor::drawDistributedLoadWidget, this)},
+                                                    {"checkBoxSupport", std::bind(&Preprocessor::drawSupport, this)},
+                                                    {"checkBoxNodeN", std::bind(&Preprocessor::drawNode, this, maxHeight)},
+                                                    };
+        for (const auto& drawFunction : drawFunctions) {
+            if (settings->value(drawFunction.setting, false).toBool()) {
+                drawFunction.function();
+            }
+        }
+    }else{
+        std::vector<DrawFunction> drawFunctions = {
+                                                    {"checkBoxFocusedLoad", std::bind(&Preprocessor::drawFocusedLoad, this)},
+                                                    {"checkBoxKernelN", std::bind(&Preprocessor::drawKernelN, this, maxHeight)},
+                                                    {"checkBoxDistributedLoad", std::bind(&Preprocessor::drawDistributedLoad, this)},
+                                                    {"checkBoxKernel", std::bind(&Preprocessor::drawKernel, this)},
+                                                    {"checkBoxSupport", std::bind(&Preprocessor::drawSupport, this)},
+                                                    {"checkBoxNodeN", std::bind(&Preprocessor::drawNode, this, maxHeight)},
+                                                    };
+        for (const auto& drawFunction : drawFunctions) {
+            if (settings->value(drawFunction.setting, false).toBool()) {
+                drawFunction.function();
+            }
         }
     }
 }
@@ -132,7 +147,6 @@ void Preprocessor::drawKernel()
     App* app = App::theApp();
     QSettings* settings = app->settings();
     qreal currentX = 0;
-    qreal maxHeight = 50 * m_sizeModel->getMaxSection();
     int rowCount = m_sizeModel->rowCount();
 
     for (int row = 0; row < rowCount; ++row) {
@@ -151,8 +165,32 @@ void Preprocessor::drawKernel()
 
         currentX += width;
     }
-
 }
+
+void Preprocessor::drawKernelWidget() {
+    qreal currentX = 0;
+    int rowCount = m_sizeModel->rowCount();
+
+    for (int row = 0; row < rowCount; ++row) {
+        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
+        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+
+        if(width == 0 || height == 0) {
+            continue;
+        }
+
+        QTextEdit* textField = new QTextEdit();
+        textField->setFixedSize(width, height);
+        textField->setText(QString("Row %1").arg(row + 1));
+
+        QGraphicsProxyWidget* proxyWidget = m_scene->addWidget(textField);
+
+        proxyWidget->setPos(currentX, -height / 2);
+
+        currentX += width;
+    }
+}
+
 
 // можно сделать красивее
 void Preprocessor::drawNode(qreal maxHeight)
@@ -281,6 +319,55 @@ void Preprocessor::drawDistributedLoad()
         currentX += width;
     }
 }
+
+void Preprocessor::drawDistributedLoadWidget()
+{
+    qreal currentX = 0;
+    int rowCount = m_sizeModel->rowCount();
+
+    for (int row = 0; row < rowCount; ++row) {
+        int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
+        int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        int direction = m_sizeModel->data(m_sizeModel->index(row, 2)).toInt();
+
+        if(width == 0 || height == 0) {
+            continue;
+        }
+        if (direction != 0) {
+            QProgressBar* progressBar = new QProgressBar();
+            progressBar->setRange(0, 100);
+            progressBar->setValue(0);
+            progressBar->setTextVisible(true);
+            progressBar->setFixedWidth(width);
+            progressBar->setFixedHeight(15);
+            progressBar->setStyleSheet(
+                "QProgressBar {"
+                "   border: 2px solid grey;"
+                "   border-radius: 5px;"
+                "   text-align: center;"
+                "}"
+                "QProgressBar::chunk {"
+                "   background-color: #00FF00;"
+                "   width: 20px;"
+                "}"
+                );
+
+
+            QGraphicsProxyWidget* proxy = m_scene->addWidget(progressBar);
+            proxy->setPos(currentX, -7.5);
+
+            QPropertyAnimation* animation = new QPropertyAnimation(progressBar, "value");
+            animation->setDuration(2000);
+            animation->setStartValue(0);
+            animation->setEndValue(100);
+            animation->setLoopCount(-1);
+            animation->start(QAbstractAnimation::DeleteWhenStopped);
+        }
+
+        currentX += width;
+    }
+}
+
 
 //можно сделать красивее код(говнокод)
 void Preprocessor::drawSupport()
