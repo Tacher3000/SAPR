@@ -30,6 +30,10 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     m_labelDifferent->setAlignment(Qt::AlignCenter);
 
     m_checkBoxWidget = new QCheckBox("Виджеты", this);
+    m_labelFlyingTextCount = new QLabel("Количество летающего текста", this);
+    m_spinBoxFlyingTextCount = new QSpinBox(this);
+    m_spinBoxFlyingTextCount->setMinimumWidth(75);
+    m_spinBoxFlyingTextCount->setRange(1, 100);
 
     m_buttonBox = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel, this);
 
@@ -50,8 +54,11 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     m_layout->addWidget(m_buttonSupportColor, 6, 1, 1, 1);
     m_layout->addWidget(m_buttonBox, 7, 0, 1, 2);
 
-    m_layout->addWidget(m_labelDifferent, 0, 3, 1, 1);
-    m_layout->addWidget(m_checkBoxWidget, 1, 3, 1, 1);
+    m_layout->addWidget(m_labelDifferent, 0, 3, 1, 2);
+    m_layout->addWidget(m_checkBoxWidget, 1, 3, 1, 2);
+    m_layout->addWidget(m_spinBoxFlyingTextCount, 2, 3, 1, 1);
+    m_layout->addWidget(m_labelFlyingTextCount, 2, 4, 1, 1);
+
 
     setLayout(m_layout);
 
@@ -102,6 +109,8 @@ void SettingsDialog::saveSettings()
     settings->setValue("checkBoxSupport", m_checkBoxSupport->isChecked());
     settings->setValue("checkBoxWidget", m_checkBoxWidget->isChecked());
 
+    settings->setValue("flyingTextCount", m_spinBoxFlyingTextCount->value());
+
     settings->setValue("kernelColor", m_kernelColor.name());
     settings->setValue("nodeColorN", m_nodeColorN.name());
     settings->setValue("kernelColorN", m_kernelColorN.name());
@@ -122,6 +131,8 @@ void SettingsDialog::loadSettings()
     m_checkBoxFocusedlLoad->setChecked(settings->value("checkBoxFocusedLoad", false).toBool());
     m_checkBoxSupport->setChecked(settings->value("checkBoxSupport", false).toBool());
     m_checkBoxWidget->setChecked(settings->value("checkBoxWidget", false).toBool());
+
+    m_spinBoxFlyingTextCount->setValue(settings->value("flyingTextCount", 1).toInt());
 
     m_kernelColor = QColor(settings->value("kernelColor", QColor(Qt::black).name()).toString());
     m_nodeColorN = QColor(settings->value("nodeColorN", QColor(Qt::black).name()).toString());

@@ -34,7 +34,7 @@ class Preprocessor : public QWidget
 public:
     Preprocessor(QWidget *parent = nullptr);
     ~Preprocessor();
-    void flyText(int count);
+    void flyText();
     void updateNodeModel();
     void updateScene();
     void openSettings();
@@ -60,7 +60,7 @@ private:
     QGraphicsScene *m_scene;
     ScalableGraphicsView *m_view;
 
-    QTimer* timer;
+    QTimer* m_timer;
 };
 
 #endif // PREPROCESSOR_H

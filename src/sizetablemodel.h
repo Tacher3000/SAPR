@@ -22,6 +22,7 @@ public:
     void setColumnCount(int nColumns);
     void clearData();
     bool removeRows(int position, int rows, const QModelIndex &parent) override;
+    bool isEmpty() const;
 private:
     int m_nRows;
     int m_nColumns;

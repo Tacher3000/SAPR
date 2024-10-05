@@ -10,6 +10,7 @@
 #include <QColor>
 #include <QMessagebox.h>
 #include <QColorDialog>
+#include <QSpinBox>
 #include "App.h"
 
 class SettingsDialog : public QDialog
@@ -42,6 +43,8 @@ private:
     QLabel *m_labelColor;
     QLabel *m_labelDifferent;
 
+    QLabel *m_labelFlyingTextCount;
+
     QCheckBox *m_checkBoxKernel;
     QCheckBox *m_checkBoxNodeN;
     QCheckBox *m_checkBoxKernelN;
@@ -60,6 +63,8 @@ private:
     QPushButton *m_buttonDistributedLoadColor;
     QPushButton *m_buttonFocusedLoadColor;
     QPushButton *m_buttonSupportColor;
+
+    QSpinBox *m_spinBoxFlyingTextCount;
 
     QColor m_kernelColor;
     QColor m_nodeColorN;

@@ -42,12 +42,11 @@ Preprocessor::Preprocessor(QWidget *parent) {
     sizes << 400 << 1500;
     splitter->setSizes(sizes);
 
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, m_scene, &QGraphicsScene::advance);
-    timer->start(16);
+    m_timer = new QTimer(this);
+    connect(m_timer, &QTimer::timeout, m_scene, &QGraphicsScene::advance);
+    m_timer->start(16);
 
-    //сделать возможность задвать в настройках
-    flyText(5);
+    flyText();
 
     mainLayput->addWidget(splitter);
 }
@@ -57,8 +56,12 @@ Preprocessor::~Preprocessor()
 
 }
 
-void Preprocessor::flyText(int count)
+void Preprocessor::flyText()
 {
+    App* app = App::theApp();
+    QSettings* settings = app->settings();
+    int count = settings->value("flyingTextCount", 1).toInt();
+
     for (int i = 0; i < count; ++i) {
         BouncingText* textItem = new BouncingText("SAPR3000");
         QFont font = textItem->font();
@@ -81,8 +84,15 @@ void Preprocessor::updateNodeModel()
 
 void Preprocessor::updateScene()
 {
-    m_scene->setSceneRect(0, 0, 0, 0);
     m_scene->clear();
+    m_scene->setSceneRect(0, 0, 0, 0);
+
+
+    if(m_nodeModel->isEmpty() && m_sizeModel->isEmpty()){
+        m_scene->setSceneRect(0, 0, 1450, 900);
+        flyText();
+        return;
+    }
 
 
     struct DrawFunction {
@@ -320,6 +330,7 @@ void Preprocessor::drawDistributedLoad()
     }
 }
 
+//доделать минус
 void Preprocessor::drawDistributedLoadWidget()
 {
     qreal currentX = 0;
@@ -547,6 +558,9 @@ void Preprocessor::clearData()
     delete m_scene;
 
     m_scene = new QGraphicsScene(this);
+    connect(m_timer, &QTimer::timeout, m_scene, &QGraphicsScene::advance);
+    m_view->resetView();
     m_view->setScene(m_scene);
+    updateScene();
 }
 

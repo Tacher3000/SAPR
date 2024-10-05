@@ -81,3 +81,12 @@ void NodeModel::clearData() {
     m_nColumns = 2;
     endResetModel();
 }
+
+bool NodeModel::isEmpty() const {
+    for (const auto &value : m_hash) {
+        if (!value.toString().isEmpty()) {
+            return false;
+        }
+    }
+    return true;
+}

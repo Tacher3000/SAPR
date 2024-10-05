@@ -143,3 +143,12 @@ bool SizeTableModel::removeRows(int position, int rows, const QModelIndex &paren
     endRemoveRows();
     return true;
 }
+
+bool SizeTableModel::isEmpty() const {
+    for (const auto &value : m_hash) {
+        if (!value.toString().isEmpty()) {
+            return false;
+        }
+    }
+    return true;
+}
