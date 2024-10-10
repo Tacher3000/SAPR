@@ -1,5 +1,6 @@
 #include "src/mainwindow.h"
 #include "src/app.h"
+#include "src/processor.h"
 
 int main(int argc, char *argv[])
 {
@@ -9,3 +10,4 @@ int main(int argc, char *argv[])
 
     return a.exec();
 }
+

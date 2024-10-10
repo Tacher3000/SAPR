@@ -36,6 +36,10 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     m_spinBoxFlyingTextCount->setRange(1, 100);
 
     m_buttonBox = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel, this);
+    QPushButton *saveButton = m_buttonBox->button(QDialogButtonBox::Save);
+    QPushButton *cancelButton = m_buttonBox->button(QDialogButtonBox::Cancel);
+    saveButton->setMinimumSize(200, 30);
+    cancelButton->setMinimumSize(200, 30);
 
     m_layout = new QGridLayout(this);
     m_layout->addWidget(m_labelDisplay, 0, 0, 1, 1);
@@ -52,7 +56,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     m_layout->addWidget(m_buttonFocusedLoadColor, 5, 1, 1, 1);
     m_layout->addWidget(m_checkBoxSupport, 6, 0, 1, 1);
     m_layout->addWidget(m_buttonSupportColor, 6, 1, 1, 1);
-    m_layout->addWidget(m_buttonBox, 7, 0, 1, 2);
+    m_layout->addWidget(m_buttonBox, 7, 0, 1, 5, Qt::AlignCenter);
 
     m_layout->addWidget(m_labelDifferent, 0, 3, 1, 2);
     m_layout->addWidget(m_checkBoxWidget, 1, 3, 1, 2);

@@ -23,6 +23,7 @@
 #include <QGraphicsProxyWidget>
 #include <QProgressBar>
 #include <QPropertyAnimation>
+#include <QPushButton>
 
 const int RECT_WIDTH_MULTIPLIER = 100;
 const int RECT_HEIGHT_MULTIPLIER = 50;
@@ -50,6 +51,12 @@ public:
     void clearData();
     void drawKernelWidget();
     void drawDistributedLoadWidget();
+    NodeModel* getNodeModel() const;
+    SizeTableModel* getSizeModel() const;
+private slots:
+    void toProcessor();
+signals:
+     void clickedToProcessor();
 private:
     NodeModel *m_nodeModel;
     QTableView *m_nodeTableView;
@@ -61,6 +68,8 @@ private:
     ScalableGraphicsView *m_view;
 
     QTimer* m_timer;
+
+    QPushButton *m_toProcessor;
 };
 
 #endif // PREPROCESSOR_H

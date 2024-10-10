@@ -22,6 +22,11 @@ Preprocessor::Preprocessor(QWidget *parent) {
     m_nodeTableView->resizeColumnsToContents();
     tablesLayput->addWidget(m_nodeTableView);
 
+    m_toProcessor = new QPushButton("Расчитать", this);
+    m_toProcessor->setMinimumHeight(40);
+    connect(m_toProcessor, &QPushButton::clicked, this, &Preprocessor::toProcessor);
+    tablesLayput->addWidget(m_toProcessor);
+
     tablesWidget->setLayout(tablesLayput);
     splitter->addWidget(tablesWidget);
 
@@ -564,3 +569,15 @@ void Preprocessor::clearData()
     updateScene();
 }
 
+void Preprocessor::toProcessor()
+{
+    emit clickedToProcessor();
+}
+
+NodeModel* Preprocessor::getNodeModel() const {
+    return m_nodeModel;
+}
+
+SizeTableModel* Preprocessor::getSizeModel() const {
+    return m_sizeModel;
+}

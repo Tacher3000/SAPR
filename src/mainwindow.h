@@ -6,6 +6,7 @@
 #include "settingsdialog.h"
 
 #include "preprocessor.h"
+#include "processor.h"
 
 #include <QMainWindow>
 #include <QHBoxLayout>
@@ -37,8 +38,12 @@ private slots:
     void saveFile();
     void saveAsFile();
 
+    void switchToProcessor();
+
 private:
+    QStackedWidget *m_stackWidget;
     Preprocessor *m_preprocessor;
+    Processor *m_processor;
     QString m_currentFilePath;
 };
 #endif // MAINWINDOW_H

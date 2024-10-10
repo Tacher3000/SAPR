@@ -3,11 +3,15 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    QStackedWidget *stackWidget = new QStackedWidget(this);
+    m_stackWidget = new QStackedWidget(this);
     m_preprocessor = new Preprocessor(this);
-    stackWidget->addWidget(m_preprocessor);
+    connect(m_preprocessor, &Preprocessor::clickedToProcessor, this, &MainWindow::switchToProcessor);
+    m_stackWidget->addWidget(m_preprocessor);
 
-    setCentralWidget(stackWidget);
+    m_processor = new Processor(this);
+    m_stackWidget->addWidget(m_processor);
+
+    setCentralWidget(m_stackWidget);
 
 
     QMenuBar *menuBar = new QMenuBar(this);
@@ -91,6 +95,12 @@ void MainWindow::saveAsFile()
         m_preprocessor->saveModels(filePath);
         m_currentFilePath = filePath;
     }
+}
+
+void MainWindow::switchToProcessor()
+{
+    m_stackWidget->setCurrentWidget(m_processor);
+    m_processor->calculate(m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {

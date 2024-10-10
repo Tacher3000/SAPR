@@ -55,6 +55,7 @@ private:
     QCheckBox *m_checkBoxWidget;
 
     QDialogButtonBox *m_buttonBox;
+
     QGridLayout *m_layout;
 
     QPushButton *m_buttonKernelColor;
