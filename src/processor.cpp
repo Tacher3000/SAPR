@@ -47,8 +47,8 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
             m_matrixA[i + 1][i + 1] = 1;
             continue;
         }
-        double width2 = sizeModel->data(sizeModel->index(i + 1, 0)).toDouble();
-        double height2 = sizeModel->data(sizeModel->index(i + 1, 1)).toDouble();
+        double width2 = sizeModel->data(sizeModel->index(i - 1, 0)).toDouble();
+        double height2 = sizeModel->data(sizeModel->index(i - 1, 1)).toDouble();
 
         m_matrixA[i][i] = (width / height) + (width2 / height2);
         m_matrixA[i + 1][i] = -(width / height);
@@ -106,7 +106,6 @@ void Processor::gaussianElimination(QVector<QVector<double>> &A, QVector<double>
     int n = A.size();
 
     for (int i = 0; i < n; ++i) {
-        // Находим максимальный элемент в текущем столбце для улучшения численной стабильности
         int maxRow = i;
         for (int k = i + 1; k < n; ++k) {
             if (fabs(A[k][i]) > fabs(A[maxRow][i])) {
@@ -114,11 +113,9 @@ void Processor::gaussianElimination(QVector<QVector<double>> &A, QVector<double>
             }
         }
 
-        // Меняем строки местами
         std::swap(A[i], A[maxRow]);
         std::swap(B[i], B[maxRow]);
 
-        // Приводим к единичному элементу на диагонали и обрабатываем остальные строки
         for (int k = i + 1; k < n; ++k) {
             double coeff = A[k][i] / A[i][i];
             for (int j = i; j < n; ++j) {

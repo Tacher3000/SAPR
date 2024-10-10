@@ -31,7 +31,7 @@ Preprocessor::Preprocessor(QWidget *parent) {
     splitter->addWidget(tablesWidget);
 
     m_scene = new QGraphicsScene(this);
-    m_scene->setSceneRect(0, 0, 1450, 900);
+    m_scene->setSceneRect(0, 0, 1000, 700);
 
     m_view = new ScalableGraphicsView (this);
     m_view->setRenderHint(QPainter::Antialiasing);
@@ -39,12 +39,12 @@ Preprocessor::Preprocessor(QWidget *parent) {
     m_view->setScene(m_scene);
     splitter->addWidget(m_view);
 
-    tablesWidget->setMinimumWidth(400);
+    tablesWidget->setMinimumWidth(100);
 
     m_view->setMinimumWidth(400);
 
     QList<int> sizes;
-    sizes << 400 << 1500;
+    sizes << 700 << 1400;
     splitter->setSizes(sizes);
 
     m_timer = new QTimer(this);
@@ -94,7 +94,7 @@ void Preprocessor::updateScene()
 
 
     if(m_nodeModel->isEmpty() && m_sizeModel->isEmpty()){
-        m_scene->setSceneRect(0, 0, 1450, 900);
+        m_scene->setSceneRect(0, 0, 1000, 700);
         flyText();
         return;
     }
@@ -503,6 +503,9 @@ void Preprocessor::saveModels(const QString &filePath) {
             }
         }
 
+        QVariant modulusValue = m_sizeModel->getModulusValue();
+        out << modulusValue;
+
         int nodeRowCount = m_nodeModel->rowCount();
         int nodeColCount = m_nodeModel->columnCount();
         out << nodeRowCount << nodeColCount;
@@ -516,6 +519,7 @@ void Preprocessor::saveModels(const QString &filePath) {
         file.close();
     }
 }
+
 
 void Preprocessor::loadModels(const QString &filePath) {
     QFile file(filePath);
@@ -537,6 +541,10 @@ void Preprocessor::loadModels(const QString &filePath) {
             }
         }
 
+        QVariant modulusValue;
+        in >> modulusValue;
+        m_sizeModel->setModulusValue(modulusValue);
+
         int nodeRowCount, nodeColCount;
         in >> nodeRowCount >> nodeColCount;
         m_nodeModel->setRowCount(nodeRowCount);
@@ -552,6 +560,7 @@ void Preprocessor::loadModels(const QString &filePath) {
         file.close();
     }
 }
+
 
 // по идее можно по другому(не знаю как)
 void Preprocessor::clearData()

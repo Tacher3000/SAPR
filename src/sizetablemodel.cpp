@@ -1,7 +1,7 @@
 #include "sizetablemodel.h"
 
 SizeTableModel::SizeTableModel(QObject *pobj)
-    : QAbstractTableModel(pobj), m_nRows(1), m_nColumns(3) {
+    : QAbstractTableModel(pobj), m_nRows(1), m_nColumns(4) {
 }
 
 QVariant SizeTableModel::data(const QModelIndex& index, int nRole) const
@@ -21,37 +21,56 @@ bool SizeTableModel::setData(const QModelIndex& index, const QVariant& value, in
     if (index.isValid() && nRole == Qt::EditRole) {
         QVariant oldValue = m_hash.value(index, QVariant(""));
 
-        m_hash[index] = value;
+        if (index.column() == 3) {
+            m_modulusValue = value;
+            for (int row = 0; row < m_nRows - 1; ++row) {
+                QModelIndex modIndex = this->index(row, 3);
+                m_hash[modIndex] = value;
+                emit dataChanged(modIndex, modIndex);
+            }
+        } else {
+            m_hash[index] = value;
+            emit dataChanged(index, index);
+        }
 
         if (index.row() == m_nRows - 1 && !value.toString().isEmpty() && oldValue.toString().isEmpty()) {
             beginInsertRows(QModelIndex(), m_nRows, m_nRows);
             ++m_nRows;
+
+            if (!m_modulusValue.toString().isEmpty()) {
+                QModelIndex modIndex = this->index(m_nRows - 2, 3);
+                m_hash[modIndex] = m_modulusValue;
+            }
+
             endInsertRows();
         }
-
         if (index.row() == m_nRows - 2 && value.toString().isEmpty()) {
-            bool isRowEmpty = true;
-            for (int col = 0; col < m_nColumns; ++col) {
+            bool areFirstThreeColumnsEmpty = true;
+            // Проверяем только первые три столбца (индексы 0, 1, 2)
+            for (int col = 0; col < 3; ++col) {
                 QModelIndex checkIndex = this->index(index.row(), col);
                 if (!m_hash.value(checkIndex, QVariant("")).toString().isEmpty()) {
-                    isRowEmpty = false;
+                    areFirstThreeColumnsEmpty = false;
                     break;
                 }
             }
 
-            if (isRowEmpty) {
+            // Удаляем строку только если первые три столбца пусты
+            if (areFirstThreeColumnsEmpty) {
                 beginRemoveRows(QModelIndex(), m_nRows - 1, m_nRows - 1);
                 --m_nRows;
                 endRemoveRows();
+                QModelIndex modIndex = this->index(m_nRows - 1, 3);
+                m_hash[modIndex] = "";
+                emit dataChanged(modIndex, modIndex);
+
             }
         }
-        emit dataChanged(index, index);
 
         return true;
     }
     return false;
 }
-
 
 
 int SizeTableModel::rowCount(const QModelIndex & /*parent*/) const {
@@ -76,6 +95,8 @@ QVariant SizeTableModel::headerData(int section, Qt::Orientation orientation, in
                 return "Сечение";
             case 2:
                 return "Распределенная продольная нагрузка";
+            case 3:
+                return "Модуль упругости";
             default:
                 return QVariant();
             }
@@ -151,4 +172,18 @@ bool SizeTableModel::isEmpty() const {
         }
     }
     return true;
+}
+
+QVariant SizeTableModel::getModulusValue() const {
+    return m_modulusValue;
+}
+
+void SizeTableModel::setModulusValue(const QVariant &value) {
+    m_modulusValue = value;
+
+    for (int row = 0; row < m_nRows - 1; ++row) {
+        QModelIndex modIndex = this->index(row, 3);
+        m_hash[modIndex] = value;
+        emit dataChanged(modIndex, modIndex);
+    }
 }
