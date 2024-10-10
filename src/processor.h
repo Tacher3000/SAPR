@@ -22,9 +22,12 @@ public:
     explicit Processor(QWidget *parent = nullptr);
     void calculate(const SizeTableModel *sizeModel, const NodeModel *nodeModel);
 
+    QVector<double> backSubstitution(const QVector<QVector<double> > &A, const QVector<double> &B);
+    void gaussianElimination(QVector<QVector<double> > &A, QVector<double> &B);
 private:
     QVector<QVector<double>> m_matrixA;
     QVector<double> m_vectorB;
+    QVector<double> m_vectorDelta;
 };
 
 #endif // PROCESSOR_H
