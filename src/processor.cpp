@@ -21,9 +21,9 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
         double width = sizeModel->data(sizeModel->index(i, 0)).toDouble();
         double height = sizeModel->data(sizeModel->index(i, 1)).toDouble();
         if(i == 0 && supportLeft.isEmpty()){
-            m_matrixA[i][i] = width / height;
-            m_matrixA[i + 1][i] = -(width / height);
-            m_matrixA[i][i + 1] = -(width / height);
+            m_matrixA[i][i] = height / width;
+            m_matrixA[i + 1][i] = -(height / width);
+            m_matrixA[i][i + 1] = -(height / width);
             continue;
         }else if(i == 0){
             m_matrixA[i][i] = 1;
@@ -33,26 +33,26 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
             double width2 = sizeModel->data(sizeModel->index(i - 1, 0)).toDouble();
             double height2 = sizeModel->data(sizeModel->index(i - 1, 1)).toDouble();
 
-            m_matrixA[i][i] = (width2 / height2) + (width / height);
+            m_matrixA[i][i] = (height2 / width2) + (height / width);
 
-            m_matrixA[i + 1][i + 1] = width / height;
-            m_matrixA[i][i + 1] = -(width / height);
-            m_matrixA[i + 1][i] = -(width / height);
+            m_matrixA[i + 1][i + 1] = height / width;
+            m_matrixA[i][i + 1] = -(height / width);
+            m_matrixA[i + 1][i] = -(height / width);
             continue;
         }else if(i == nSizeMatrix - 2){
             double width2 = sizeModel->data(sizeModel->index(i - 1, 0)).toDouble();
             double height2 = sizeModel->data(sizeModel->index(i - 1, 1)).toDouble();
 
-            m_matrixA[i][i] = (width2 / height2) + (width / height);
+            m_matrixA[i][i] = (width2 / height2) + (height / width);
             m_matrixA[i + 1][i + 1] = 1;
             continue;
         }
         double width2 = sizeModel->data(sizeModel->index(i - 1, 0)).toDouble();
         double height2 = sizeModel->data(sizeModel->index(i - 1, 1)).toDouble();
 
-        m_matrixA[i][i] = (width / height) + (width2 / height2);
-        m_matrixA[i + 1][i] = -(width / height);
-        m_matrixA[i][i + 1] = -(width / height);
+        m_matrixA[i][i] = (height / width) + (height2 / width2);
+        m_matrixA[i + 1][i] = -(height / width);
+        m_matrixA[i][i + 1] = -(height / width);
 
     }
 
