@@ -2,6 +2,7 @@
 #define PROCESSOR_H
 
 #include <QWidget>
+#include <QTextEdit>
 #include <QVector>
 #include "sizetablemodel.h"
 #include "nodemodel.h"
@@ -25,9 +26,14 @@ public:
     QVector<double> backSubstitution(const QVector<QVector<double> > &A, const QVector<double> &B);
     void gaussianElimination(QVector<QVector<double> > &A, QVector<double> &B);
 private:
+    void logMatrix(const QVector<QVector<double>> &matrix, const QString &name);
+    void logVector(const QVector<double> &vector, const QString &name);
+
     QVector<QVector<double>> m_matrixA;
     QVector<double> m_vectorB;
     QVector<double> m_vectorDelta;
+    QVector<double> m_vectorNx;
+    QTextEdit *m_textEdit;
 };
 
 #endif // PROCESSOR_H
