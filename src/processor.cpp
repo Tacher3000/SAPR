@@ -1,7 +1,5 @@
 #include "processor.h"
 
-#include <QVBoxLayout>
-
 Processor::Processor(QWidget *parent) : QWidget(parent) {
     m_textEdit = new QTextEdit(this);
 

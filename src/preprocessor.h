@@ -7,6 +7,7 @@
 #include "settingsdialog.h"
 #include "nodemodel.h"
 #include "bouncingtext.h"
+#include "scenedrawer.h"
 
 
 #include <QWidget>
@@ -24,9 +25,6 @@
 #include <QProgressBar>
 #include <QPropertyAnimation>
 #include <QPushButton>
-
-const int RECT_WIDTH_MULTIPLIER = 100;
-const int RECT_HEIGHT_MULTIPLIER = 50;
 
 
 class Preprocessor : public QWidget
@@ -64,6 +62,7 @@ private:
     SizeTableModel *m_sizeModel;
     QTableView *m_sizeTableView;
 
+    SceneDrawer *m_sceneDrawer;
     QGraphicsScene *m_scene;
     ScalableGraphicsView *m_view;
 

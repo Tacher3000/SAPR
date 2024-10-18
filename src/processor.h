@@ -1,12 +1,15 @@
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
 
+#include "sizetablemodel.h"
+#include "nodemodel.h"
+
 #include <QWidget>
 #include <QTextEdit>
 #include <QVector>
-#include "sizetablemodel.h"
-#include "nodemodel.h"
 #include <QDebug>
+#include <QVBoxLayout>
+
 
 #define DEBUG_MATRIX(matrix) \
 do { \
