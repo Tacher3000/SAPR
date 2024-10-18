@@ -29,7 +29,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/preprocessor.h src/preprocessor.cpp
         src/nodemodel.h src/nodemodel.cpp
         src/modelmanager.h src/modelmanager.cpp
-        src/scenemanager.h src/scenemanager.cpp
+
         src/bouncingtext.h src/bouncingtext.cpp
         src/processor.h src/processor.cpp
         src/scenedrawer.h src/scenedrawer.cpp
