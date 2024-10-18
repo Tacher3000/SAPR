@@ -38,17 +38,9 @@ public:
     void updateScene();
     void openSettings();
     void showAboutDialog();
-    void drawKernel();
-    void drawNode(qreal maxHeight);
-    void drawKernelN(qreal maxHeight);
-    void drawDistributedLoad();
-    void drawSupport();
-    void drawFocusedLoad();
     void saveModels(const QString &filePath);
     void loadModels(const QString &filePath);
     void clearData();
-    void drawKernelWidget();
-    void drawDistributedLoadWidget();
     NodeModel* getNodeModel() const;
     SizeTableModel* getSizeModel() const;
 private slots:

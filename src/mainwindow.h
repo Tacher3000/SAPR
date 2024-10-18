@@ -7,6 +7,7 @@
 
 #include "preprocessor.h"
 #include "processor.h"
+#include "postprocessor.h"
 
 #include <QMainWindow>
 #include <QHBoxLayout>
@@ -44,8 +45,11 @@ private slots:
 
 private:
     QStackedWidget *m_stackWidget;
+
     Preprocessor *m_preprocessor;
     Processor *m_processor;
+    PostProcessor *m_postProcessor;
+
     QString m_currentFilePath;
 };
 #endif // MAINWINDOW_H

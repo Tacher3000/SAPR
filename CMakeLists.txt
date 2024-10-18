@@ -33,6 +33,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/bouncingtext.h src/bouncingtext.cpp
         src/processor.h src/processor.cpp
         src/scenedrawer.h src/scenedrawer.cpp
+        src/postprocessor.h src/postprocessor.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET SAPR APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
