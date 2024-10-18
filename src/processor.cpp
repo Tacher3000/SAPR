@@ -1,11 +1,24 @@
 #include "processor.h"
 
 Processor::Processor(QWidget *parent) : QWidget(parent) {
+    m_toPreprocessorButton = new QPushButton("Назад", this);
+    m_toPostprocessorButton = new QPushButton("Вперед", this);
+    m_toPreprocessorButton->setMinimumHeight(40);
+    m_toPostprocessorButton->setMinimumHeight(40);
+
+    connect(m_toPreprocessorButton, &QPushButton::clicked, this, &Processor::toPreprocessor);
+    connect(m_toPostprocessorButton, &QPushButton::clicked, this, &Processor::toPostprocessor);
+
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    buttonLayout->addWidget(m_toPreprocessorButton);
+    buttonLayout->addWidget(m_toPostprocessorButton);
+
     m_textEdit = new QTextEdit(this);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 
     layout->addWidget(m_textEdit);
+    layout->addLayout(buttonLayout);
 
     setLayout(layout);
 }
@@ -32,6 +45,7 @@ void Processor::logVector(const QVector<double> &vector, const QString &name) {
 }
 
 void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *nodeModel) {
+    m_textEdit->clear();
     double modulusValue = sizeModel->getModulusValue().toDouble();
 
     int nSizeMatrix = nodeModel->rowCount();
@@ -192,4 +206,12 @@ QVector<double> Processor::backSubstitution(const QVector<QVector<double>> &A, c
     }
 
     return x;
+}
+
+void Processor::toPreprocessor() {
+    emit clickedToPreprocessor();
+}
+
+void Processor::toPostprocessor() {
+    emit clickedToPostprocessor();
 }

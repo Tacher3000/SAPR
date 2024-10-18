@@ -39,6 +39,8 @@ private slots:
     void saveAsFile();
 
     void switchToProcessor();
+    void switchToPreprocessor();
+    void switchToPostprocessor();
 
 private:
     QStackedWidget *m_stackWidget;

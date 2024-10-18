@@ -68,7 +68,7 @@ private:
 
     QTimer* m_timer;
 
-    QPushButton *m_toProcessor;
+    QPushButton *m_toProcessorButton;
 };
 
 #endif // PREPROCESSOR_H

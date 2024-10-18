@@ -9,6 +9,7 @@
 #include <QVector>
 #include <QDebug>
 #include <QVBoxLayout>
+#include <QPushButton>
 
 
 #define DEBUG_MATRIX(matrix) \
@@ -28,6 +29,12 @@ public:
 
     QVector<double> backSubstitution(const QVector<QVector<double> > &A, const QVector<double> &B);
     void gaussianElimination(QVector<QVector<double> > &A, QVector<double> &B);
+public slots:
+    void toPreprocessor();
+    void toPostprocessor();
+signals:
+    void clickedToPreprocessor();
+    void clickedToPostprocessor();
 private:
     void logMatrix(const QVector<QVector<double>> &matrix, const QString &name);
     void logVector(const QVector<double> &vector, const QString &name);
@@ -37,6 +44,9 @@ private:
     QVector<double> m_vectorDelta;
     QVector<double> m_vectorNx;
     QTextEdit *m_textEdit;
+
+    QPushButton *m_toPreprocessorButton;
+    QPushButton *m_toPostprocessorButton;
 };
 
 #endif // PROCESSOR_H

@@ -22,10 +22,10 @@ Preprocessor::Preprocessor(QWidget* parent) : QWidget(parent) {
     m_nodeTableView->resizeColumnsToContents();
     tablesLayput->addWidget(m_nodeTableView);
 
-    m_toProcessor = new QPushButton("Расчитать", this);
-    m_toProcessor->setMinimumHeight(40);
-    connect(m_toProcessor, &QPushButton::clicked, this, &Preprocessor::toProcessor);
-    tablesLayput->addWidget(m_toProcessor);
+    m_toProcessorButton = new QPushButton("Расчитать", this);
+    m_toProcessorButton->setMinimumHeight(40);
+    connect(m_toProcessorButton, &QPushButton::clicked, this, &Preprocessor::toProcessor);
+    tablesLayput->addWidget(m_toProcessorButton);
 
     tablesWidget->setLayout(tablesLayput);
     splitter->addWidget(tablesWidget);

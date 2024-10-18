@@ -10,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_processor = new Processor(this);
     m_stackWidget->addWidget(m_processor);
+    connect(m_processor, &Processor::clickedToPreprocessor, this, &MainWindow::switchToPreprocessor);
+    connect(m_processor, &Processor::clickedToPostprocessor, this, &MainWindow::switchToPostprocessor);
 
     setCentralWidget(m_stackWidget);
 
@@ -101,6 +103,16 @@ void MainWindow::switchToProcessor()
 {
     m_stackWidget->setCurrentWidget(m_processor);
     m_processor->calculate(m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel());
+}
+
+void MainWindow::switchToPreprocessor()
+{
+    m_stackWidget->setCurrentWidget(m_preprocessor);
+}
+
+void MainWindow::switchToPostprocessor()
+{
+
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
