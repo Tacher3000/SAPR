@@ -65,7 +65,7 @@ void MainWindow::openSettings()
 
     connect(&settingsDialog, &SettingsDialog::settingsSaved, m_preprocessor, &Preprocessor::updateScene);
     connect(&settingsDialog, &SettingsDialog::settingsSaved, this, [this](){
-        m_postProcessor->draw(m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel(), &m_processor->getVectorNx());
+        m_postProcessor->draw(m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel(), &m_processor->getVectorNx(), &m_processor->getVectorUx());
     });
 
     settingsDialog.exec();
@@ -119,7 +119,7 @@ void MainWindow::switchToPreprocessor()
 void MainWindow::switchToPostprocessor()
 {
     m_stackWidget->setCurrentWidget(m_postProcessor);
-    m_postProcessor->draw(m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel(), &m_processor->getVectorNx());
+    m_postProcessor->draw(m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel(), &m_processor->getVectorNx(), &m_processor->getVectorUx());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {

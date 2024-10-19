@@ -49,6 +49,11 @@ const QVector<double>& Processor::getVectorNx() const
     return m_vectorNx;
 }
 
+const QVector<double> &Processor::getVectorUx() const
+{
+    return m_vectorUx;
+}
+
 void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *nodeModel) {
     m_textEdit->clear();
     double modulusValue = sizeModel->getModulusValue().toDouble();
@@ -170,6 +175,25 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
     }
 
     logVector(m_vectorNx, "Vector Nx");
+
+    m_vectorUx.resize((nSizeMatrix - 1) * 2);
+
+    k = 0;
+
+    for (int i = 0; i < (nSizeMatrix - 1) * 2; ++i) {
+        double width = sizeModel->data(sizeModel->index(i / 2, 0)).toDouble();
+        double height = sizeModel->data(sizeModel->index(i / 2, 1)).toDouble();
+        double loadDirection = sizeModel->data(sizeModel->index(i / 2, 2)).toDouble();
+
+        if (i % 2 == 0) {
+            m_vectorUx[i] = m_vectorDelta[k] + 0 + 0;
+        } else {
+            m_vectorUx[i] = m_vectorDelta[k] + (width / width) * (m_vectorDelta[k + 1] - m_vectorDelta[k]) +
+                            (loadDirection * width * width) / (2 * modulusValue * height) * (1 - width / width);
+            ++k;
+        }
+    }
+    logVector(m_vectorUx, "Vector Ux");
 }
 
 

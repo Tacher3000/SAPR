@@ -10,6 +10,7 @@ PostProcessor::PostProcessor(QWidget *parent) : QWidget(parent)
     m_view->setFrameStyle(0);
     m_view->setScene(m_scene);
 
+
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(m_view);
 
@@ -22,7 +23,7 @@ PostProcessor::PostProcessor(QWidget *parent) : QWidget(parent)
     setLayout(layout);
 }
 
-void PostProcessor::draw(const SizeTableModel *sizeModel, const NodeModel *nodeModel, const QVector<double> *vectorNx)
+void PostProcessor::draw(const SizeTableModel *sizeModel, const NodeModel *nodeModel, const QVector<double> *vectorNx, const QVector<double> *vectorUx)
 {
     m_sceneDrawer->clearScene();
     m_sceneDrawer->setSceneSize(0, 0);
@@ -31,8 +32,10 @@ void PostProcessor::draw(const SizeTableModel *sizeModel, const NodeModel *nodeM
     QSettings* settings = app->settings();
     qreal maxHeight = RECT_HEIGHT_MULTIPLIER * sizeModel->getMaxSection();
 
-    m_sceneDrawer->drawKernelStripes(sizeModel);
     m_sceneDrawer->drawNx(sizeModel, vectorNx);
+    m_sceneDrawer->drawUx(sizeModel, vectorUx, vectorNx);
+    m_sceneDrawer->drawKernelStripes(sizeModel);
+
 
     if (settings->value("checkBoxWidget", false).toBool()) {
         if (settings->value("checkBoxFocusedLoad", false).toBool()) m_sceneDrawer->drawFocusedLoad(sizeModel, nodeModel);

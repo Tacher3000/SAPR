@@ -41,6 +41,7 @@ public:
 
     void drawKernelStripes(const SizeTableModel *sizeModel);
     void drawNx(const SizeTableModel *sizeModel, const QVector<double> *vectorNx);
+    void drawUx(const SizeTableModel *sizeModel, const QVector<double> *vectorUx, const QVector<double>* vectorNx);
 private:
     QGraphicsScene* m_scene;
 };

@@ -25,12 +25,15 @@ class Processor : public QWidget {
 
 public:
     explicit Processor(QWidget *parent = nullptr);
+    void extracted(const SizeTableModel *&sizeModel, double &modulusValue,
+                   int &nSizeMatrix, int &k);
     void calculate(const SizeTableModel *sizeModel, const NodeModel *nodeModel);
 
     QVector<double> backSubstitution(const QVector<QVector<double> > &A, const QVector<double> &B);
     void gaussianElimination(QVector<QVector<double> > &A, QVector<double> &B);
 
     const QVector<double>& getVectorNx() const;
+    const QVector<double>& getVectorUx() const;
 public slots:
     void toPreprocessor();
     void toPostprocessor();
@@ -45,6 +48,8 @@ private:
     QVector<double> m_vectorB;
     QVector<double> m_vectorDelta;
     QVector<double> m_vectorNx;
+    QVector<double> m_vectorUx;
+
     QTextEdit *m_textEdit;
 
     QPushButton *m_toPreprocessorButton;
