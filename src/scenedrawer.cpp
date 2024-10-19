@@ -330,3 +330,77 @@ void SceneDrawer::drawFocusedLoad(const SizeTableModel* sizeModel, const NodeMod
         currentX += width;
     }
 }
+
+//некрасиво
+void SceneDrawer::drawKernelStripes(const SizeTableModel* sizeModel) {
+    qreal currentX = 0;
+    int rowCount = sizeModel->rowCount();
+
+    qreal stripeYStart = 0;
+    qreal stripeYEnd = stripeYStart + 800;
+    QLineF stripeLine(0, stripeYStart, 0, stripeYEnd);
+    m_scene->addLine(stripeLine, QPen(Qt::black));
+
+    for (int row = 0; row < rowCount; ++row) {
+        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
+        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+
+        if (width == 0 || height == 0) {
+            continue;
+        }
+
+        qreal stripeX = currentX + width;
+
+
+        QLineF stripeLine(stripeX, stripeYStart, stripeX, stripeYEnd);
+        m_scene->addLine(stripeLine, QPen(Qt::black));
+
+        currentX += width;
+    }
+}
+
+
+void SceneDrawer::drawNx(const SizeTableModel* sizeModel, const QVector<double>* vectorNx) {
+    // if (vectorNx->isEmpty() || (sizeModel->rowCount() - 1) * 2 - 1 != vectorNx->size()) {
+    //     qWarning() << "VectorNx size mismatch!";
+    //     return;
+    // }
+
+    qreal currentX = 0;
+    int rowCount = sizeModel->rowCount();
+    double maxEleventNx = *std::max_element(vectorNx->begin(), vectorNx->end(),
+                                            [](double a, double b) {
+                                                return std::abs(a) < std::abs(b);
+                                            });
+
+    for (int row = 0; row < rowCount; ++row) {
+        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
+        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+
+        if (width == 0 || height == 0) {
+            continue;
+        }
+
+
+        qreal pointX1 = currentX;
+        qreal pointX2 = currentX + width;
+        double t1 = (*vectorNx)[2 * row] * RECT_HEIGHT_MULTIPLIER;
+        double t2 = (*vectorNx)[2 * row + 1] * RECT_HEIGHT_MULTIPLIER;
+
+        while(std::abs(t1) > 100 || std::abs(t2) > 100){
+            t1 /= 2;
+            t2 /= 2;
+        }
+
+        qreal pointY1 = maxEleventNx + 300 - t1;
+        qreal pointY2 = maxEleventNx + 300 - t2;
+
+        QLineF lineOX(pointX1, maxEleventNx + 300, pointX2, maxEleventNx + 300);
+        m_scene->addLine(lineOX, QPen(Qt::black));
+
+        QLineF line(pointX1, pointY1, pointX2, pointY2);
+        m_scene->addLine(line, QPen(Qt::red));
+        currentX += width;
+
+    }
+}

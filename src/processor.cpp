@@ -44,6 +44,11 @@ void Processor::logVector(const QVector<double> &vector, const QString &name) {
     m_textEdit->append(output);
 }
 
+const QVector<double>& Processor::getVectorNx() const
+{
+    return m_vectorNx;
+}
+
 void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *nodeModel) {
     m_textEdit->clear();
     double modulusValue = sizeModel->getModulusValue().toDouble();

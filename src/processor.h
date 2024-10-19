@@ -29,6 +29,8 @@ public:
 
     QVector<double> backSubstitution(const QVector<QVector<double> > &A, const QVector<double> &B);
     void gaussianElimination(QVector<QVector<double> > &A, QVector<double> &B);
+
+    const QVector<double>& getVectorNx() const;
 public slots:
     void toPreprocessor();
     void toPostprocessor();

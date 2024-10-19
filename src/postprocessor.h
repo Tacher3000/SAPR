@@ -15,7 +15,7 @@ class PostProcessor : public QWidget
 public:
     PostProcessor(QWidget *parent = nullptr);
 
-    void draw(const SizeTableModel *sizeModel, const NodeModel *nodeModel);
+    void draw(const SizeTableModel *sizeModel, const NodeModel *nodeModel, const QVector<double> *vectorNx);
 private slots:
     void toProcessor();
 signals:

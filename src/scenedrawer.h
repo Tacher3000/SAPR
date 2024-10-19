@@ -17,6 +17,8 @@
 #include <QTimer>
 #include <QPropertyAnimation>
 
+#include <algorithm>
+
 const int RECT_WIDTH_MULTIPLIER = 100;
 const int RECT_HEIGHT_MULTIPLIER = 50;
 
@@ -37,6 +39,8 @@ public:
     void clearScene();
     void setSceneSize(qreal width, qreal height);
 
+    void drawKernelStripes(const SizeTableModel *sizeModel);
+    void drawNx(const SizeTableModel *sizeModel, const QVector<double> *vectorNx);
 private:
     QGraphicsScene* m_scene;
 };
