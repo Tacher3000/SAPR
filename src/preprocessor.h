@@ -8,7 +8,7 @@
 #include "nodemodel.h"
 #include "bouncingtext.h"
 #include "scenedrawer.h"
-
+#include "numericdelegate.h"
 
 #include <QWidget>
 #include <QMainWindow>
@@ -25,7 +25,6 @@
 #include <QProgressBar>
 #include <QPropertyAnimation>
 #include <QPushButton>
-
 
 class Preprocessor : public QWidget
 {

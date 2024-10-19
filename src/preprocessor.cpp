@@ -6,12 +6,15 @@ Preprocessor::Preprocessor(QWidget* parent) : QWidget(parent) {
     QVBoxLayout* tablesLayput = new QVBoxLayout(this);
     QWidget* tablesWidget = new QWidget(this);
 
+    NumericDelegate *delegate = new NumericDelegate(this);
+
     m_sizeModel = new SizeTableModel;
     connect(m_sizeModel, &SizeTableModel::dataChanged, this, &Preprocessor::updateNodeModel);
     m_sizeTableView = new QTableView(this);
     m_sizeTableView->setModel(m_sizeModel);
     m_sizeTableView->resizeRowsToContents();
     m_sizeTableView->resizeColumnsToContents();
+    m_sizeTableView->setItemDelegate(delegate);
     tablesLayput->addWidget(m_sizeTableView);
 
     m_nodeModel = new NodeModel;
@@ -20,6 +23,7 @@ Preprocessor::Preprocessor(QWidget* parent) : QWidget(parent) {
     m_nodeTableView->setModel(m_nodeModel);
     m_nodeTableView->resizeRowsToContents();
     m_nodeTableView->resizeColumnsToContents();
+    m_nodeTableView->setItemDelegate(delegate);
     tablesLayput->addWidget(m_nodeTableView);
 
     m_toProcessorButton = new QPushButton("Расчитать", this);
