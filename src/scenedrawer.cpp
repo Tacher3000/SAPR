@@ -361,10 +361,9 @@ void SceneDrawer::drawKernelStripes(const SizeTableModel* sizeModel) {
 
 //исправить рисование текста Nx
 void SceneDrawer::drawNx(const SizeTableModel* sizeModel, const QVector<double>* vectorNx) {
-    // if (vectorNx->isEmpty() || (sizeModel->rowCount() - 1) * 2 - 1 != vectorNx->size()) {
-    //     qWarning() << "VectorNx size mismatch!";
-    //     return;
-    // }
+    if (vectorNx->isEmpty()) {
+        return;
+    }
 
     qreal currentX = 0;
     int rowCount = sizeModel->rowCount();
@@ -424,10 +423,9 @@ void SceneDrawer::drawNx(const SizeTableModel* sizeModel, const QVector<double>*
 }
 
 void SceneDrawer::drawUx(const SizeTableModel* sizeModel, const QVector<double>* vectorUx, const QVector<double>* vectorNx) {
-    // if (vectorNx->isEmpty() || (sizeModel->rowCount() - 1) * 2 - 1 != vectorNx->size()) {
-    //     qWarning() << "VectorNx size mismatch!";
-    //     return;
-    // }
+    if (vectorNx->isEmpty()) {
+        return;
+    }
 
     qreal currentX = 0;
     int rowCount = sizeModel->rowCount();

@@ -220,7 +220,7 @@ void Preprocessor::clearData()
     m_nodeModel->clearData();
     m_sizeModel->clearData();
 
-    m_scene->clear();
+    m_sceneDrawer->clearScene();
     delete m_scene;
 
     m_scene = new QGraphicsScene(this);

@@ -6,7 +6,7 @@ NumericDelegate::NumericDelegate(QObject *parent)
 QWidget *NumericDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     QLineEdit *editor = new QLineEdit(parent);
     QIntValidator *validator = new QIntValidator(editor);
-    validator->setBottom(0);
+    validator->setBottom(INT_MIN);
     editor->setValidator(validator);
 
     connect(editor, &QLineEdit::textChanged, [editor, validator](const QString &text) {
