@@ -28,6 +28,8 @@ class SceneDrawer : public QObject {
 public:
     SceneDrawer(QGraphicsScene* scene, QObject* parent = nullptr);
 
+    void setScene(QGraphicsScene* scene);
+
     void drawKernel(const SizeTableModel* sizeModel);
     void drawKernelWidget(const SizeTableModel* sizeModel);
     void drawNode(const SizeTableModel* sizeModel, qreal maxHeight);

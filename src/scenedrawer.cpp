@@ -3,6 +3,11 @@
 SceneDrawer::SceneDrawer(QGraphicsScene* scene, QObject* parent)
     : QObject(parent), m_scene(scene) {}
 
+void SceneDrawer::setScene(QGraphicsScene* scene) {
+    m_scene = scene;
+}
+
+
 void SceneDrawer::clearScene() {
     m_scene->clear();
 }
@@ -402,6 +407,21 @@ void SceneDrawer::drawNx(const SizeTableModel* sizeModel, const QVector<double>*
 
         QLineF line(pointX1, pointY1, pointX2, pointY2);
         m_scene->addLine(line, QPen(Qt::red));
+
+        QGraphicsTextItem *Nx1n = m_scene->addText(QString::number((*vectorNx)[2 * row]));
+        QGraphicsTextItem *Nx2n = m_scene->addText(QString::number((*vectorNx)[2 * row + 1]));
+
+        if((*vectorNx)[2 * row] >= 0){
+            Nx1n->setPos(pointX1 , pointY1 - 20);
+        }else{
+            Nx1n->setPos(pointX1 , pointY1);
+        }
+
+        if((*vectorNx)[2 * row + 1] >= 0){
+            Nx2n->setPos(pointX2 - 30, pointY2 - 20);
+        }else{
+            Nx2n->setPos(pointX2 - 30, pointY2);
+        }
 
         qreal hatchStep = 5.0;
 

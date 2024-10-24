@@ -225,6 +225,7 @@ void Preprocessor::clearData()
 
     m_scene = new QGraphicsScene(this);
     connect(m_timer, &QTimer::timeout, m_scene, &QGraphicsScene::advance);
+    m_sceneDrawer->setScene(m_scene);
     m_view->resetView();
     m_view->setScene(m_scene);
     updateScene();
