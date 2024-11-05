@@ -1,7 +1,7 @@
 #include "sizetablemodel.h"
 
 SizeTableModel::SizeTableModel(QObject *pobj)
-    : QAbstractTableModel(pobj), m_nRows(1), m_nColumns(4) {
+    : QAbstractTableModel(pobj), m_nRows(1), m_nColumns(5) {
 }
 
 QVariant SizeTableModel::data(const QModelIndex& index, int nRole) const
@@ -21,10 +21,10 @@ bool SizeTableModel::setData(const QModelIndex& index, const QVariant& value, in
     if (index.isValid() && nRole == Qt::EditRole) {
         QVariant oldValue = m_hash.value(index, QVariant(""));
 
-        if (index.column() == 3) {
+        if (index.column() == 4) {
             m_modulusValue = value;
             for (int row = 0; row < m_nRows - 1; ++row) {
-                QModelIndex modIndex = this->index(row, 3);
+                QModelIndex modIndex = this->index(row, 4);
                 m_hash[modIndex] = value;
                 emit dataChanged(modIndex, modIndex);
             }
@@ -38,7 +38,7 @@ bool SizeTableModel::setData(const QModelIndex& index, const QVariant& value, in
             ++m_nRows;
 
             if (!m_modulusValue.toString().isEmpty()) {
-                QModelIndex modIndex = this->index(m_nRows - 2, 3);
+                QModelIndex modIndex = this->index(m_nRows - 2, 4);
                 m_hash[modIndex] = m_modulusValue;
             }
 
@@ -47,7 +47,7 @@ bool SizeTableModel::setData(const QModelIndex& index, const QVariant& value, in
         if (index.row() == m_nRows - 2 && value.toString().isEmpty()) {
             bool areFirstThreeColumnsEmpty = true;
             // Проверяем только первые три столбца (индексы 0, 1, 2)
-            for (int col = 0; col < 3; ++col) {
+            for (int col = 0; col < 4; ++col) {
                 QModelIndex checkIndex = this->index(index.row(), col);
                 if (!m_hash.value(checkIndex, QVariant("")).toString().isEmpty()) {
                     areFirstThreeColumnsEmpty = false;
@@ -60,7 +60,7 @@ bool SizeTableModel::setData(const QModelIndex& index, const QVariant& value, in
                 beginRemoveRows(QModelIndex(), m_nRows - 1, m_nRows - 1);
                 --m_nRows;
                 endRemoveRows();
-                QModelIndex modIndex = this->index(m_nRows - 1, 3);
+                QModelIndex modIndex = this->index(m_nRows - 1, 4);
                 m_hash[modIndex] = "";
                 emit dataChanged(modIndex, modIndex);
 
@@ -96,6 +96,8 @@ QVariant SizeTableModel::headerData(int section, Qt::Orientation orientation, in
             case 2:
                 return "Распределенная продольная нагрузка";
             case 3:
+                return "Предельное значение";
+            case 4:
                 return "Модуль упругости";
             default:
                 return QVariant();
@@ -144,7 +146,7 @@ void SizeTableModel::clearData() {
     beginResetModel();
     m_hash.clear();
     m_nRows = 1;
-    m_nColumns = 3;
+    m_nColumns = 4;
     endResetModel();
 }
 
@@ -182,7 +184,7 @@ void SizeTableModel::setModulusValue(const QVariant &value) {
     m_modulusValue = value;
 
     for (int row = 0; row < m_nRows - 1; ++row) {
-        QModelIndex modIndex = this->index(row, 3);
+        QModelIndex modIndex = this->index(row, 4);
         m_hash[modIndex] = value;
         emit dataChanged(modIndex, modIndex);
     }
