@@ -13,11 +13,11 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     buttonLayout->addWidget(m_toPreprocessorButton);
     buttonLayout->addWidget(m_toPostprocessorButton);
 
-    m_textEdit = new QTextEdit(this);
+    // m_textEdit = new QTextEdit(this);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 
-    layout->addWidget(m_textEdit);
+    // layout->addWidget(m_textEdit);
     layout->addLayout(buttonLayout);
 
     setLayout(layout);
@@ -32,7 +32,7 @@ void Processor::logMatrix(const QVector<QVector<double>> &matrix, const QString 
         }
         output += "\n";
     }
-    m_textEdit->append(output);
+    // m_textEdit->append(output);
 }
 
 void Processor::logVector(const QVector<double> &vector, const QString &name) {
@@ -41,7 +41,40 @@ void Processor::logVector(const QVector<double> &vector, const QString &name) {
         output += QString::number(value) + "\t";
     }
     output += "\n";
-    m_textEdit->append(output);
+    // m_textEdit->append(output);
+}
+
+void Processor::fillHashNx(const SizeTableModel *sizeModel, const NodeModel *nodeModel)
+{
+    m_hashNx.clear();
+    double step = 0.25;
+    int i = 0;
+    int k = 0;
+    double modulusValue = sizeModel->getModulusValue().toDouble();
+
+    int nSizeMatrix = nodeModel->rowCount();
+
+    double temp = 0;
+
+    while (true) {
+        double width = sizeModel->data(sizeModel->index(i / 2, 0)).toDouble();
+        double height = sizeModel->data(sizeModel->index(i / 2, 1)).toDouble();
+        double loadDirection = sizeModel->data(sizeModel->index(i / 2, 2)).toDouble();
+
+        temp += width;
+
+        if(width == 0 || height == 0){
+            break;
+        }
+        while(step * i <= temp){
+            m_hashNx[i * step] = modulusValue * height / width * (m_vectorDelta[k + 1] - m_vectorDelta[k]) +
+                          loadDirection * width * (1 - 2 * step * i / width) / 2;
+            ++i;
+        }
+        ++k;
+
+
+    }
 }
 
 const QVector<double>& Processor::getVectorNx() const
@@ -55,7 +88,7 @@ const QVector<double> &Processor::getVectorUx() const
 }
 
 void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *nodeModel) {
-    m_textEdit->clear();
+    // m_textEdit->clear();
     double modulusValue = sizeModel->getModulusValue().toDouble();
 
     int nSizeMatrix = nodeModel->rowCount();
@@ -109,7 +142,7 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
         m_matrixA[i][i + 1] = -(height / width * modulusValue);
     }
 
-    logMatrix(m_matrixA, "Matrix A");
+    // logMatrix(m_matrixA, "Matrix A");
 
     m_vectorB.resize(nSizeMatrix);
     for (int i = 0; i < nSizeMatrix; ++i) {
@@ -144,7 +177,7 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
         }
     }
 
-    logVector(m_vectorB, "Vector B");
+    // logVector(m_vectorB, "Vector B");
 
     QVector<QVector<double>> A = m_matrixA;
     QVector<double> B = m_vectorB;
@@ -153,7 +186,9 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
 
     m_vectorDelta = backSubstitution(A, B);
 
-    logVector(m_vectorDelta, "Vector Delta");
+    // logVector(m_vectorDelta, "Vector Delta");
+
+
 
     m_vectorNx.resize((nSizeMatrix - 1) * 2);
 
@@ -174,7 +209,8 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
         }
     }
 
-    logVector(m_vectorNx, "Vector Nx");
+    fillHashNx(sizeModel, nodeModel);
+    // logVector(m_vectorNx, "Vector Nx");
 
     m_vectorUx.resize((nSizeMatrix - 1) * 2);
 
@@ -193,7 +229,7 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
             ++k;
         }
     }
-    logVector(m_vectorUx, "Vector Ux");
+    // logVector(m_vectorUx, "Vector Ux");
 }
 
 

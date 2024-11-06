@@ -20,6 +20,15 @@ do { \
     } \
 } while (0)
 
+#define DEBUG_HASH(hash) \
+do { \
+        qDebug() << "Hash:"; \
+        for (auto it = hash.constBegin(); it != hash.constEnd(); ++it) { \
+            qDebug() << "Key:" << it.key() << ", Value:" << it.value(); \
+    } \
+} while (0)
+
+
 class Processor : public QWidget {
     Q_OBJECT
 
@@ -44,13 +53,17 @@ private:
     void logMatrix(const QVector<QVector<double>> &matrix, const QString &name);
     void logVector(const QVector<double> &vector, const QString &name);
 
+    void fillHashNx(const SizeTableModel *sizeModel, const NodeModel *nodeModel);
+
     QVector<QVector<double>> m_matrixA;
     QVector<double> m_vectorB;
     QVector<double> m_vectorDelta;
     QVector<double> m_vectorNx;
     QVector<double> m_vectorUx;
 
-    QTextEdit *m_textEdit;
+    QHash<double, double> m_hashNx;
+
+    // QTextEdit *m_textEdit;
 
     QPushButton *m_toPreprocessorButton;
     QPushButton *m_toPostprocessorButton;
