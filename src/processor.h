@@ -53,7 +53,7 @@ private:
     void logMatrix(const QVector<QVector<double>> &matrix, const QString &name);
     void logVector(const QVector<double> &vector, const QString &name);
 
-    void fillHashNx(const SizeTableModel *sizeModel, const NodeModel *nodeModel);
+    void fillMapNx(const SizeTableModel *sizeModel, const NodeModel *nodeModel);
 
     QVector<QVector<double>> m_matrixA;
     QVector<double> m_vectorB;
@@ -61,7 +61,7 @@ private:
     QVector<double> m_vectorNx;
     QVector<double> m_vectorUx;
 
-    QHash<double, double> m_hashNx;
+    QMap<double, double> m_mapNx;
 
     // QTextEdit *m_textEdit;
 

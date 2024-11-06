@@ -44,37 +44,35 @@ void Processor::logVector(const QVector<double> &vector, const QString &name) {
     // m_textEdit->append(output);
 }
 
-void Processor::fillHashNx(const SizeTableModel *sizeModel, const NodeModel *nodeModel)
+void Processor::fillMapNx(const SizeTableModel *sizeModel, const NodeModel *nodeModel)
 {
-    m_hashNx.clear();
+    m_mapNx.clear();
     double step = 0.25;
-    int i = 0;
-    int k = 0;
+    double currentStep = 0;
+    int deltaIndex = 0;
+    double cumulativeWidth = 0;
     double modulusValue = sizeModel->getModulusValue().toDouble();
 
-    int nSizeMatrix = nodeModel->rowCount();
-
-    double temp = 0;
-
     while (true) {
-        double width = sizeModel->data(sizeModel->index(i / 2, 0)).toDouble();
-        double height = sizeModel->data(sizeModel->index(i / 2, 1)).toDouble();
-        double loadDirection = sizeModel->data(sizeModel->index(i / 2, 2)).toDouble();
+        double width = sizeModel->data(sizeModel->index(deltaIndex, 0)).toDouble();
+        double height = sizeModel->data(sizeModel->index(deltaIndex, 1)).toDouble();
+        double loadDirection = sizeModel->data(sizeModel->index(deltaIndex, 2)).toDouble();
 
-        temp += width;
+        cumulativeWidth  += width;
 
         if(width == 0 || height == 0){
             break;
         }
-        while(step * i <= temp){
-            m_hashNx[i * step] = modulusValue * height / width * (m_vectorDelta[k + 1] - m_vectorDelta[k]) +
-                          loadDirection * width * (1 - 2 * step * i / width) / 2;
-            ++i;
+        while(step * currentStep  <= cumulativeWidth ){
+            m_mapNx[currentStep  * step] = modulusValue * height / width * (m_vectorDelta[deltaIndex + 1] - m_vectorDelta[deltaIndex]) +
+                          loadDirection * width * (1.0 - 2.0 * step * currentStep / width) / 2.0;
+            ++currentStep ;
         }
-        ++k;
+        ++deltaIndex;
 
 
     }
+    DEBUG_HASH(m_mapNx);
 }
 
 const QVector<double>& Processor::getVectorNx() const
@@ -209,7 +207,7 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
         }
     }
 
-    fillHashNx(sizeModel, nodeModel);
+    fillMapNx(sizeModel, nodeModel);
     // logVector(m_vectorNx, "Vector Nx");
 
     m_vectorUx.resize((nSizeMatrix - 1) * 2);
