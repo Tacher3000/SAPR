@@ -12,6 +12,8 @@
 #include <QPushButton>
 #include <QStandardItemModel>
 #include <QTableView>
+#include <QDoubleSpinBox>
+#include <QLabel>
 
 
 #define DEBUG_MATRIX(matrix) \
@@ -45,17 +47,19 @@ public:
 
     const QVector<double>& getVectorNx() const;
     const QVector<double>& getVectorUx() const;
+    void fillTable(const SizeTableModel *sizeModel, const NodeModel *nodeModel);
 public slots:
     void toPreprocessor();
     void toPostprocessor();
 signals:
     void clickedToPreprocessor();
     void clickedToPostprocessor();
+    void stepChanged();
 private:
     void logMatrix(const QVector<QVector<double>> &matrix, const QString &name);
     void logVector(const QVector<double> &vector, const QString &name);
 
-    void fillTable(const SizeTableModel *sizeModel, const NodeModel *nodeModel);
+
 
     QVector<QVector<double>> m_matrixA;
     QVector<double> m_vectorB;
@@ -66,6 +70,7 @@ private:
     QMap<double, double> m_mapNx;
 
     // QTextEdit *m_textEdit;
+    QDoubleSpinBox *m_stepSelector;
 
     QStandardItemModel *m_tableModel;
     QTableView *m_tableView;

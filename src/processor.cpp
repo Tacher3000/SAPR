@@ -1,6 +1,18 @@
 #include "processor.h"
 
 Processor::Processor(QWidget *parent) : QWidget(parent) {
+    m_stepSelector = new QDoubleSpinBox(this);
+    m_stepSelector->setMinimum(0.01);
+    m_stepSelector->setMaximum(1.0);
+    m_stepSelector->setSingleStep(0.01);
+    m_stepSelector->setValue(0.25);
+    m_stepSelector->setMinimumHeight(40);
+    m_stepSelector->setMaximumWidth(120);
+    // QLabel *stepLabel = new QLabel("Шаг:", this);
+
+    connect(m_stepSelector, &QDoubleSpinBox::valueChanged, this, &Processor::stepChanged);
+
+
     m_toPreprocessorButton = new QPushButton("Назад", this);
     m_toPostprocessorButton = new QPushButton("Вперед", this);
     m_toPreprocessorButton->setMinimumHeight(40);
@@ -26,12 +38,14 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     m_tableView->setModel(m_tableModel);
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+    m_tableView->resizeColumnsToContents();
+
     QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(m_stepSelector);
     layout->addWidget(m_tableView);
     layout->addLayout(buttonLayout);
     setLayout(layout);
 }
-
 
 void Processor::logMatrix(const QVector<QVector<double>> &matrix, const QString &name) {
     QString output = name + ":\n";
@@ -55,11 +69,13 @@ void Processor::logVector(const QVector<double> &vector, const QString &name) {
 
 void Processor::fillTable(const SizeTableModel *sizeModel, const NodeModel *nodeModel)
 {
-    m_mapNx.clear();
-    double step = 0.25;
+    m_tableModel->removeRows(0, m_tableModel->rowCount());
+    double step = m_stepSelector->value();
     double currentStep = 0;
     int deltaIndex = 0;
+    int rowIndex = 0;
     double nxValue;
+    double uxValue;
     double cumulativeWidth = 0;
     double globalCoordinate = 0;
     double globalCoordinateRepeated = 0;
@@ -77,26 +93,37 @@ void Processor::fillTable(const SizeTableModel *sizeModel, const NodeModel *node
         }
 
         currentStep = 0;
-        // double segmentStartGlobal = globalCoordinate;
         while(step * currentStep  <= width){
             double localCoordinate = step * currentStep;
 
             nxValue = modulusValue * height / width * (m_vectorDelta[deltaIndex + 1] - m_vectorDelta[deltaIndex]) +
                           loadDirection * width * (1.0 - 2.0 * step * currentStep / width) / 2.0;
-            m_tableModel->setItem(globalCoordinate / step, 3, new QStandardItem(QString::number(nxValue)));
 
-            m_tableModel->setItem(globalCoordinate / step, 0, new QStandardItem(QString::number(deltaIndex + 1)));
-            m_tableModel->setItem(globalCoordinate / step, 1, new QStandardItem(QString::number(localCoordinate)));
-            m_tableModel->setItem(globalCoordinate / step, 2, new QStandardItem(QString::number(globalCoordinateRepeated)));
+            uxValue = m_vectorDelta[deltaIndex] + (step * currentStep / width) * (m_vectorDelta[deltaIndex + 1] - m_vectorDelta[deltaIndex]) +
+                            (loadDirection * width * step * currentStep) / (2 * modulusValue * height) * (1 - step * currentStep / width);
+
+            QString nxValueStr = QString::number(nxValue, 'f', 4).remove(QRegularExpression("\\.?0+$"));
+            QString uxValueStr = QString::number(uxValue, 'f', 4).remove(QRegularExpression("\\.?0+$"));
+            if (nxValueStr == "-0") nxValueStr = "0";
+            if (uxValueStr == "-0") uxValueStr = "0";
+
+            m_tableModel->setItem(rowIndex, 0, new QStandardItem(QString::number(deltaIndex + 1)));
+            m_tableModel->setItem(rowIndex, 1, new QStandardItem(QString::number(localCoordinate)));
+            m_tableModel->setItem(rowIndex, 2, new QStandardItem(QString::number(globalCoordinateRepeated)));
+            m_tableModel->setItem(rowIndex, 3, new QStandardItem(nxValueStr));
+            m_tableModel->setItem(rowIndex, 4, new QStandardItem(uxValueStr));
+
 
             globalCoordinate += step;
             globalCoordinateRepeated += step;
-            ++currentStep ;
+            ++currentStep;
+            ++rowIndex;
         }
         globalCoordinateRepeated -=step;
         cumulativeWidth  += width;
         ++deltaIndex;
     }
+    m_tableView->resizeColumnsToContents();
 }
 
 const QVector<double>& Processor::getVectorNx() const
@@ -251,6 +278,7 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
             ++k;
         }
     }
+    // DEBUG_MATRIX(m_vectorUx);
     // logVector(m_vectorUx, "Vector Ux");
 }
 

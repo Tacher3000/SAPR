@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_stackWidget->addWidget(m_processor);
     connect(m_processor, &Processor::clickedToPreprocessor, this, &MainWindow::switchToPreprocessor);
     connect(m_processor, &Processor::clickedToPostprocessor, this, &MainWindow::switchToPostprocessor);
+    connect(m_processor, &Processor::stepChanged, this, &MainWindow::fillTableProcessor);
     setCentralWidget(m_stackWidget);
 
     m_postProcessor = new PostProcessor(this);
@@ -120,6 +121,10 @@ void MainWindow::switchToPostprocessor()
 {
     m_stackWidget->setCurrentWidget(m_postProcessor);
     m_postProcessor->draw(m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel(), &m_processor->getVectorNx(), &m_processor->getVectorUx());
+}
+
+void MainWindow::fillTableProcessor(){
+    m_processor->fillTable(m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
