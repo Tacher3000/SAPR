@@ -10,6 +10,8 @@
 #include <QDebug>
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QStandardItemModel>
+#include <QTableView>
 
 
 #define DEBUG_MATRIX(matrix) \
@@ -53,7 +55,7 @@ private:
     void logMatrix(const QVector<QVector<double>> &matrix, const QString &name);
     void logVector(const QVector<double> &vector, const QString &name);
 
-    void fillMapNx(const SizeTableModel *sizeModel, const NodeModel *nodeModel);
+    void fillTable(const SizeTableModel *sizeModel, const NodeModel *nodeModel);
 
     QVector<QVector<double>> m_matrixA;
     QVector<double> m_vectorB;
@@ -64,6 +66,9 @@ private:
     QMap<double, double> m_mapNx;
 
     // QTextEdit *m_textEdit;
+
+    QStandardItemModel *m_tableModel;
+    QTableView *m_tableView;
 
     QPushButton *m_toPreprocessorButton;
     QPushButton *m_toPostprocessorButton;

@@ -13,13 +13,22 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     buttonLayout->addWidget(m_toPreprocessorButton);
     buttonLayout->addWidget(m_toPostprocessorButton);
 
-    // m_textEdit = new QTextEdit(this);
+    m_tableModel = new QStandardItemModel(this);
+    m_tableModel->setColumnCount(6);
+    m_tableModel->setHeaderData(0, Qt::Horizontal, "Номер стержня");
+    m_tableModel->setHeaderData(1, Qt::Horizontal, "Локальная координата");
+    m_tableModel->setHeaderData(2, Qt::Horizontal, "Глобальная координата");
+    m_tableModel->setHeaderData(3, Qt::Horizontal, "Nx");
+    m_tableModel->setHeaderData(4, Qt::Horizontal, "Ux");
+    m_tableModel->setHeaderData(5, Qt::Horizontal, "Предельное значение");
+
+    m_tableView = new QTableView(this);
+    m_tableView->setModel(m_tableModel);
+    m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
-
-    // layout->addWidget(m_textEdit);
+    layout->addWidget(m_tableView);
     layout->addLayout(buttonLayout);
-
     setLayout(layout);
 }
 
@@ -44,13 +53,16 @@ void Processor::logVector(const QVector<double> &vector, const QString &name) {
     // m_textEdit->append(output);
 }
 
-void Processor::fillMapNx(const SizeTableModel *sizeModel, const NodeModel *nodeModel)
+void Processor::fillTable(const SizeTableModel *sizeModel, const NodeModel *nodeModel)
 {
     m_mapNx.clear();
     double step = 0.25;
     double currentStep = 0;
     int deltaIndex = 0;
+    double nxValue;
     double cumulativeWidth = 0;
+    double globalCoordinate = 0;
+    double globalCoordinateRepeated = 0;
     double modulusValue = sizeModel->getModulusValue().toDouble();
 
     while (true) {
@@ -58,21 +70,33 @@ void Processor::fillMapNx(const SizeTableModel *sizeModel, const NodeModel *node
         double height = sizeModel->data(sizeModel->index(deltaIndex, 1)).toDouble();
         double loadDirection = sizeModel->data(sizeModel->index(deltaIndex, 2)).toDouble();
 
-        cumulativeWidth  += width;
+
 
         if(width == 0 || height == 0){
             break;
         }
-        while(step * currentStep  <= cumulativeWidth ){
-            m_mapNx[currentStep  * step] = modulusValue * height / width * (m_vectorDelta[deltaIndex + 1] - m_vectorDelta[deltaIndex]) +
+
+        currentStep = 0;
+        // double segmentStartGlobal = globalCoordinate;
+        while(step * currentStep  <= width){
+            double localCoordinate = step * currentStep;
+
+            nxValue = modulusValue * height / width * (m_vectorDelta[deltaIndex + 1] - m_vectorDelta[deltaIndex]) +
                           loadDirection * width * (1.0 - 2.0 * step * currentStep / width) / 2.0;
+            m_tableModel->setItem(globalCoordinate / step, 3, new QStandardItem(QString::number(nxValue)));
+
+            m_tableModel->setItem(globalCoordinate / step, 0, new QStandardItem(QString::number(deltaIndex + 1)));
+            m_tableModel->setItem(globalCoordinate / step, 1, new QStandardItem(QString::number(localCoordinate)));
+            m_tableModel->setItem(globalCoordinate / step, 2, new QStandardItem(QString::number(globalCoordinateRepeated)));
+
+            globalCoordinate += step;
+            globalCoordinateRepeated += step;
             ++currentStep ;
         }
+        globalCoordinateRepeated -=step;
+        cumulativeWidth  += width;
         ++deltaIndex;
-
-
     }
-    DEBUG_HASH(m_mapNx);
 }
 
 const QVector<double>& Processor::getVectorNx() const
@@ -207,7 +231,7 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
         }
     }
 
-    fillMapNx(sizeModel, nodeModel);
+    fillTable(sizeModel, nodeModel);
     // logVector(m_vectorNx, "Vector Nx");
 
     m_vectorUx.resize((nSizeMatrix - 1) * 2);
