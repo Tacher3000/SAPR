@@ -47,6 +47,7 @@ public:
 
     const QVector<double>& getVectorNx() const;
     const QVector<double>& getVectorUx() const;
+    const QVector<double>& getVectorSigmax() const;
     void setNodeModel(const NodeModel *nodeModel);
     void setSizeModel(const SizeTableModel *sizeModel);
     const void fillTable();
@@ -69,6 +70,7 @@ private:
     QVector<double> m_vectorDelta;
     QVector<double> m_vectorNx;
     QVector<double> m_vectorUx;
+    QVector<double> m_vectorSigmax;
 
     QMap<double, double> m_mapNx;
 

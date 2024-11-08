@@ -65,7 +65,7 @@ void MainWindow::openSettings()
 
     connect(&settingsDialog, &SettingsDialog::settingsSaved, m_preprocessor, &Preprocessor::updateScene);
     connect(&settingsDialog, &SettingsDialog::settingsSaved, this, [this](){
-        m_postProcessor->draw(m_processor, m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel(), &m_processor->getVectorNx(), &m_processor->getVectorUx());
+        m_postProcessor->draw(m_processor, m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel());
     });
 
     settingsDialog.exec();
@@ -121,7 +121,7 @@ void MainWindow::switchToPreprocessor()
 void MainWindow::switchToPostprocessor()
 {
     m_stackWidget->setCurrentWidget(m_postProcessor);
-    m_postProcessor->draw(m_processor, m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel(), &m_processor->getVectorNx(), &m_processor->getVectorUx());
+    m_postProcessor->draw(m_processor, m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel());
 }
 
 

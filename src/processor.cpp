@@ -26,13 +26,14 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     buttonLayout->addWidget(m_toPostprocessorButton);
 
     m_tableModel = new QStandardItemModel(this);
-    m_tableModel->setColumnCount(6);
+    m_tableModel->setColumnCount(7);
     m_tableModel->setHeaderData(0, Qt::Horizontal, "Номер стержня");
     m_tableModel->setHeaderData(1, Qt::Horizontal, "Локальная координата");
     m_tableModel->setHeaderData(2, Qt::Horizontal, "Глобальная координата");
     m_tableModel->setHeaderData(3, Qt::Horizontal, "Nx");
     m_tableModel->setHeaderData(4, Qt::Horizontal, "Ux");
-    m_tableModel->setHeaderData(5, Qt::Horizontal, "Предельное значение");
+    m_tableModel->setHeaderData(5, Qt::Horizontal, "σx");
+    m_tableModel->setHeaderData(6, Qt::Horizontal, "Предельное значение");
 
     m_tableView = new QTableView(this);
     m_tableView->setModel(m_tableModel);
@@ -76,6 +77,7 @@ const void Processor::fillTable()
     int rowIndex = 0;
     double nxValue;
     double uxValue;
+    double sigmaValue;
     double cumulativeWidth = 0;
     double globalCoordinate = 0;
     double globalCoordinateRepeated = 0;
@@ -103,9 +105,13 @@ const void Processor::fillTable()
             uxValue = m_vectorDelta[deltaIndex] + (step * currentStep / width) * (m_vectorDelta[deltaIndex + 1] - m_vectorDelta[deltaIndex]) +
                             (loadDirection * width * step * currentStep) / (2 * modulusValue * height) * (1 - step * currentStep / width);
 
+            sigmaValue = nxValue/ height;
+
             QString nxValueStr = QString::number(nxValue, 'f', 4).remove(QRegularExpression("\\.?0+$"));
             QString uxValueStr = QString::number(uxValue, 'f', 4).remove(QRegularExpression("\\.?0+$"));
+            QString sigmaValueStr = QString::number(sigmaValue, 'f', 4).remove(QRegularExpression("\\.?0+$"));
             if (nxValueStr == "-0") nxValueStr = "0";
+            if (uxValueStr == "-0") uxValueStr = "0";
             if (uxValueStr == "-0") uxValueStr = "0";
 
             m_tableModel->setItem(rowIndex, 0, new QStandardItem(QString::number(deltaIndex + 1)));
@@ -113,7 +119,8 @@ const void Processor::fillTable()
             m_tableModel->setItem(rowIndex, 2, new QStandardItem(QString::number(globalCoordinateRepeated)));
             m_tableModel->setItem(rowIndex, 3, new QStandardItem(nxValueStr));
             m_tableModel->setItem(rowIndex, 4, new QStandardItem(uxValueStr));
-            m_tableModel->setItem(rowIndex, 5, new QStandardItem(limitValue));
+            m_tableModel->setItem(rowIndex, 5, new QStandardItem(sigmaValueStr));
+            m_tableModel->setItem(rowIndex, 6, new QStandardItem(limitValue));
 
 
             globalCoordinate += step;
@@ -146,6 +153,11 @@ const QVector<double>& Processor::getVectorNx() const
 const QVector<double> &Processor::getVectorUx() const
 {
     return m_vectorUx;
+}
+
+const QVector<double> &Processor::getVectorSigmax() const
+{
+    return m_vectorSigmax;
 }
 
 void Processor::setNodeModel(const NodeModel *nodeModel) {
@@ -267,15 +279,19 @@ void Processor::calculate() {
         double width = m_sizeModel->data(m_sizeModel->index(i / 2, 0)).toDouble();
         double height = m_sizeModel->data(m_sizeModel->index(i / 2, 1)).toDouble();
         double loadDirection = m_sizeModel->data(m_sizeModel->index(i / 2, 2)).toDouble();
+        double nxValue;
 
         if (i % 2 == 0) {
-            m_vectorNx[i] = modulusValue * height / width * (m_vectorDelta[k + 1] - m_vectorDelta[k]) +
+            nxValue = modulusValue * height / width * (m_vectorDelta[k + 1] - m_vectorDelta[k]) +
                             loadDirection * width * (1 - 2 * 0 / width) / 2;
         } else {
-            m_vectorNx[i] = modulusValue * height / width * (m_vectorDelta[k + 1] - m_vectorDelta[k]) +
+            nxValue = modulusValue * height / width * (m_vectorDelta[k + 1] - m_vectorDelta[k]) +
                             loadDirection * width * (1 - 2 * width / width) / 2;
             ++k;
         }
+        QString nxValueStr = QString::number(nxValue, 'f', 4).remove(QRegularExpression("\\.?0+$"));
+        if (nxValueStr == "-0") nxValueStr = "0";
+        m_vectorNx[i] = nxValueStr.toDouble();
     }
 
     fillTable();
@@ -289,17 +305,34 @@ void Processor::calculate() {
         double width = m_sizeModel->data(m_sizeModel->index(i / 2, 0)).toDouble();
         double height = m_sizeModel->data(m_sizeModel->index(i / 2, 1)).toDouble();
         double loadDirection = m_sizeModel->data(m_sizeModel->index(i / 2, 2)).toDouble();
-
+        double uxValue;
         if (i % 2 == 0) {
-            m_vectorUx[i] = m_vectorDelta[k] + 0 + 0;
+            uxValue = m_vectorDelta[k] + 0 + 0;
         } else {
-            m_vectorUx[i] = m_vectorDelta[k] + (width / width) * (m_vectorDelta[k + 1] - m_vectorDelta[k]) +
+            uxValue = m_vectorDelta[k] + (width / width) * (m_vectorDelta[k + 1] - m_vectorDelta[k]) +
                             (loadDirection * width * width) / (2 * modulusValue * height) * (1 - width / width);
             ++k;
         }
+        QString uxValueStr = QString::number(uxValue, 'f', 4).remove(QRegularExpression("\\.?0+$"));
+        if (uxValueStr == "-0") uxValueStr = "0";
+        m_vectorUx[i] = uxValueStr.toDouble();
     }
     // DEBUG_MATRIX(m_vectorUx);
     // logVector(m_vectorUx, "Vector Ux");
+
+    m_vectorSigmax.resize((nSizeMatrix - 1) * 2);
+
+    k = 0;
+
+    for (int i = 0; i < (nSizeMatrix - 1) * 2; ++i) {
+        double height = m_sizeModel->data(m_sizeModel->index(i / 2, 1)).toDouble();
+        double sigmaValue = m_vectorNx[i] / height;
+
+        QString sigmaValueStr = QString::number(sigmaValue, 'f', 4).remove(QRegularExpression("\\.?0+$"));
+        if (sigmaValueStr == "-0") sigmaValueStr = "0";
+        m_vectorSigmax[i] = sigmaValueStr.toDouble();
+    }
+    // DEBUG_MATRIX(m_vectorSigmax);
 }
 
 

@@ -31,9 +31,7 @@ void PostProcessor::toProcessor()
 }
 
 void PostProcessor::draw(Processor *processor, const SizeTableModel *sizeModel,
-                         const NodeModel *nodeModel,
-                         const QVector<double> *vectorNx,
-                         const QVector<double> *vectorUx) {
+                         const NodeModel *nodeModel) {
     m_sceneDrawer->clearScene();
     m_sceneDrawer->setSceneSize(0, 0);
 
@@ -41,8 +39,9 @@ void PostProcessor::draw(Processor *processor, const SizeTableModel *sizeModel,
     QSettings *settings = app->settings();
     qreal maxHeight = RECT_HEIGHT_MULTIPLIER * sizeModel->getMaxSection();
 
-    m_sceneDrawer->drawNx(sizeModel, vectorNx);
-    m_sceneDrawer->drawUx(processor, sizeModel, vectorUx, vectorNx);
+    m_sceneDrawer->drawNx(sizeModel, &processor->getVectorNx());
+    m_sceneDrawer->drawUx(processor, sizeModel, &processor->getVectorUx(), &processor->getVectorNx());
+    m_sceneDrawer->drawSigmax(sizeModel, &processor->getVectorSigmax());
     m_sceneDrawer->drawKernelStripes(sizeModel);
 
     if (settings->value("checkBoxWidget", false).toBool()) {
