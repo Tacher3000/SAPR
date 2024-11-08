@@ -381,13 +381,13 @@ void SceneDrawer::drawNx(const SizeTableModel* sizeModel, const QVector<double>*
 
 
 
-    while(maxEleventNx > 100){
+    while(std::abs(maxEleventNx) > 100){
         maxEleventNx /= 2;
         ++ratio;
     }
     const QString NxString = "Nx [qL]";
     QGraphicsTextItem *text = m_scene->addText(NxString);
-    text->setPos(-60, maxEleventNx + 235);
+    text->setPos(-60, 235);
 
     for (int row = 0; row < rowCount; ++row) {
         int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
@@ -403,17 +403,13 @@ void SceneDrawer::drawNx(const SizeTableModel* sizeModel, const QVector<double>*
         double t1 = (*vectorNx)[2 * row] * RECT_HEIGHT_MULTIPLIER;
         double t2 = (*vectorNx)[2 * row + 1] * RECT_HEIGHT_MULTIPLIER;
 
-        // while(std::abs(t1) > 100 || std::abs(t2) > 100){
-        //     t1 /= 2;
-        //     t2 /= 2;
-        // }
         for (int i = 0; i <= ratio; ++i) {
             t1 /= 2;
             t2 /= 2;
         }
 
-        qreal pointY1 = maxEleventNx + 250 - t1;
-        qreal pointY2 = maxEleventNx + 250 - t2;
+        qreal pointY1 = 250 - t1;
+        qreal pointY2 = 250 - t2;
 
 
 
@@ -440,13 +436,13 @@ void SceneDrawer::drawNx(const SizeTableModel* sizeModel, const QVector<double>*
         for (qreal x = pointX1; x <= pointX2; x += hatchStep) {
             qreal t = (x - pointX1) / (pointX2 - pointX1);
             qreal yLine = pointY1 * (1 - t) + pointY2 * t;
-            qreal yOX = maxEleventNx + 250;
+            qreal yOX = 250;
 
             QLineF hatchLine(x, yOX, x, yLine);
             m_scene->addLine(hatchLine, QPen(Qt::red));
         }
 
-        QLineF lineOX(pointX1, maxEleventNx + 250, pointX2, maxEleventNx + 250);
+        QLineF lineOX(pointX1, 250, pointX2, 250);
         m_scene->addLine(lineOX, QPen(Qt::black));
 
         currentX += width;
@@ -475,7 +471,7 @@ void SceneDrawer::drawUx(Processor* processor, const SizeTableModel* sizeModel, 
         double step = 0.005;
         for (int i = 0; i * step < width / RECT_WIDTH_MULTIPLIER; ++i) {
             double uxValue = processor->calculationUxAtPoint(row, step * i);
-            if(maxEleventUx < uxValue){
+            if(std::abs(maxEleventUx) < std::abs(uxValue)){
                 maxEleventUx = uxValue;
             }
         }
@@ -489,13 +485,13 @@ void SceneDrawer::drawUx(Processor* processor, const SizeTableModel* sizeModel, 
 
 
 
-    while(maxEleventUx > 100){
+    while(std::abs(maxEleventUx) > 100){
         maxEleventUx /= 2;
         ++ratio;
     }
     const QString NxString = "Ux [qL^2/EA]";
     QGraphicsTextItem *text = m_scene->addText(NxString);
-    text->setPos(-80, maxEleventUx + 435);
+    text->setPos(-80, 435);
 
     for (int row = 0; row < rowCount; ++row) {
         int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
@@ -512,18 +508,14 @@ void SceneDrawer::drawUx(Processor* processor, const SizeTableModel* sizeModel, 
         double t2Ux = (*vectorUx)[2 * row + 1] * RECT_HEIGHT_MULTIPLIER;
 
         if((*vectorNx)[2 * row] == (*vectorNx)[2 * row + 1]){
-            // while(std::abs(t1Ux) > 100 || std::abs(t2Ux) > 100){
-            //     t1Ux /= 2;
-            //     t2Ux /= 2;
-            // }
 
             for (int i = 0; i <= ratio; ++i) {
-                t1Ux /= 1.5;
-                t2Ux /= 1.5;
+                t1Ux /= 2;
+                t2Ux /= 2;
             }
 
-            qreal pointY1 = maxEleventUx + 450 - t1Ux;
-            qreal pointY2 = maxEleventUx + 450 - t2Ux;
+            qreal pointY1 = 450 - t1Ux;
+            qreal pointY2 = 450 - t2Ux;
 
 
 
@@ -535,7 +527,7 @@ void SceneDrawer::drawUx(Processor* processor, const SizeTableModel* sizeModel, 
             for (qreal x = pointX1; x <= pointX2; x += hatchStep) {
                 qreal t = (x - pointX1) / (pointX2 - pointX1);
                 qreal yLine = pointY1 * (1 - t) + pointY2 * t;
-                qreal yOX = maxEleventUx + 450;
+                qreal yOX = 450;
 
                 QLineF hatchLine(x, yOX, x, yLine);
                 m_scene->addLine(hatchLine, QPen(Qt::red));
@@ -546,12 +538,12 @@ void SceneDrawer::drawUx(Processor* processor, const SizeTableModel* sizeModel, 
                 // qDebug() << processor->calculationUxAtPoint(row, step * i);
                 double uxValue = processor->calculationUxAtPoint(row, step * i) * RECT_HEIGHT_MULTIPLIER;
                 for (int i = 0; i <= ratio; ++i) {
-                    uxValue /= 1.5;
+                    uxValue /= 2;
                 }
-                m_scene->addEllipse(currentX + i * step * RECT_WIDTH_MULTIPLIER, maxEleventUx + 450 - uxValue, 0.5, 0.3, QPen(Qt::red));
+                m_scene->addEllipse(currentX + i * step * RECT_WIDTH_MULTIPLIER, 450 - uxValue, 0.5, 0.3, QPen(Qt::red));
             }
         }
-        QLineF lineOX(pointX1, maxEleventUx + 450, pointX2, maxEleventUx + 450);
+        QLineF lineOX(pointX1, 450, pointX2, 450);
         m_scene->addLine(lineOX, QPen(Qt::black));
 
         currentX += width;
