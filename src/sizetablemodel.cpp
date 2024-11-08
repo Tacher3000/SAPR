@@ -90,15 +90,15 @@ QVariant SizeTableModel::headerData(int section, Qt::Orientation orientation, in
         if (orientation == Qt::Horizontal) {
             switch (section) {
             case 0:
-                return "Длина";
+                return "Длина, L";
             case 1:
-                return "Сечение";
+                return "Сечение, A";
             case 2:
-                return "Распределенная продольная нагрузка";
+                return "Распределенная продольная нагрузка, q";
             case 3:
-                return "Предельное значение";
+                return "Допускаемое напряжение, [σ]";
             case 4:
-                return "Модуль упругости";
+                return "Модуль упругости, E";
             default:
                 return QVariant();
             }

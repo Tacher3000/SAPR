@@ -48,7 +48,7 @@ Preprocessor::Preprocessor(QWidget* parent) : QWidget(parent) {
     m_view->setMinimumWidth(400);
 
     QList<int> sizes;
-    sizes << 700 << 1400;
+    sizes << 850 << 1250;
     splitter->setSizes(sizes);
 
     m_timer = new QTimer(this);
@@ -121,6 +121,7 @@ void Preprocessor::updateScene()
         if (settings->value("checkBoxSupport", false).toBool()) m_sceneDrawer->drawSupport(m_sizeModel, m_nodeModel);
         if (settings->value("checkBoxNodeN", false).toBool()) m_sceneDrawer->drawNode(m_sizeModel, maxHeight);
     }
+    m_sizeTableView->resizeColumnsToContents();
 }
 
 

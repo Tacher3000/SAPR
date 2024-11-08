@@ -45,7 +45,7 @@ QVariant NodeModel::headerData(int section, Qt::Orientation orientation, int rol
         if (orientation == Qt::Horizontal) {
             switch (section) {
             case 0:
-                return "Сосредоточенная продольная нагрузка";
+                return "Сосредоточенная продольная нагрузка, F";
             case 1:
                 return "Опора";
             default:
