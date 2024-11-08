@@ -3,6 +3,7 @@
 
 #include "scenedrawer.h"
 #include "scalablegraphicsview.h"
+#include "processor.h"
 
 #include <QGraphicsScene>
 #include <QWidget>
@@ -15,7 +16,9 @@ class PostProcessor : public QWidget
 public:
     PostProcessor(QWidget *parent = nullptr);
 
-    void draw(const SizeTableModel *sizeModel, const NodeModel *nodeModel, const QVector<double> *vectorNx, const QVector<double> *vectorUx);
+    void draw(Processor *processor, const SizeTableModel *sizeModel,
+              const NodeModel *nodeModel, const QVector<double> *vectorNx,
+              const QVector<double> *vectorUx);
 private slots:
     void toProcessor();
 signals:

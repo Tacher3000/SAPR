@@ -13,7 +13,6 @@ MainWindow::MainWindow(QWidget *parent)
     m_stackWidget->addWidget(m_processor);
     connect(m_processor, &Processor::clickedToPreprocessor, this, &MainWindow::switchToPreprocessor);
     connect(m_processor, &Processor::clickedToPostprocessor, this, &MainWindow::switchToPostprocessor);
-    connect(m_processor, &Processor::stepChanged, this, &MainWindow::fillTableProcessor);
     setCentralWidget(m_stackWidget);
 
     m_postProcessor = new PostProcessor(this);
@@ -66,7 +65,7 @@ void MainWindow::openSettings()
 
     connect(&settingsDialog, &SettingsDialog::settingsSaved, m_preprocessor, &Preprocessor::updateScene);
     connect(&settingsDialog, &SettingsDialog::settingsSaved, this, [this](){
-        m_postProcessor->draw(m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel(), &m_processor->getVectorNx(), &m_processor->getVectorUx());
+        m_postProcessor->draw(m_processor, m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel(), &m_processor->getVectorNx(), &m_processor->getVectorUx());
     });
 
     settingsDialog.exec();
@@ -109,7 +108,9 @@ void MainWindow::saveAsFile()
 void MainWindow::switchToProcessor()
 {
     m_stackWidget->setCurrentWidget(m_processor);
-    m_processor->calculate(m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel());
+    m_processor->setSizeModel(m_preprocessor->getSizeModel());
+    m_processor->setNodeModel(m_preprocessor->getNodeModel());
+    m_processor->calculate();
 }
 
 void MainWindow::switchToPreprocessor()
@@ -120,12 +121,9 @@ void MainWindow::switchToPreprocessor()
 void MainWindow::switchToPostprocessor()
 {
     m_stackWidget->setCurrentWidget(m_postProcessor);
-    m_postProcessor->draw(m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel(), &m_processor->getVectorNx(), &m_processor->getVectorUx());
+    m_postProcessor->draw(m_processor, m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel(), &m_processor->getVectorNx(), &m_processor->getVectorUx());
 }
 
-void MainWindow::fillTableProcessor(){
-    m_processor->fillTable(m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel());
-}
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     event->accept();

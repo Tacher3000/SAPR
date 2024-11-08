@@ -5,6 +5,7 @@
 #include "nodemodel.h"
 #include "settingsdialog.h"
 #include "app.h"
+#include "processor.h"
 
 #include <QGraphicsScene>
 #include <QSettings>
@@ -43,7 +44,7 @@ public:
 
     void drawKernelStripes(const SizeTableModel *sizeModel);
     void drawNx(const SizeTableModel *sizeModel, const QVector<double> *vectorNx);
-    void drawUx(const SizeTableModel *sizeModel, const QVector<double> *vectorUx, const QVector<double>* vectorNx);
+    void drawUx(Processor* processor, const SizeTableModel *sizeModel, const QVector<double> *vectorUx, const QVector<double>* vectorNx);
 private:
     QGraphicsScene* m_scene;
 };

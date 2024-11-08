@@ -43,8 +43,6 @@ private slots:
     void switchToPreprocessor();
     void switchToPostprocessor();
 
-    void fillTableProcessor();
-
 private:
     QStackedWidget *m_stackWidget;
 

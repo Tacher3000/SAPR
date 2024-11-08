@@ -38,28 +38,31 @@ class Processor : public QWidget {
 
 public:
     explicit Processor(QWidget *parent = nullptr);
-    void extracted(const SizeTableModel *&sizeModel, double &modulusValue,
-                   int &nSizeMatrix, int &k);
-    void calculate(const SizeTableModel *sizeModel, const NodeModel *nodeModel);
+    // void extracted(const SizeTableModel *&sizeModel, double &modulusValue,
+    //                int &nSizeMatrix, int &k);
+    void calculate();
 
     QVector<double> backSubstitution(const QVector<QVector<double> > &A, const QVector<double> &B);
     void gaussianElimination(QVector<QVector<double> > &A, QVector<double> &B);
 
     const QVector<double>& getVectorNx() const;
     const QVector<double>& getVectorUx() const;
-    void fillTable(const SizeTableModel *sizeModel, const NodeModel *nodeModel);
+    void setNodeModel(const NodeModel *nodeModel);
+    void setSizeModel(const SizeTableModel *sizeModel);
+    const void fillTable();
+    const double calculationUxAtPoint(int number, double x);
 public slots:
     void toPreprocessor();
     void toPostprocessor();
 signals:
     void clickedToPreprocessor();
     void clickedToPostprocessor();
-    void stepChanged();
 private:
     void logMatrix(const QVector<QVector<double>> &matrix, const QString &name);
     void logVector(const QVector<double> &vector, const QString &name);
 
-
+    const NodeModel *m_nodeModel;
+    const SizeTableModel *m_sizeModel;
 
     QVector<QVector<double>> m_matrixA;
     QVector<double> m_vectorB;

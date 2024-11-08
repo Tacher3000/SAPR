@@ -10,7 +10,7 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     m_stepSelector->setMaximumWidth(120);
     // QLabel *stepLabel = new QLabel("Шаг:", this);
 
-    connect(m_stepSelector, &QDoubleSpinBox::valueChanged, this, &Processor::stepChanged);
+    connect(m_stepSelector, &QDoubleSpinBox::valueChanged, this, &Processor::fillTable);
 
 
     m_toPreprocessorButton = new QPushButton("Назад", this);
@@ -67,7 +67,7 @@ void Processor::logVector(const QVector<double> &vector, const QString &name) {
     // m_textEdit->append(output);
 }
 
-void Processor::fillTable(const SizeTableModel *sizeModel, const NodeModel *nodeModel)
+const void Processor::fillTable()
 {
     m_tableModel->removeRows(0, m_tableModel->rowCount());
     double step = m_stepSelector->value();
@@ -79,12 +79,13 @@ void Processor::fillTable(const SizeTableModel *sizeModel, const NodeModel *node
     double cumulativeWidth = 0;
     double globalCoordinate = 0;
     double globalCoordinateRepeated = 0;
-    double modulusValue = sizeModel->getModulusValue().toDouble();
+    double modulusValue = m_sizeModel->getModulusValue().toDouble();
 
     while (true) {
-        double width = sizeModel->data(sizeModel->index(deltaIndex, 0)).toDouble();
-        double height = sizeModel->data(sizeModel->index(deltaIndex, 1)).toDouble();
-        double loadDirection = sizeModel->data(sizeModel->index(deltaIndex, 2)).toDouble();
+        double width = m_sizeModel->data(m_sizeModel->index(deltaIndex, 0)).toDouble();
+        double height = m_sizeModel->data(m_sizeModel->index(deltaIndex, 1)).toDouble();
+        double loadDirection = m_sizeModel->data(m_sizeModel->index(deltaIndex, 2)).toDouble();
+        QString limitValue = m_sizeModel->data(m_sizeModel->index(deltaIndex, 3)).toString();
 
 
 
@@ -112,6 +113,7 @@ void Processor::fillTable(const SizeTableModel *sizeModel, const NodeModel *node
             m_tableModel->setItem(rowIndex, 2, new QStandardItem(QString::number(globalCoordinateRepeated)));
             m_tableModel->setItem(rowIndex, 3, new QStandardItem(nxValueStr));
             m_tableModel->setItem(rowIndex, 4, new QStandardItem(uxValueStr));
+            m_tableModel->setItem(rowIndex, 5, new QStandardItem(limitValue));
 
 
             globalCoordinate += step;
@@ -126,6 +128,16 @@ void Processor::fillTable(const SizeTableModel *sizeModel, const NodeModel *node
     m_tableView->resizeColumnsToContents();
 }
 
+const double Processor::calculationUxAtPoint(int number, double x)
+{
+    double width = m_sizeModel->data(m_sizeModel->index(number, 0)).toDouble();
+    double height = m_sizeModel->data(m_sizeModel->index(number, 1)).toDouble();
+    double loadDirection = m_sizeModel->data(m_sizeModel->index(number, 2)).toDouble();
+    double modulusValue = m_sizeModel->getModulusValue().toDouble();
+    return m_vectorDelta[number] + (x / width) * (m_vectorDelta[number + 1] - m_vectorDelta[number]) +
+           (loadDirection * width * x) / (2 * modulusValue * height) * (1 - x / width);
+}
+
 const QVector<double>& Processor::getVectorNx() const
 {
     return m_vectorNx;
@@ -136,11 +148,19 @@ const QVector<double> &Processor::getVectorUx() const
     return m_vectorUx;
 }
 
-void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *nodeModel) {
-    // m_textEdit->clear();
-    double modulusValue = sizeModel->getModulusValue().toDouble();
+void Processor::setNodeModel(const NodeModel *nodeModel) {
+    m_nodeModel = nodeModel;
+}
 
-    int nSizeMatrix = nodeModel->rowCount();
+void Processor::setSizeModel(const SizeTableModel *sizeModel) {
+    m_sizeModel = sizeModel;
+}
+
+void Processor::calculate() {
+    // m_textEdit->clear();
+    double modulusValue = m_sizeModel->getModulusValue().toDouble();
+
+    int nSizeMatrix = m_nodeModel->rowCount();
     m_matrixA.resize(nSizeMatrix);
 
     for (int i = 0; i < nSizeMatrix; ++i) {
@@ -150,12 +170,12 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
         }
     }
 
-    QString supportLeft = nodeModel->data(nodeModel->index(0, 1)).toString();
-    QString supportRight = nodeModel->data(nodeModel->index(nSizeMatrix - 1, 1)).toString();
+    QString supportLeft = m_nodeModel->data(m_nodeModel->index(0, 1)).toString();
+    QString supportRight = m_nodeModel->data(m_nodeModel->index(nSizeMatrix - 1, 1)).toString();
 
     for (int i = 0; i < nSizeMatrix - 1; ++i) {
-        double width = sizeModel->data(sizeModel->index(i, 0)).toDouble();
-        double height = sizeModel->data(sizeModel->index(i, 1)).toDouble();
+        double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toDouble();
+        double height = m_sizeModel->data(m_sizeModel->index(i, 1)).toDouble();
         if (i == 0 && supportLeft.isEmpty()) {
             m_matrixA[i][i] = height / width * modulusValue;
             m_matrixA[i + 1][i] = -(height / width * modulusValue);
@@ -166,8 +186,8 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
             continue;
         }
         if (i == nSizeMatrix - 2 && supportRight.isEmpty()) {
-            double width2 = sizeModel->data(sizeModel->index(i - 1, 0)).toDouble();
-            double height2 = sizeModel->data(sizeModel->index(i - 1, 1)).toDouble();
+            double width2 = m_sizeModel->data(m_sizeModel->index(i - 1, 0)).toDouble();
+            double height2 = m_sizeModel->data(m_sizeModel->index(i - 1, 1)).toDouble();
 
             m_matrixA[i][i] = (height2 / width2 * modulusValue) + (height / width * modulusValue);
 
@@ -176,15 +196,15 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
             m_matrixA[i + 1][i] = -(height / width * modulusValue);
             continue;
         } else if (i == nSizeMatrix - 2) {
-            double width2 = sizeModel->data(sizeModel->index(i - 1, 0)).toDouble();
-            double height2 = sizeModel->data(sizeModel->index(i - 1, 1)).toDouble();
+            double width2 = m_sizeModel->data(m_sizeModel->index(i - 1, 0)).toDouble();
+            double height2 = m_sizeModel->data(m_sizeModel->index(i - 1, 1)).toDouble();
 
             m_matrixA[i][i] = (height2 / width2 * modulusValue) + (height / width * modulusValue);
             m_matrixA[i + 1][i + 1] = 1;
             continue;
         }
-        double width2 = sizeModel->data(sizeModel->index(i - 1, 0)).toDouble();
-        double height2 = sizeModel->data(sizeModel->index(i - 1, 1)).toDouble();
+        double width2 = m_sizeModel->data(m_sizeModel->index(i - 1, 0)).toDouble();
+        double height2 = m_sizeModel->data(m_sizeModel->index(i - 1, 1)).toDouble();
 
         m_matrixA[i][i] = (height / width * modulusValue) + (height2 / width2 * modulusValue);
         m_matrixA[i + 1][i] = -(height / width * modulusValue);
@@ -206,22 +226,22 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
             continue;
         }
         if (i == 0) {
-            double width = sizeModel->data(sizeModel->index(i, 0)).toDouble();
-            double loadDirection = sizeModel->data(sizeModel->index(i, 2)).toDouble();
-            double focusedDirection = nodeModel->data(nodeModel->index(i, 0)).toDouble();
+            double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toDouble();
+            double loadDirection = m_sizeModel->data(m_sizeModel->index(i, 2)).toDouble();
+            double focusedDirection = m_nodeModel->data(m_nodeModel->index(i, 0)).toDouble();
             m_vectorB[i] = focusedDirection + loadDirection * width / 2;
         }
         if (i == nSizeMatrix - 1) {
-            double width = sizeModel->data(sizeModel->index(i - 1, 0)).toDouble();
-            double loadDirection = sizeModel->data(sizeModel->index(i - 1, 2)).toDouble();
-            double focusedDirection = nodeModel->data(nodeModel->index(i, 0)).toDouble();
+            double width = m_sizeModel->data(m_sizeModel->index(i - 1, 0)).toDouble();
+            double loadDirection = m_sizeModel->data(m_sizeModel->index(i - 1, 2)).toDouble();
+            double focusedDirection = m_nodeModel->data(m_nodeModel->index(i, 0)).toDouble();
             m_vectorB[i] = focusedDirection + loadDirection * width / 2;
         } else {
-            double width1 = sizeModel->data(sizeModel->index(i - 1, 0)).toDouble();
-            double width2 = sizeModel->data(sizeModel->index(i, 0)).toDouble();
-            double loadDirection = sizeModel->data(sizeModel->index(i - 1, 2)).toDouble();
-            double loadDirection2 = sizeModel->data(sizeModel->index(i, 2)).toDouble();
-            double focusedDirection = nodeModel->data(nodeModel->index(i, 0)).toDouble();
+            double width1 = m_sizeModel->data(m_sizeModel->index(i - 1, 0)).toDouble();
+            double width2 = m_sizeModel->data(m_sizeModel->index(i, 0)).toDouble();
+            double loadDirection = m_sizeModel->data(m_sizeModel->index(i - 1, 2)).toDouble();
+            double loadDirection2 = m_sizeModel->data(m_sizeModel->index(i, 2)).toDouble();
+            double focusedDirection = m_nodeModel->data(m_nodeModel->index(i, 0)).toDouble();
             m_vectorB[i] = focusedDirection + loadDirection * width1 / 2 + loadDirection2 * width2 / 2;
         }
     }
@@ -244,9 +264,9 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
     int k = 0;
 
     for (int i = 0; i < (nSizeMatrix - 1) * 2; ++i) {
-        double width = sizeModel->data(sizeModel->index(i / 2, 0)).toDouble();
-        double height = sizeModel->data(sizeModel->index(i / 2, 1)).toDouble();
-        double loadDirection = sizeModel->data(sizeModel->index(i / 2, 2)).toDouble();
+        double width = m_sizeModel->data(m_sizeModel->index(i / 2, 0)).toDouble();
+        double height = m_sizeModel->data(m_sizeModel->index(i / 2, 1)).toDouble();
+        double loadDirection = m_sizeModel->data(m_sizeModel->index(i / 2, 2)).toDouble();
 
         if (i % 2 == 0) {
             m_vectorNx[i] = modulusValue * height / width * (m_vectorDelta[k + 1] - m_vectorDelta[k]) +
@@ -258,7 +278,7 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
         }
     }
 
-    fillTable(sizeModel, nodeModel);
+    fillTable();
     // logVector(m_vectorNx, "Vector Nx");
 
     m_vectorUx.resize((nSizeMatrix - 1) * 2);
@@ -266,9 +286,9 @@ void Processor::calculate(const SizeTableModel *sizeModel, const NodeModel *node
     k = 0;
 
     for (int i = 0; i < (nSizeMatrix - 1) * 2; ++i) {
-        double width = sizeModel->data(sizeModel->index(i / 2, 0)).toDouble();
-        double height = sizeModel->data(sizeModel->index(i / 2, 1)).toDouble();
-        double loadDirection = sizeModel->data(sizeModel->index(i / 2, 2)).toDouble();
+        double width = m_sizeModel->data(m_sizeModel->index(i / 2, 0)).toDouble();
+        double height = m_sizeModel->data(m_sizeModel->index(i / 2, 1)).toDouble();
+        double loadDirection = m_sizeModel->data(m_sizeModel->index(i / 2, 2)).toDouble();
 
         if (i % 2 == 0) {
             m_vectorUx[i] = m_vectorDelta[k] + 0 + 0;
