@@ -72,3 +72,29 @@ void PostProcessor::draw(Processor *processor, const SizeTableModel *sizeModel,
             m_sceneDrawer->drawNode(sizeModel, maxHeight);
     }
 }
+
+void PostProcessor::exportSceneToPdf(const QString &filePath) {
+    // Создаем временный PDF-файл для новой страницы
+    QTemporaryFile tempFile;
+    if (!tempFile.open()) {
+        qWarning() << "Не удалось открыть временный файл.";
+        return;
+    }
+
+    QPdfWriter pdfWriter(tempFile.fileName());
+    QPainter painter(&pdfWriter);
+
+    // Настройка и создание новой страницы
+    pdfWriter.newPage();
+    m_scene->render(&painter);
+    painter.end();
+
+    // Закрываем временный файл и основной файл
+    tempFile.close();
+    // QFile::remove(filePath);
+
+    // Переименовываем временный файл в файл назначения
+    if (!QFile::rename(tempFile.fileName(), filePath)) {
+        qWarning() << "Не удалось сохранить PDF.";
+    }
+}

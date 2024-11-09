@@ -532,7 +532,6 @@ void SceneDrawer::drawUx(Processor* processor, const SizeTableModel* sizeModel, 
                 }
                 m_scene->addEllipse(currentX + i * step * RECT_WIDTH_MULTIPLIER, 450 - uxValue, 0.5, 0.3, QPen(Qt::red));
 
-                // qDebug() << fmod(step * i * RECT_WIDTH_MULTIPLIER, hatchStep);
                 if(std::abs(fmod(step * i * RECT_WIDTH_MULTIPLIER, hatchStep)) < 0.001){
                     QLineF hatchLine(currentX + i * step * RECT_WIDTH_MULTIPLIER, yOX, currentX + i * step * RECT_WIDTH_MULTIPLIER, 450 - uxValue);
                     m_scene->addLine(hatchLine, QPen(Qt::red));

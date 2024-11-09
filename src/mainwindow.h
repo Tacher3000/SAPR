@@ -38,6 +38,7 @@ private slots:
     void loadFile();
     void saveFile();
     void saveAsFile();
+    void saveReport();
 
     void switchToProcessor();
     void switchToPreprocessor();

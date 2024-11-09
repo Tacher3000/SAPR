@@ -244,3 +244,67 @@ NodeModel* Preprocessor::getNodeModel() const {
 SizeTableModel* Preprocessor::getSizeModel() const {
     return m_sizeModel;
 }
+
+
+void Preprocessor::exportModelToPdf(const QString &filePath) {
+    QPdfWriter pdfWriter(filePath);
+    pdfWriter.setPageSize(QPageSize::A4);
+    pdfWriter.setResolution(300);
+
+    QPainter painter(&pdfWriter);
+
+    auto printModel = [&](QAbstractItemModel *model, const QString &title, int &y, bool reduceRowCount = false) {
+        int rowCount = model->rowCount();
+        if (reduceRowCount) {
+            rowCount--;
+        }
+        int columnCount = model->columnCount();
+
+        int cellWidth = 300;
+        int headerHeight = 120;
+        int cellHeight = 80;
+
+        int tableWidth = (columnCount + 1) * cellWidth;
+        int pageWidth = pdfWriter.width();
+        int x = (pageWidth - tableWidth) / 2;
+
+        painter.setFont(QFont("Arial", 10, QFont::Bold));
+        painter.drawText(QRect(x, y, tableWidth, headerHeight), Qt::AlignCenter, title);
+        y += headerHeight + 20;
+
+        painter.setFont(QFont("Arial", 8, QFont::Bold));
+        QRect rect(x, y, cellWidth, headerHeight);
+        painter.drawRect(rect);
+        painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, "№");
+
+        for (int col = 0; col < columnCount; ++col) {
+            QRect rect(x + (col + 1) * cellWidth, y, cellWidth, headerHeight);
+            painter.drawRect(rect);
+            painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, model->headerData(col, Qt::Horizontal).toString());
+        }
+        y += headerHeight;
+
+        painter.setFont(QFont("Arial", 8));
+        for (int row = 0; row < rowCount; ++row) {
+            QRect rect(x, y + row * cellHeight, cellWidth, cellHeight);
+            painter.drawRect(rect);
+            painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, QString::number(row + 1));
+
+            for (int col = 0; col < columnCount; ++col) {
+                QRect rect(x + (col + 1) * cellWidth, y + row * cellHeight, cellWidth, cellHeight);
+                painter.drawRect(rect);
+                painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, model->data(model->index(row, col)).toString());
+            }
+        }
+
+        y += rowCount * cellHeight + 50;
+    };
+
+    int y = 100;
+
+    printModel(m_sizeModel, "Таблица стержней", y, true);
+
+    printModel(m_nodeModel, "Таблица узлов", y);
+
+    painter.end();
+}

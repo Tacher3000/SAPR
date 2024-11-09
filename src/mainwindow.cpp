@@ -42,6 +42,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveAsFile);
     mainMenu->addAction(saveAsAction);
 
+    QAction *saveReportAction = new QAction("Сохранить отчет", this);
+    connect(saveReportAction, &QAction::triggered, this, &MainWindow::saveReport);
+    mainMenu->addAction(saveReportAction);
+
     QAction *exitAction = new QAction("Выход", this);
     connect(exitAction, &QAction::triggered, this, &MainWindow::close);
     mainMenu->addAction(exitAction);
@@ -105,6 +109,16 @@ void MainWindow::saveAsFile()
     }
 }
 
+void MainWindow::saveReport()
+{
+    QString filePath = QFileDialog::getSaveFileName(this, "Сохранить файл как", "", "All Files (*)");
+    if (!filePath.isEmpty()) {
+
+        m_preprocessor->exportModelToPdf(filePath);
+        m_postProcessor->exportSceneToPdf(filePath);
+    }
+}
+
 void MainWindow::switchToProcessor()
 {
     m_stackWidget->setCurrentWidget(m_processor);
@@ -128,3 +142,5 @@ void MainWindow::switchToPostprocessor()
 void MainWindow::closeEvent(QCloseEvent *event) {
     event->accept();
 }
+
+

@@ -9,6 +9,15 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QPrinter>
+#include <QPainter>
+#include <QPdfWriter>
+#include <QPdfDocument>
+#include <QFile>
+#include <QBuffer>
+#include <QTemporaryFile>
+#include <QPdfDocumentRenderOptions>
+
 
 class PostProcessor : public QWidget
 {
@@ -18,6 +27,7 @@ public:
 
     void draw(Processor *processor, const SizeTableModel *sizeModel,
               const NodeModel *nodeModel);
+    void exportSceneToPdf(const QString &filePath);
 private slots:
     void toProcessor();
 signals:

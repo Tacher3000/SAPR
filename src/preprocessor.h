@@ -25,6 +25,8 @@
 #include <QProgressBar>
 #include <QPropertyAnimation>
 #include <QPushButton>
+#include <QPdfWriter>
+#include <QPainter>
 
 class Preprocessor : public QWidget
 {
@@ -42,6 +44,7 @@ public:
     void clearData();
     NodeModel* getNodeModel() const;
     SizeTableModel* getSizeModel() const;
+    void exportModelToPdf(const QString &filePath);
 private slots:
     void toProcessor();
 signals:
