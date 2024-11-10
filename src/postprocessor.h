@@ -18,7 +18,6 @@
 #include <QTemporaryFile>
 #include <QPdfDocumentRenderOptions>
 
-
 class PostProcessor : public QWidget
 {
     Q_OBJECT
@@ -28,6 +27,7 @@ public:
     void draw(Processor *processor, const SizeTableModel *sizeModel,
               const NodeModel *nodeModel);
     void exportSceneToPdf(const QString &filePath);
+    QGraphicsScene* getScene() const;
 private slots:
     void toProcessor();
 signals:

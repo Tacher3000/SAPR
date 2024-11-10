@@ -44,6 +44,9 @@ public:
     void clearData();
     NodeModel* getNodeModel() const;
     SizeTableModel* getSizeModel() const;
+    QTableView* getSizeTableView() const;
+    QTableView* getNodeTableView() const;
+    QGraphicsScene* getScene() const;
     void exportModelToPdf(const QString &filePath);
 private slots:
     void toProcessor();

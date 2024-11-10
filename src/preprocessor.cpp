@@ -245,6 +245,21 @@ SizeTableModel* Preprocessor::getSizeModel() const {
     return m_sizeModel;
 }
 
+QTableView *Preprocessor::getSizeTableView() const
+{
+    return m_sizeTableView;
+}
+
+QTableView *Preprocessor::getNodeTableView() const
+{
+    return m_nodeTableView;
+}
+
+QGraphicsScene *Preprocessor::getScene() const
+{
+    return m_scene;
+}
+
 
 void Preprocessor::exportModelToPdf(const QString &filePath) {
     QPdfWriter pdfWriter(filePath);

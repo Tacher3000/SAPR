@@ -114,8 +114,10 @@ void MainWindow::saveReport()
     QString filePath = QFileDialog::getSaveFileName(this, "Сохранить файл как", "", "All Files (*)");
     if (!filePath.isEmpty()) {
 
-        m_preprocessor->exportModelToPdf(filePath);
-        m_postProcessor->exportSceneToPdf(filePath);
+        // m_preprocessor->exportModelToPdf(filePath);
+        // m_postProcessor->exportSceneToPdf(filePath);
+        // mergePdfFiles("C:\\Users\\pyanc\\Desktop\\1231.pdf", "C:\\Users\\pyanc\\Desktop\\1232.pdf", filePath);
+        saveReportPDF(filePath);
     }
 }
 
@@ -143,4 +145,129 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     event->accept();
 }
 
+bool MainWindow::mergePdfFiles(const QString &file1Path, const QString &file2Path, const QString &outputFilePath) {
+    QPdfDocument pdf1, pdf2;
 
+    pdf1.load(file1Path);
+    pdf2.load(file2Path);
+
+    if (pdf1.status() == QPdfDocument::Status::Error || pdf2.status() == QPdfDocument::Status::Error) {
+        qWarning("Could not load one of the PDF files.");
+        return false;
+    }
+
+    QFile outputFile(outputFilePath);
+    if (!outputFile.open(QIODevice::WriteOnly)) {
+        qWarning("Could not open output file for writing.");
+        return false;
+    }
+
+    QPdfWriter writer(&outputFile);
+    writer.setPageSize(QPageSize(QPageSize::A4));
+    QPainter painter(&writer);
+
+    QSize imageSize(writer.width() / 4, writer.height() / 4);
+
+    for (int i = 0; i < pdf1.pageCount(); ++i) {
+        QImage image = pdf1.render(i, imageSize);
+        if (!image.isNull()) {
+            painter.drawImage(QRectF(0, 0, writer.width(), writer.height()), image);
+        }
+        if (i < pdf1.pageCount() - 1) {
+            writer.newPage();
+        }
+    }
+
+    for (int i = 0; i < pdf2.pageCount(); ++i) {
+        writer.newPage();
+        QImage image = pdf2.render(i, imageSize);
+        if (!image.isNull()) {
+            painter.drawImage(QRectF(0, 0, writer.width(), writer.height()), image);
+        }
+    }
+
+    painter.end();
+    return true;
+}
+
+
+void MainWindow::saveReportPDF(const QString &filePath)
+{
+    QPdfWriter pdfWriter(filePath);
+    pdfWriter.setPageSize(QPageSize::A4);
+    pdfWriter.setResolution(300);
+
+    QPainter painter(&pdfWriter);
+
+    auto printModel = [&](QAbstractItemModel *model, const QString &title, int &y, bool reduceRowCount = false) {
+        int rowCount = model->rowCount();
+        if (reduceRowCount) {
+            rowCount--;
+        }
+        int columnCount = model->columnCount();
+
+        int cellWidth = 300;
+        int headerHeight = 120;
+        int cellHeight = 80;
+
+        int tableWidth = (columnCount + 1) * cellWidth;
+        int pageWidth = pdfWriter.width();
+        int pageHeight = pdfWriter.height();
+        int x = (pageWidth - tableWidth) / 2;
+
+        painter.setFont(QFont("Arial", 10, QFont::Bold));
+        painter.drawText(QRect(x, y, tableWidth, headerHeight), Qt::AlignCenter, title);
+        y += headerHeight + 20;
+
+        painter.setFont(QFont("Arial", 8, QFont::Bold));
+        QRect rect(x, y, cellWidth, headerHeight);
+        painter.drawRect(rect);
+        painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, "№");
+
+        for (int col = 0; col < columnCount; ++col) {
+            QRect rect(x + (col + 1) * cellWidth, y, cellWidth, headerHeight);
+            painter.drawRect(rect);
+            painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, model->headerData(col, Qt::Horizontal).toString());
+        }
+        y += headerHeight;
+
+        painter.setFont(QFont("Arial", 8));
+        for (int row = 0; row < rowCount; ++row) {
+            if (y + cellHeight > pageHeight) {
+                pdfWriter.newPage();
+                y = 100;
+            }
+
+            QRect rect(x, y, cellWidth, cellHeight);
+            painter.drawRect(rect);
+            painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, QString::number(row + 1));
+
+            for (int col = 0; col < columnCount; ++col) {
+                QRect rect(x + (col + 1) * cellWidth, y, cellWidth, cellHeight);
+                painter.drawRect(rect);
+                painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, model->data(model->index(row, col)).toString());
+            }
+            y += cellHeight;
+        }
+
+        y += 50;
+    };
+
+    int y = 100;
+
+    printModel(m_preprocessor->getSizeModel(), "Таблица стержней", y, true);
+    printModel(m_preprocessor->getNodeModel(), "Таблица узлов", y);
+
+    pdfWriter.newPage();
+    m_preprocessor->getScene()->render(&painter);
+
+    y = 100;
+
+    pdfWriter.newPage();
+    printModel(m_processor->getTableModel(), "Таблица расчетов", y);
+
+    pdfWriter.newPage();
+    m_postProcessor->getScene()->render(&painter);
+
+    painter.end();
+}

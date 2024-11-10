@@ -145,6 +145,16 @@ const double Processor::calculationUxAtPoint(int number, double x)
            (loadDirection * width * x) / (2 * modulusValue * height) * (1 - x / width);
 }
 
+QStandardItemModel *Processor::getTableModel() const
+{
+    return m_tableModel;
+}
+
+QTableView *Processor::getTableView() const
+{
+    return m_tableView;
+}
+
 const QVector<double>& Processor::getVectorNx() const
 {
     return m_vectorNx;

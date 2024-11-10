@@ -19,6 +19,7 @@
 #include <QStackedWidget>
 #include <QCloseEvent>
 #include <QFileDialog>
+#include <QPdfDocument>
 
 
 class MainWindow : public QMainWindow
@@ -28,6 +29,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
+    bool mergePdfFiles(const QString &file1Path, const QString &file2Path, const QString &outputFilePath);
+    void saveReportPDF(const QString &filePath);
 protected:
     void closeEvent(QCloseEvent *event) override;
 

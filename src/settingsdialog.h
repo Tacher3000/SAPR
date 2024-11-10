@@ -11,7 +11,7 @@
 #include <QMessagebox.h>
 #include <QColorDialog>
 #include <QSpinBox>
-#include "App.h"
+#include "app.h"
 
 class SettingsDialog : public QDialog
 {

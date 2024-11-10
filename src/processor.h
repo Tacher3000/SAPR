@@ -52,6 +52,8 @@ public:
     void setSizeModel(const SizeTableModel *sizeModel);
     const void fillTable();
     const double calculationUxAtPoint(int number, double x);
+    QStandardItemModel* getTableModel() const;
+    QTableView* getTableView() const;
 public slots:
     void toPreprocessor();
     void toPostprocessor();
