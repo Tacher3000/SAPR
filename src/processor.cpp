@@ -87,7 +87,8 @@ const void Processor::fillTable()
         double width = m_sizeModel->data(m_sizeModel->index(deltaIndex, 0)).toDouble();
         double height = m_sizeModel->data(m_sizeModel->index(deltaIndex, 1)).toDouble();
         double loadDirection = m_sizeModel->data(m_sizeModel->index(deltaIndex, 2)).toDouble();
-        QString limitValue = m_sizeModel->data(m_sizeModel->index(deltaIndex, 3)).toString();
+        QString limitValueStr  = m_sizeModel->data(m_sizeModel->index(deltaIndex, 3)).toString();
+        double limitValue = limitValueStr.toDouble();
 
 
 
@@ -119,9 +120,16 @@ const void Processor::fillTable()
             m_tableModel->setItem(rowIndex, 2, new QStandardItem(QString::number(globalCoordinateRepeated)));
             m_tableModel->setItem(rowIndex, 3, new QStandardItem(nxValueStr));
             m_tableModel->setItem(rowIndex, 4, new QStandardItem(uxValueStr));
-            m_tableModel->setItem(rowIndex, 5, new QStandardItem(sigmaValueStr));
-            m_tableModel->setItem(rowIndex, 6, new QStandardItem(limitValue));
+            // m_tableModel->setItem(rowIndex, 5, new QStandardItem(sigmaValueStr));
+            // m_tableModel->setItem(rowIndex, 6, new QStandardItem(limitValueStr));
 
+            QStandardItem *sigmaItem = new QStandardItem(sigmaValueStr);
+            if (sigmaValue > limitValue) {
+                sigmaItem->setData(QColor(Qt::red), Qt::BackgroundRole);
+            }
+            m_tableModel->setItem(rowIndex, 5, sigmaItem);
+
+            m_tableModel->setItem(rowIndex, 6, new QStandardItem(limitValueStr));
 
             globalCoordinate += step;
             globalCoordinateRepeated += step;
