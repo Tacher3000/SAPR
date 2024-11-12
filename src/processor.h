@@ -56,6 +56,8 @@ public:
     QStandardItemModel* getTableModel() const;
     QTableView* getTableView() const;
     const double calculationUxAtGlobalPoint(double globalX);
+    const double calculationNxAtGlobalPoint(double globalX);
+    const double calculationSigmaxAtGlobalPoint(double globalX);
 public slots:
     void toPreprocessor();
     void toPostprocessor();

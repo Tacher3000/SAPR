@@ -24,15 +24,20 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     uxInPoint = new QLabel("Ux:", this);
     sigmaxInPoint = new QLabel("σx:", this);
 
+    QFrame *line = new QFrame;
+    line->setFrameShape(QFrame::VLine);
+    line->setFrameShadow(QFrame::Sunken);
 
     QHBoxLayout *topLayout = new QHBoxLayout();
     topLayout->addWidget(stepLabel);
     topLayout->addWidget(m_stepSelector);
+    topLayout->addWidget(line);
     topLayout->addWidget(pointLabel);
     topLayout->addWidget(m_pointEdit);
     topLayout->addWidget(nxInPoint);
     topLayout->addWidget(uxInPoint);
     topLayout->addWidget(sigmaxInPoint);
+    topLayout->addStretch();
 
     m_toPreprocessorButton = new QPushButton("Назад", this);
     m_toPostprocessorButton = new QPushButton("Вперед", this);
@@ -202,6 +207,65 @@ const double Processor::calculationUxAtGlobalPoint(double globalX)
            (loadDirection * width * localX) / (2 * modulusValue * height) * (1 - localX / width);
 }
 
+const double Processor::calculationNxAtGlobalPoint(double globalX)
+{
+    int number = -1;
+    double localX = 0.0;
+    double currentX = 0.0;
+
+    for (int i = 0; i < m_sizeModel->rowCount(); ++i) {
+        double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toDouble();
+
+        if (globalX <= currentX + width) {
+            number = i;
+            localX = globalX - currentX;
+            break;
+        }
+        currentX += width;
+    }
+
+    if (number == -1) {
+        throw std::out_of_range("Глобальная координата за пределами");
+    }
+
+    double width = m_sizeModel->data(m_sizeModel->index(number, 0)).toDouble();
+    double height = m_sizeModel->data(m_sizeModel->index(number, 1)).toDouble();
+    double loadDirection = m_sizeModel->data(m_sizeModel->index(number, 2)).toDouble();
+    double modulusValue = m_sizeModel->getModulusValue().toDouble();
+
+    return modulusValue * height / width * (m_vectorDelta[number + 1] - m_vectorDelta[number]) +
+           loadDirection * width * (1.0 - 2.0 * localX / width) / 2.0;
+}
+
+const double Processor::calculationSigmaxAtGlobalPoint(double globalX)
+{
+    int number = -1;
+    double localX = 0.0;
+    double currentX = 0.0;
+
+    for (int i = 0; i < m_sizeModel->rowCount(); ++i) {
+        double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toDouble();
+
+        if (globalX <= currentX + width) {
+            number = i;
+            localX = globalX - currentX;
+            break;
+        }
+        currentX += width;
+    }
+
+    if (number == -1) {
+        throw std::out_of_range("Глобальная координата за пределами");
+    }
+
+    double width = m_sizeModel->data(m_sizeModel->index(number, 0)).toDouble();
+    double height = m_sizeModel->data(m_sizeModel->index(number, 1)).toDouble();
+    double loadDirection = m_sizeModel->data(m_sizeModel->index(number, 2)).toDouble();
+    double modulusValue = m_sizeModel->getModulusValue().toDouble();
+
+    return (modulusValue * height / width * (m_vectorDelta[number + 1] - m_vectorDelta[number]) +
+            loadDirection * width * (1.0 - 2.0 * localX / width) / 2.0) / height;
+}
 
 QStandardItemModel *Processor::getTableModel() const
 {
@@ -454,5 +518,7 @@ void Processor::toPostprocessor() {
 
 void Processor::changePointEdit(QString value)
 {
+    nxInPoint->setText("Nx: " + QString::number(calculationNxAtGlobalPoint(value.toDouble())));
     uxInPoint->setText("Ux: " + QString::number(calculationUxAtGlobalPoint(value.toDouble())));
+    sigmaxInPoint->setText("σx: " + QString::number(calculationSigmaxAtGlobalPoint(value.toDouble())));
 }
