@@ -6,7 +6,9 @@ Preprocessor::Preprocessor(QWidget* parent) : QWidget(parent) {
     QVBoxLayout* tablesLayput = new QVBoxLayout(this);
     QWidget* tablesWidget = new QWidget(this);
 
-    NumericDelegate *delegate = new NumericDelegate(this);
+    NumericDelegate *delegateNumeric = new NumericDelegate(this);
+    PositiveNumericDelegate *delegatePositive = new PositiveNumericDelegate(this);
+    PositiveDoubleDelegate *delegatePositiveDouble = new PositiveDoubleDelegate(this);
 
     m_sizeModel = new SizeTableModel;
     connect(m_sizeModel, &SizeTableModel::dataChanged, this, &Preprocessor::updateNodeModel);
@@ -14,7 +16,11 @@ Preprocessor::Preprocessor(QWidget* parent) : QWidget(parent) {
     m_sizeTableView->setModel(m_sizeModel);
     m_sizeTableView->resizeRowsToContents();
     m_sizeTableView->resizeColumnsToContents();
-    m_sizeTableView->setItemDelegate(delegate);
+    m_sizeTableView->setItemDelegateForColumn(0, delegatePositive);
+    m_sizeTableView->setItemDelegateForColumn(1, delegatePositive);
+    m_sizeTableView->setItemDelegateForColumn(2, delegateNumeric);
+    m_sizeTableView->setItemDelegateForColumn(3, delegatePositiveDouble);
+    m_sizeTableView->setItemDelegateForColumn(4, delegatePositive);
     tablesLayput->addWidget(m_sizeTableView);
 
     m_nodeModel = new NodeModel;
@@ -23,7 +29,10 @@ Preprocessor::Preprocessor(QWidget* parent) : QWidget(parent) {
     m_nodeTableView->setModel(m_nodeModel);
     m_nodeTableView->resizeRowsToContents();
     m_nodeTableView->resizeColumnsToContents();
-    m_nodeTableView->setItemDelegate(delegate);
+    // m_nodeTableView->setItemDelegate(delegate);
+    m_nodeTableView->setItemDelegateForColumn(0, delegateNumeric);
+    m_nodeTableView->setItemDelegateForColumn(1, delegateNumeric);
+
     tablesLayput->addWidget(m_nodeTableView);
 
     m_toProcessorButton = new QPushButton("Расчитать", this);

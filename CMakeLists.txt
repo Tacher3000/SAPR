@@ -38,6 +38,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/scenedrawer.h src/scenedrawer.cpp
         src/postprocessor.h src/postprocessor.cpp
         src/numericdelegate.h src/numericdelegate.cpp
+        src/positivenumericdelegate.h src/positivenumericdelegate.cpp
+        src/positivedoubledelegate.h src/positivedoubledelegate.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET SAPR APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

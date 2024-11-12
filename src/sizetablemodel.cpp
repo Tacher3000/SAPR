@@ -146,7 +146,7 @@ void SizeTableModel::clearData() {
     beginResetModel();
     m_hash.clear();
     m_nRows = 1;
-    m_nColumns = 4;
+    m_nColumns = 5;
     endResetModel();
 }
 

@@ -9,6 +9,8 @@
 #include "bouncingtext.h"
 #include "scenedrawer.h"
 #include "numericdelegate.h"
+#include "positivenumericdelegate.h"
+#include "positivedoubledelegate.h"
 
 #include <QWidget>
 #include <QMainWindow>
