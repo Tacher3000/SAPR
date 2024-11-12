@@ -29,7 +29,6 @@ Preprocessor::Preprocessor(QWidget* parent) : QWidget(parent) {
     m_nodeTableView->setModel(m_nodeModel);
     m_nodeTableView->resizeRowsToContents();
     m_nodeTableView->resizeColumnsToContents();
-    // m_nodeTableView->setItemDelegate(delegate);
     m_nodeTableView->setItemDelegateForColumn(0, delegateNumeric);
     m_nodeTableView->setItemDelegateForColumn(1, delegateNumeric);
 

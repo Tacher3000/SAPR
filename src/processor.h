@@ -6,6 +6,7 @@
 
 #include <QWidget>
 #include <QTextEdit>
+#include <QLineEdit>
 #include <QVector>
 #include <QDebug>
 #include <QVBoxLayout>
@@ -54,9 +55,11 @@ public:
     const double calculationUxAtPoint(int number, double x);
     QStandardItemModel* getTableModel() const;
     QTableView* getTableView() const;
+    const double calculationUxAtGlobalPoint(double globalX);
 public slots:
     void toPreprocessor();
     void toPostprocessor();
+    void changePointEdit(QString value);
 signals:
     void clickedToPreprocessor();
     void clickedToPostprocessor();
@@ -78,6 +81,11 @@ private:
 
     // QTextEdit *m_textEdit;
     QDoubleSpinBox *m_stepSelector;
+    QLineEdit *m_pointEdit;
+
+    QLabel *nxInPoint;
+    QLabel *uxInPoint;
+    QLabel *sigmaxInPoint;
 
     QStandardItemModel *m_tableModel;
     QTableView *m_tableView;

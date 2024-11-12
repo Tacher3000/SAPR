@@ -1,6 +1,8 @@
 #include "processor.h"
 
 Processor::Processor(QWidget *parent) : QWidget(parent) {
+    QLabel *stepLabel = new QLabel("Шаг:", this);
+
     m_stepSelector = new QDoubleSpinBox(this);
     m_stepSelector->setMinimum(0.01);
     m_stepSelector->setMaximum(1.0);
@@ -8,10 +10,29 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     m_stepSelector->setValue(0.25);
     m_stepSelector->setMinimumHeight(40);
     m_stepSelector->setMaximumWidth(120);
-    // QLabel *stepLabel = new QLabel("Шаг:", this);
-
     connect(m_stepSelector, &QDoubleSpinBox::valueChanged, this, &Processor::fillTable);
 
+    QLabel *pointLabel = new QLabel("В точке:", this);
+
+    m_pointEdit = new QLineEdit(this);
+    m_pointEdit->setMinimumHeight(40);
+    m_pointEdit->setMaximumWidth(120);
+
+    connect(m_pointEdit, &QLineEdit::textEdited, this, &Processor::changePointEdit);
+
+    nxInPoint = new QLabel("Nx:", this);
+    uxInPoint = new QLabel("Ux:", this);
+    sigmaxInPoint = new QLabel("σx:", this);
+
+
+    QHBoxLayout *topLayout = new QHBoxLayout();
+    topLayout->addWidget(stepLabel);
+    topLayout->addWidget(m_stepSelector);
+    topLayout->addWidget(pointLabel);
+    topLayout->addWidget(m_pointEdit);
+    topLayout->addWidget(nxInPoint);
+    topLayout->addWidget(uxInPoint);
+    topLayout->addWidget(sigmaxInPoint);
 
     m_toPreprocessorButton = new QPushButton("Назад", this);
     m_toPostprocessorButton = new QPushButton("Вперед", this);
@@ -42,7 +63,7 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     m_tableView->resizeColumnsToContents();
 
     QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->addWidget(m_stepSelector);
+    layout->addLayout(topLayout);
     layout->addWidget(m_tableView);
     layout->addLayout(buttonLayout);
     setLayout(layout);
@@ -120,8 +141,6 @@ const void Processor::fillTable()
             m_tableModel->setItem(rowIndex, 2, new QStandardItem(QString::number(globalCoordinateRepeated)));
             m_tableModel->setItem(rowIndex, 3, new QStandardItem(nxValueStr));
             m_tableModel->setItem(rowIndex, 4, new QStandardItem(uxValueStr));
-            // m_tableModel->setItem(rowIndex, 5, new QStandardItem(sigmaValueStr));
-            // m_tableModel->setItem(rowIndex, 6, new QStandardItem(limitValueStr));
 
             QStandardItem *sigmaItem = new QStandardItem(sigmaValueStr);
             if (sigmaValue > limitValue) {
@@ -152,6 +171,37 @@ const double Processor::calculationUxAtPoint(int number, double x)
     return m_vectorDelta[number] + (x / width) * (m_vectorDelta[number + 1] - m_vectorDelta[number]) +
            (loadDirection * width * x) / (2 * modulusValue * height) * (1 - x / width);
 }
+
+const double Processor::calculationUxAtGlobalPoint(double globalX)
+{
+    int number = -1;
+    double localX = 0.0;
+    double currentX = 0.0;
+
+    for (int i = 0; i < m_sizeModel->rowCount(); ++i) {
+        double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toDouble();
+
+        if (globalX <= currentX + width) {
+            number = i;
+            localX = globalX - currentX;
+            break;
+        }
+        currentX += width;
+    }
+
+    if (number == -1) {
+        throw std::out_of_range("Глобальная координата за пределами");
+    }
+
+    double width = m_sizeModel->data(m_sizeModel->index(number, 0)).toDouble();
+    double height = m_sizeModel->data(m_sizeModel->index(number, 1)).toDouble();
+    double loadDirection = m_sizeModel->data(m_sizeModel->index(number, 2)).toDouble();
+    double modulusValue = m_sizeModel->getModulusValue().toDouble();
+
+    return m_vectorDelta[number] + (localX / width) * (m_vectorDelta[number + 1] - m_vectorDelta[number]) +
+           (loadDirection * width * localX) / (2 * modulusValue * height) * (1 - localX / width);
+}
+
 
 QStandardItemModel *Processor::getTableModel() const
 {
@@ -400,4 +450,9 @@ void Processor::toPreprocessor() {
 
 void Processor::toPostprocessor() {
     emit clickedToPostprocessor();
+}
+
+void Processor::changePointEdit(QString value)
+{
+    uxInPoint->setText("Ux: " + QString::number(calculationUxAtGlobalPoint(value.toDouble())));
 }
