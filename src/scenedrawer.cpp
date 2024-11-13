@@ -1,4 +1,6 @@
 #include "scenedrawer.h"
+#include "processor.h"
+
 
 SceneDrawer::SceneDrawer(QGraphicsScene* scene, QObject* parent)
     : QObject(parent), m_scene(scene) {}

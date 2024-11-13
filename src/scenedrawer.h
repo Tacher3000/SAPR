@@ -5,7 +5,7 @@
 #include "nodemodel.h"
 #include "settingsdialog.h"
 #include "app.h"
-#include "processor.h"
+// #include "processor.h"
 
 #include <QGraphicsScene>
 #include <QSettings>
@@ -19,6 +19,8 @@
 #include <QPropertyAnimation>
 
 #include <algorithm>
+
+class Processor;
 
 const int RECT_WIDTH_MULTIPLIER = 100;
 const int RECT_HEIGHT_MULTIPLIER = 50;

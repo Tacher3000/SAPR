@@ -1,4 +1,5 @@
 #include "processor.h"
+#include "scenedrawer.h"
 
 Processor::Processor(QWidget *parent) : QWidget(parent) {
     QLabel *stepLabel = new QLabel("Шаг:", this);
@@ -88,20 +89,50 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
 
     m_tableView->resizeColumnsToContents();
 
-    // m_scene = new QGraphicsScene(this);
-    // m_sceneDrawer = new SceneDrawer(m_scene, this);
-    // m_scene->setSceneRect(0, 0, 1000, 700);
+    m_scene = new QGraphicsScene(this);
+    m_sceneDrawer = new SceneDrawer(m_scene, this);
+    m_scene->setSceneRect(0, 0, 1000, 700);
 
-    // m_view = new QGraphicsView(this);
-    // m_view->setRenderHint(QPainter::Antialiasing);
-    // m_view->setFrameStyle(0);
-    // m_view->setScene(m_scene);
+    m_view = new QGraphicsView(this);
+    m_view->setRenderHint(QPainter::Antialiasing);
+    m_view->setFrameStyle(0);
+    m_view->setScene(m_scene);
+
+    QHBoxLayout *midleLayout = new QHBoxLayout();
+    midleLayout->addWidget(m_tableView);
+    midleLayout->addWidget(m_view);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addLayout(topLayout);
-    layout->addWidget(m_tableView);
+    layout->addLayout(midleLayout);
     layout->addLayout(buttonLayout);
     setLayout(layout);
+}
+
+void Processor::updateScene()
+{
+    m_sceneDrawer->clearScene();
+    m_sceneDrawer->setSceneSize(0, 0);
+
+    App* app = App::theApp();
+    QSettings* settings = app->settings();
+    qreal maxHeight = RECT_HEIGHT_MULTIPLIER * m_sizeModel->getMaxSection();
+
+    if (settings->value("checkBoxWidget", false).toBool()) {
+        if (settings->value("checkBoxFocusedLoad", false).toBool()) m_sceneDrawer->drawFocusedLoad(m_sizeModel, m_nodeModel);
+        if (settings->value("checkBoxKernelN", false).toBool()) m_sceneDrawer->drawKernelN(m_sizeModel, maxHeight);
+        if (settings->value("checkBoxKernel", false).toBool()) m_sceneDrawer->drawKernelWidget(m_sizeModel);
+        if (settings->value("checkBoxDistributedLoad", false).toBool()) m_sceneDrawer->drawDistributedLoadWidget(m_sizeModel);
+        if (settings->value("checkBoxSupport", false).toBool()) m_sceneDrawer->drawSupport(m_sizeModel, m_nodeModel);
+        if (settings->value("checkBoxNodeN", false).toBool()) m_sceneDrawer->drawNode(m_sizeModel, maxHeight);
+    } else {
+        if (settings->value("checkBoxFocusedLoad", false).toBool()) m_sceneDrawer->drawFocusedLoad(m_sizeModel, m_nodeModel);
+        if (settings->value("checkBoxKernelN", false).toBool()) m_sceneDrawer->drawKernelN(m_sizeModel, maxHeight);
+        if (settings->value("checkBoxDistributedLoad", false).toBool()) m_sceneDrawer->drawDistributedLoad(m_sizeModel);
+        if (settings->value("checkBoxKernel", false).toBool()) m_sceneDrawer->drawKernel(m_sizeModel);
+        if (settings->value("checkBoxSupport", false).toBool()) m_sceneDrawer->drawSupport(m_sizeModel, m_nodeModel);
+        if (settings->value("checkBoxNodeN", false).toBool()) m_sceneDrawer->drawNode(m_sizeModel, maxHeight);
+    }
 }
 
 void Processor::logMatrix(const QVector<QVector<double>> &matrix, const QString &name) {
@@ -304,6 +335,7 @@ void Processor::setSizeModel(const SizeTableModel *sizeModel) {
 }
 
 void Processor::calculate() {
+    updateScene();
     // m_textEdit->clear();
     double modulusValue = m_sizeModel->getModulusValue().toDouble();
 

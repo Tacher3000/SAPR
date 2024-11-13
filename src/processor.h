@@ -3,6 +3,8 @@
 
 #include "sizetablemodel.h"
 #include "nodemodel.h"
+#include "app.h"
+// #include "scenedrawer.h"
 
 #include <QWidget>
 #include <QTextEdit>
@@ -16,7 +18,9 @@
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include <QGraphicsView>
+#include <QSettings>
 
+class SceneDrawer;
 
 #define DEBUG_MATRIX(matrix) \
 do { \
@@ -60,6 +64,7 @@ public:
     QTableView* getTableView() const;
     const double calculationUxAtGlobalPoint(double globalX);
     const double maxGlobalX();
+    void updateScene();
 public slots:
     void toPreprocessor();
     void toPostprocessor();
@@ -97,7 +102,7 @@ private:
     QStandardItemModel *m_tableModel;
     QTableView *m_tableView;
 
-    // SceneDrawer *m_sceneDrawer;
+    SceneDrawer *m_sceneDrawer;
     QGraphicsScene *m_scene;
     QGraphicsView *m_view;
 
