@@ -15,6 +15,7 @@
 #include <QTableView>
 #include <QDoubleSpinBox>
 #include <QLabel>
+#include <QGraphicsView>
 
 
 #define DEBUG_MATRIX(matrix) \
@@ -53,11 +54,12 @@ public:
     void setSizeModel(const SizeTableModel *sizeModel);
     const void fillTable();
     const double calculationUxAtPoint(int number, double x);
+    const double calculationNxAtPoint(int number, double x);
+    const double calculationSigmaxAtPoint(int number, double x);
     QStandardItemModel* getTableModel() const;
     QTableView* getTableView() const;
     const double calculationUxAtGlobalPoint(double globalX);
-    const double calculationNxAtGlobalPoint(double globalX);
-    const double calculationSigmaxAtGlobalPoint(double globalX);
+    const double maxGlobalX();
 public slots:
     void toPreprocessor();
     void toPostprocessor();
@@ -89,8 +91,16 @@ private:
     QLabel *uxInPoint;
     QLabel *sigmaxInPoint;
 
+    QPushButton *m_decreaseFromPoint;
+    QPushButton *m_addToPoint;
+
     QStandardItemModel *m_tableModel;
     QTableView *m_tableView;
+
+    // SceneDrawer *m_sceneDrawer;
+    QGraphicsScene *m_scene;
+    QGraphicsView *m_view;
+
 
     QPushButton *m_toPreprocessorButton;
     QPushButton *m_toPostprocessorButton;

@@ -14,9 +14,13 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
 
     QLabel *pointLabel = new QLabel("В точке:", this);
 
+    QDoubleValidator *validator = new QDoubleValidator(0.0, std::numeric_limits<double>::max(), 4, this);
+    validator->setNotation(QDoubleValidator::ScientificNotation);
+
     m_pointEdit = new QLineEdit(this);
     m_pointEdit->setMinimumHeight(40);
     m_pointEdit->setMaximumWidth(120);
+    m_pointEdit->setValidator(validator);
 
     connect(m_pointEdit, &QLineEdit::textEdited, this, &Processor::changePointEdit);
 
@@ -24,6 +28,21 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     uxInPoint = new QLabel("Ux:", this);
     sigmaxInPoint = new QLabel("σx:", this);
 
+    m_decreaseFromPoint = new QPushButton("<", this);
+    m_decreaseFromPoint->setMinimumHeight(40);
+    m_decreaseFromPoint->setMaximumWidth(120);
+    connect(m_decreaseFromPoint, &QPushButton::clicked, [this](){
+        m_pointEdit->setText(QString::number(m_pointEdit->text().toDouble() - m_stepSelector->value()));
+        changePointEdit(m_pointEdit->text());
+    });
+
+    m_addToPoint = new QPushButton(">", this);
+    m_addToPoint->setMinimumHeight(40);
+    m_addToPoint->setMaximumWidth(120);
+    connect(m_addToPoint, &QPushButton::clicked, [this](){
+        m_pointEdit->setText(QString::number(m_pointEdit->text().toDouble() + m_stepSelector->value()));
+        changePointEdit(m_pointEdit->text());
+    });
     QFrame *line = new QFrame;
     line->setFrameShape(QFrame::VLine);
     line->setFrameShadow(QFrame::Sunken);
@@ -37,6 +56,8 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     topLayout->addWidget(nxInPoint);
     topLayout->addWidget(uxInPoint);
     topLayout->addWidget(sigmaxInPoint);
+    topLayout->addWidget(m_decreaseFromPoint);
+    topLayout->addWidget(m_addToPoint);
     topLayout->addStretch();
 
     m_toPreprocessorButton = new QPushButton("Назад", this);
@@ -53,19 +74,28 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
 
     m_tableModel = new QStandardItemModel(this);
     m_tableModel->setColumnCount(7);
-    m_tableModel->setHeaderData(0, Qt::Horizontal, "Номер стержня");
+    m_tableModel->setHeaderData(0, Qt::Horizontal, "Номер стержня, №");
     m_tableModel->setHeaderData(1, Qt::Horizontal, "Локальная координата");
     m_tableModel->setHeaderData(2, Qt::Horizontal, "Глобальная координата");
-    m_tableModel->setHeaderData(3, Qt::Horizontal, "Nx");
-    m_tableModel->setHeaderData(4, Qt::Horizontal, "Ux");
-    m_tableModel->setHeaderData(5, Qt::Horizontal, "σx");
-    m_tableModel->setHeaderData(6, Qt::Horizontal, "Предельное значение");
+    m_tableModel->setHeaderData(3, Qt::Horizontal, "Nx, [qL]");
+    m_tableModel->setHeaderData(4, Qt::Horizontal, "Ux, [qL^2/EA]");
+    m_tableModel->setHeaderData(5, Qt::Horizontal, "σx, [qL/A]");
+    m_tableModel->setHeaderData(6, Qt::Horizontal, "Допускаемое напряжение, [σ]");
 
     m_tableView = new QTableView(this);
     m_tableView->setModel(m_tableModel);
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     m_tableView->resizeColumnsToContents();
+
+    // m_scene = new QGraphicsScene(this);
+    // m_sceneDrawer = new SceneDrawer(m_scene, this);
+    // m_scene->setSceneRect(0, 0, 1000, 700);
+
+    // m_view = new QGraphicsView(this);
+    // m_view->setRenderHint(QPainter::Antialiasing);
+    // m_view->setFrameStyle(0);
+    // m_view->setScene(m_scene);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addLayout(topLayout);
@@ -203,68 +233,41 @@ const double Processor::calculationUxAtGlobalPoint(double globalX)
     double loadDirection = m_sizeModel->data(m_sizeModel->index(number, 2)).toDouble();
     double modulusValue = m_sizeModel->getModulusValue().toDouble();
 
-    return m_vectorDelta[number] + (localX / width) * (m_vectorDelta[number + 1] - m_vectorDelta[number]) +
-           (loadDirection * width * localX) / (2 * modulusValue * height) * (1 - localX / width);
+    return (m_vectorDelta[number] + (localX / width) * (m_vectorDelta[number + 1] - m_vectorDelta[number]) +
+            (loadDirection * width * localX) / (2 * modulusValue * height) * (1 - localX / width));
 }
 
-const double Processor::calculationNxAtGlobalPoint(double globalX)
+
+const double Processor::calculationNxAtPoint(int number, double x)
 {
-    int number = -1;
-    double localX = 0.0;
-    double currentX = 0.0;
-
-    for (int i = 0; i < m_sizeModel->rowCount(); ++i) {
-        double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toDouble();
-
-        if (globalX <= currentX + width) {
-            number = i;
-            localX = globalX - currentX;
-            break;
-        }
-        currentX += width;
-    }
-
-    if (number == -1) {
-        throw std::out_of_range("Глобальная координата за пределами");
-    }
-
     double width = m_sizeModel->data(m_sizeModel->index(number, 0)).toDouble();
     double height = m_sizeModel->data(m_sizeModel->index(number, 1)).toDouble();
     double loadDirection = m_sizeModel->data(m_sizeModel->index(number, 2)).toDouble();
     double modulusValue = m_sizeModel->getModulusValue().toDouble();
 
     return modulusValue * height / width * (m_vectorDelta[number + 1] - m_vectorDelta[number]) +
-           loadDirection * width * (1.0 - 2.0 * localX / width) / 2.0;
+           loadDirection * width * (1.0 - 2.0 * x / width) / 2.0;
 }
 
-const double Processor::calculationSigmaxAtGlobalPoint(double globalX)
+const double Processor::calculationSigmaxAtPoint(int number, double x)
 {
-    int number = -1;
-    double localX = 0.0;
-    double currentX = 0.0;
-
-    for (int i = 0; i < m_sizeModel->rowCount(); ++i) {
-        double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toDouble();
-
-        if (globalX <= currentX + width) {
-            number = i;
-            localX = globalX - currentX;
-            break;
-        }
-        currentX += width;
-    }
-
-    if (number == -1) {
-        throw std::out_of_range("Глобальная координата за пределами");
-    }
-
     double width = m_sizeModel->data(m_sizeModel->index(number, 0)).toDouble();
     double height = m_sizeModel->data(m_sizeModel->index(number, 1)).toDouble();
     double loadDirection = m_sizeModel->data(m_sizeModel->index(number, 2)).toDouble();
     double modulusValue = m_sizeModel->getModulusValue().toDouble();
 
     return (modulusValue * height / width * (m_vectorDelta[number + 1] - m_vectorDelta[number]) +
-            loadDirection * width * (1.0 - 2.0 * localX / width) / 2.0) / height;
+            loadDirection * width * (1.0 - 2.0 * x / width) / 2.0) / height;
+}
+
+const double Processor::maxGlobalX()
+{
+    double currentX = 0.0;
+    for (int i = 0; i < m_sizeModel->rowCount(); ++i) {
+        double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toDouble();
+        currentX += width;
+    }
+    return currentX;
 }
 
 QStandardItemModel *Processor::getTableModel() const
@@ -516,9 +519,47 @@ void Processor::toPostprocessor() {
     emit clickedToPostprocessor();
 }
 
+// исправить, можно находить стержень заранее и создать методы для нахождения по стержню и локальной координате
 void Processor::changePointEdit(QString value)
 {
-    nxInPoint->setText("Nx: " + QString::number(calculationNxAtGlobalPoint(value.toDouble())));
-    uxInPoint->setText("Ux: " + QString::number(calculationUxAtGlobalPoint(value.toDouble())));
-    sigmaxInPoint->setText("σx: " + QString::number(calculationSigmaxAtGlobalPoint(value.toDouble())));
+    value.replace(",", ".");
+
+    if(value.toDouble() > maxGlobalX()){
+        m_pointEdit->setText(QString::number(maxGlobalX()));
+        return;
+    }else if(value.toDouble() < 0){
+        m_pointEdit->setText("0");
+        return;
+    }
+
+    int number = -1;
+    double localX = 0.0;
+    double currentX = 0.0;
+
+    for (int i = 0; i < m_sizeModel->rowCount(); ++i) {
+        double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toDouble();
+
+        if (value.toDouble() < currentX + width) {
+            number = i;
+            localX = value.toDouble() - currentX;
+            nxInPoint->setText("Nx: " + QString::number(calculationNxAtPoint(number, localX)));
+            uxInPoint->setText("Ux: " + QString::number(calculationUxAtPoint(number, localX)));
+            sigmaxInPoint->setText("σx: " + QString::number(calculationSigmaxAtPoint(number, localX)));
+            break;
+        }else if(value.toDouble() == currentX + width){
+            number = i;
+            localX = value.toDouble() - currentX;
+            if(value.toDouble() == maxGlobalX()){
+                nxInPoint->setText("Nx: " + QString::number(calculationNxAtPoint(number, localX)));
+                uxInPoint->setText("Ux: " + QString::number(calculationUxAtPoint(number, localX)));
+                sigmaxInPoint->setText("σx: " + QString::number(calculationSigmaxAtPoint(number, localX)));
+                break;
+            }
+            nxInPoint->setText("Nx: " + QString::number(calculationNxAtPoint(number, localX)) + "\nNx: " + QString::number(calculationNxAtPoint(number + 1, 0)));
+            uxInPoint->setText("Ux: " + QString::number(calculationUxAtPoint(number, localX)) + "\nUx: " + QString::number(calculationUxAtPoint(number + 1, 0)));
+            sigmaxInPoint->setText("σx: " + QString::number(calculationSigmaxAtPoint(number, localX)) + "\nσx: " + QString::number(calculationSigmaxAtPoint(number + 1, 0)));
+            break;
+        }
+        currentX += width;
+    }
 }
