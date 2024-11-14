@@ -432,9 +432,17 @@ void Processor::calculate() {
             m_matrixA[i][i] = height / width * modulusValue;
             m_matrixA[i + 1][i] = -(height / width * modulusValue);
             m_matrixA[i][i + 1] = -(height / width * modulusValue);
+            if(nSizeMatrix - 1 == 1 && !supportRight.isEmpty()){
+                m_matrixA[i + 1][i + 1] = 1;
+                m_matrixA[i][i + 1] = 0;
+                m_matrixA[i + 1][i] = 0;
+            }
             continue;
         } else if (i == 0) {
             m_matrixA[i][i] = 1;
+            if(nSizeMatrix - 1 == 1 && !supportLeft.isEmpty()){
+                m_matrixA[i + 1][i + 1] = height / width * modulusValue;
+            }
             continue;
         }
         if (i == nSizeMatrix - 2 && supportRight.isEmpty()) {
@@ -463,6 +471,7 @@ void Processor::calculate() {
         m_matrixA[i][i + 1] = -(height / width * modulusValue);
     }
 
+    // DEBUG_MATRIX(m_matrixA);
     // logMatrix(m_matrixA, "Matrix A");
 
     m_vectorB.resize(nSizeMatrix);
@@ -497,6 +506,7 @@ void Processor::calculate() {
             m_vectorB[i] = focusedDirection + loadDirection * width1 / 2 + loadDirection2 * width2 / 2;
         }
     }
+    // DEBUG_MATRIX(m_vectorB);
 
     // logVector(m_vectorB, "Vector B");
 
