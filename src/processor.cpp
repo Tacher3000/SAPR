@@ -38,16 +38,17 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
             m_view->setLinePosition(text);
         }
     });
-    nxInPoint = new QLabel("Nx:", this);
-    uxInPoint = new QLabel("Ux:", this);
-    sigmaxInPoint = new QLabel("σx:", this);
+    m_nxInPoint = new QLabel("Nx:", this);
+    m_nxInPoint->setFixedWidth(60);
+    m_uxInPoint = new QLabel("Ux:", this);
+    m_uxInPoint->setFixedWidth(60);
+    m_sigmaxInPoint = new QLabel("σx:", this);
+    m_sigmaxInPoint->setFixedWidth(60);
 
     m_decreaseFromPoint = new QPushButton("<", this);
     m_decreaseFromPoint->setMinimumHeight(40);
     m_decreaseFromPoint->setMaximumWidth(120);
     connect(m_decreaseFromPoint, &QPushButton::clicked, [this](){
-
-
         bool ok;
         qreal x = m_pointEdit->text().toDouble(&ok);
         x -= m_stepSelector->value();
@@ -69,8 +70,6 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     m_addToPoint->setMinimumHeight(40);
     m_addToPoint->setMaximumWidth(120);
     connect(m_addToPoint, &QPushButton::clicked, [this](){
-
-
         bool ok;
         qreal x = m_pointEdit->text().toDouble(&ok);
         x += m_stepSelector->value();
@@ -97,9 +96,9 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     topLayout->addWidget(line);
     topLayout->addWidget(pointLabel);
     topLayout->addWidget(m_pointEdit);
-    topLayout->addWidget(nxInPoint);
-    topLayout->addWidget(uxInPoint);
-    topLayout->addWidget(sigmaxInPoint);
+    topLayout->addWidget(m_nxInPoint);
+    topLayout->addWidget(m_uxInPoint);
+    topLayout->addWidget(m_sigmaxInPoint);
     topLayout->addWidget(m_decreaseFromPoint);
     topLayout->addWidget(m_addToPoint);
     topLayout->addStretch();
@@ -149,10 +148,10 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     m_view->setRenderHint(QPainter::Antialiasing);
     m_view->setFrameStyle(0);
     m_view->setScene(m_scene);
-    // connect(m_view, &MovableLineView::lineMoved, this, &Processor::changePointEdit);
     connect(m_view, &MovableLineView::lineMoved, [this](const QString &x){
         changePointEdit(x);
-        m_pointEdit->setText(x);
+        m_pointEdit->setText(QString::number(x.toDouble(), 'f', 4).remove(QRegularExpression("\\.?0+$")));
+
     });
 
     QHBoxLayout *midleLayout = new QHBoxLayout();
@@ -248,6 +247,7 @@ const void Processor::fillTable()
         double height = m_sizeModel->data(m_sizeModel->index(deltaIndex, 1)).toDouble();
         double loadDirection = m_sizeModel->data(m_sizeModel->index(deltaIndex, 2)).toDouble();
         QString limitValueStr  = m_sizeModel->data(m_sizeModel->index(deltaIndex, 3)).toString();
+        limitValueStr.replace(",", ".");
         double limitValue = limitValueStr.toDouble();
 
 
@@ -273,7 +273,7 @@ const void Processor::fillTable()
             QString sigmaValueStr = QString::number(sigmaValue, 'f', 4).remove(QRegularExpression("\\.?0+$"));
             if (nxValueStr == "-0") nxValueStr = "0";
             if (uxValueStr == "-0") uxValueStr = "0";
-            if (uxValueStr == "-0") uxValueStr = "0";
+            if (sigmaValueStr == "-0") sigmaValueStr = "0";
 
             m_tableModel->setItem(rowIndex, 0, new QStandardItem(QString::number(deltaIndex + 1)));
             m_tableModel->setItem(rowIndex, 1, new QStandardItem(QString::number(localCoordinate)));
@@ -408,7 +408,7 @@ void Processor::setSizeModel(const SizeTableModel *sizeModel) {
 }
 
 void Processor::calculate() {
-    updateScene();
+
     // m_textEdit->clear();
     double modulusValue = m_sizeModel->getModulusValue().toDouble();
 
@@ -646,22 +646,56 @@ void Processor::changePointEdit(QString value)
         if (value.toDouble() < currentX + width) {
             number = i;
             localX = value.toDouble() - currentX;
-            nxInPoint->setText("Nx: " + QString::number(calculationNxAtPoint(number, localX)));
-            uxInPoint->setText("Ux: " + QString::number(calculationUxAtPoint(number, localX)));
-            sigmaxInPoint->setText("σx: " + QString::number(calculationSigmaxAtPoint(number, localX)));
+
+            QString nxValueStr = QString::number(calculationNxAtPoint(number, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+            QString uxValueStr = QString::number(calculationUxAtPoint(number, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+            QString sigmaValueStr = QString::number(calculationSigmaxAtPoint(number, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+
+            if (nxValueStr == "-0") nxValueStr = "0";
+            if (uxValueStr == "-0") uxValueStr = "0";
+            if (sigmaValueStr == "-0") sigmaValueStr = "0";
+
+            m_nxInPoint->setText("Nx: " + nxValueStr);
+            m_uxInPoint->setText("Ux: " + uxValueStr);
+            m_sigmaxInPoint->setText("σx: " + sigmaValueStr);
             break;
         }else if(value.toDouble() == currentX + width){
             number = i;
             localX = value.toDouble() - currentX;
             if(value.toDouble() == maxGlobalX()){
-                nxInPoint->setText("Nx: " + QString::number(calculationNxAtPoint(number, localX)));
-                uxInPoint->setText("Ux: " + QString::number(calculationUxAtPoint(number, localX)));
-                sigmaxInPoint->setText("σx: " + QString::number(calculationSigmaxAtPoint(number, localX)));
+                QString nxValueStr = QString::number(calculationNxAtPoint(number, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+                QString uxValueStr = QString::number(calculationUxAtPoint(number, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+                QString sigmaValueStr = QString::number(calculationSigmaxAtPoint(number, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+
+                if (nxValueStr == "-0") nxValueStr = "0";
+                if (uxValueStr == "-0") uxValueStr = "0";
+                if (sigmaValueStr == "-0") sigmaValueStr = "0";
+
+                m_nxInPoint->setText("Nx: " + nxValueStr);
+                m_uxInPoint->setText("Ux: " + uxValueStr);
+                m_sigmaxInPoint->setText("σx: " + sigmaValueStr);
                 break;
             }
-            nxInPoint->setText("Nx: " + QString::number(calculationNxAtPoint(number, localX)) + "\nNx: " + QString::number(calculationNxAtPoint(number + 1, 0)));
-            uxInPoint->setText("Ux: " + QString::number(calculationUxAtPoint(number, localX)) + "\nUx: " + QString::number(calculationUxAtPoint(number + 1, 0)));
-            sigmaxInPoint->setText("σx: " + QString::number(calculationSigmaxAtPoint(number, localX)) + "\nσx: " + QString::number(calculationSigmaxAtPoint(number + 1, 0)));
+            QString nxValueStr1 = QString::number(calculationNxAtPoint(number, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+            QString uxValueStr1 = QString::number(calculationUxAtPoint(number, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+            QString sigmaValueStr1 = QString::number(calculationSigmaxAtPoint(number, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+
+            if (nxValueStr1 == "-0") nxValueStr1 = "0";
+            if (uxValueStr1 == "-0") uxValueStr1 = "0";
+            if (sigmaValueStr1 == "-0") sigmaValueStr1 = "0";
+
+            QString nxValueStr2 = QString::number(calculationNxAtPoint(number + 1, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+            QString uxValueStr2 = QString::number(calculationUxAtPoint(number + 1, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+            QString sigmaValueStr2 = QString::number(calculationSigmaxAtPoint(number + 1, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+
+            if (nxValueStr2 == "-0") nxValueStr2 = "0";
+            if (uxValueStr2 == "-0") uxValueStr2 = "0";
+            if (sigmaValueStr2 == "-0") sigmaValueStr2 = "0";
+
+            m_nxInPoint->setText("Nx: " + nxValueStr1 + "\nNx: " + nxValueStr2);
+            m_uxInPoint->setText("Ux: " + uxValueStr1 + "\nUx: " + uxValueStr2);
+            m_sigmaxInPoint->setText("σx: " + sigmaValueStr1 + "\nσx: " + sigmaValueStr2);
+
             break;
         }
         currentX += width;

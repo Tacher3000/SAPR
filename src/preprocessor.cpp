@@ -242,7 +242,18 @@ void Preprocessor::clearData()
 
 void Preprocessor::toProcessor()
 {
-    emit clickedToProcessor();
+    if(m_nodeModel->data(m_nodeModel->index(0, 1)).toBool() || m_nodeModel->data(m_nodeModel->index(m_nodeModel->rowCount() - 1, 1)).toBool()){
+        if(m_sizeModel->getModulusValue().toBool()){
+            for(int row = 0; row < m_sizeModel->rowCount() - 1; ++row){
+                int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt();
+                int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt();
+                if(width == 0 || height == 0) {
+                    return;
+                }
+            }
+            emit clickedToProcessor();
+        }
+    }
 }
 
 NodeModel* Preprocessor::getNodeModel() const {

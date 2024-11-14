@@ -68,6 +68,7 @@ void MainWindow::openSettings()
     SettingsDialog settingsDialog(this);
 
     connect(&settingsDialog, &SettingsDialog::settingsSaved, m_preprocessor, &Preprocessor::updateScene);
+    connect(&settingsDialog, &SettingsDialog::settingsSaved, m_processor, &Processor::updateScene);
     connect(&settingsDialog, &SettingsDialog::settingsSaved, this, [this](){
         m_postProcessor->draw(m_processor, m_preprocessor->getSizeModel(), m_preprocessor->getNodeModel());
     });
@@ -127,6 +128,7 @@ void MainWindow::switchToProcessor()
     m_processor->setSizeModel(m_preprocessor->getSizeModel());
     m_processor->setNodeModel(m_preprocessor->getNodeModel());
     m_processor->calculate();
+    m_processor->updateScene();
 }
 
 void MainWindow::switchToPreprocessor()

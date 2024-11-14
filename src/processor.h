@@ -94,9 +94,9 @@ private:
     QDoubleSpinBox *m_stepSelector;
     QLineEdit *m_pointEdit;
 
-    QLabel *nxInPoint;
-    QLabel *uxInPoint;
-    QLabel *sigmaxInPoint;
+    QLabel *m_nxInPoint;
+    QLabel *m_uxInPoint;
+    QLabel *m_sigmaxInPoint;
 
     QPushButton *m_decreaseFromPoint;
     QPushButton *m_addToPoint;
