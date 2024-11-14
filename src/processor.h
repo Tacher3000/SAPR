@@ -4,7 +4,8 @@
 #include "sizetablemodel.h"
 #include "nodemodel.h"
 #include "app.h"
-// #include "scenedrawer.h"
+#include "movablelineitem.h"
+#include "movablelineview.h"
 
 #include <QWidget>
 #include <QTextEdit>
@@ -65,6 +66,7 @@ public:
     const double calculationUxAtGlobalPoint(double globalX);
     const double maxGlobalX();
     void updateScene();
+    void moveLineTo(const QPointF &pos);
 public slots:
     void toPreprocessor();
     void toPostprocessor();
@@ -104,8 +106,8 @@ private:
 
     SceneDrawer *m_sceneDrawer;
     QGraphicsScene *m_scene;
-    QGraphicsView *m_view;
-
+    MovableLineView *m_view;
+    MovableLineItem *m_movableLine;
 
     QPushButton *m_toPreprocessorButton;
     QPushButton *m_toPostprocessorButton;

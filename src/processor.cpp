@@ -24,7 +24,20 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     m_pointEdit->setValidator(validator);
 
     connect(m_pointEdit, &QLineEdit::textEdited, this, &Processor::changePointEdit);
-
+    connect(m_pointEdit, &QLineEdit::textEdited, [this](const QString &text) {
+        bool ok;
+        qreal x = text.toDouble(&ok);
+        if (ok) {
+            if(x > maxGlobalX()){
+                m_view->setLinePosition(QString::number(maxGlobalX()));
+                return;
+            }else if(x < 0){
+                m_view->setLinePosition("0");
+                return;
+            }
+            m_view->setLinePosition(text);
+        }
+    });
     nxInPoint = new QLabel("Nx:", this);
     uxInPoint = new QLabel("Ux:", this);
     sigmaxInPoint = new QLabel("σx:", this);
@@ -33,6 +46,21 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     m_decreaseFromPoint->setMinimumHeight(40);
     m_decreaseFromPoint->setMaximumWidth(120);
     connect(m_decreaseFromPoint, &QPushButton::clicked, [this](){
+
+
+        bool ok;
+        qreal x = m_pointEdit->text().toDouble(&ok);
+        x -= m_stepSelector->value();
+        if (ok) {
+            if(x > maxGlobalX()){
+                m_view->setLinePosition(QString::number(maxGlobalX()));
+                return;
+            }else if(x < 0){
+                m_view->setLinePosition("0");
+                return;
+            }
+            m_view->setLinePosition(QString::number(x));
+        }
         m_pointEdit->setText(QString::number(m_pointEdit->text().toDouble() - m_stepSelector->value()));
         changePointEdit(m_pointEdit->text());
     });
@@ -41,6 +69,21 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     m_addToPoint->setMinimumHeight(40);
     m_addToPoint->setMaximumWidth(120);
     connect(m_addToPoint, &QPushButton::clicked, [this](){
+
+
+        bool ok;
+        qreal x = m_pointEdit->text().toDouble(&ok);
+        x += m_stepSelector->value();
+        if (ok) {
+            if(x > maxGlobalX()){
+                m_view->setLinePosition(QString::number(maxGlobalX()));
+                return;
+            }else if(x < 0){
+                m_view->setLinePosition("0");
+                return;
+            }
+            m_view->setLinePosition(QString::number(x));
+        }
         m_pointEdit->setText(QString::number(m_pointEdit->text().toDouble() + m_stepSelector->value()));
         changePointEdit(m_pointEdit->text());
     });
@@ -93,10 +136,24 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     m_sceneDrawer = new SceneDrawer(m_scene, this);
     m_scene->setSceneRect(0, 0, 1000, 700);
 
-    m_view = new QGraphicsView(this);
+    qreal minX = 0;
+    qreal maxX = 0;
+    m_movableLine = new MovableLineItem(0, -100, 100, minX, maxX);
+    m_scene->addItem(m_movableLine);
+
+    connect(m_scene, &QGraphicsScene::sceneRectChanged, [this](const QRectF &rect){
+        moveLineTo(rect.center());
+    });
+
+    m_view = new MovableLineView(m_movableLine, this);
     m_view->setRenderHint(QPainter::Antialiasing);
     m_view->setFrameStyle(0);
     m_view->setScene(m_scene);
+    // connect(m_view, &MovableLineView::lineMoved, this, &Processor::changePointEdit);
+    connect(m_view, &MovableLineView::lineMoved, [this](const QString &x){
+        changePointEdit(x);
+        m_pointEdit->setText(x);
+    });
 
     QHBoxLayout *midleLayout = new QHBoxLayout();
     midleLayout->addWidget(m_tableView);
@@ -113,6 +170,17 @@ void Processor::updateScene()
 {
     m_sceneDrawer->clearScene();
     m_sceneDrawer->setSceneSize(0, 0);
+
+    if (!m_scene->items().contains(m_movableLine)) {
+        qreal minX = 0;
+        qreal maxX = maxGlobalX() * RECT_WIDTH_MULTIPLIER;
+        m_movableLine = new MovableLineItem(0, -100, 100, minX, maxX);
+        m_scene->addItem(m_movableLine);
+        m_view->setLine(m_movableLine);
+        connect(m_scene, &QGraphicsScene::sceneRectChanged, [this](const QRectF &rect){
+            moveLineTo(rect.center());
+        });
+    }
 
     App* app = App::theApp();
     QSettings* settings = app->settings();
@@ -133,6 +201,11 @@ void Processor::updateScene()
         if (settings->value("checkBoxSupport", false).toBool()) m_sceneDrawer->drawSupport(m_sizeModel, m_nodeModel);
         if (settings->value("checkBoxNodeN", false).toBool()) m_sceneDrawer->drawNode(m_sizeModel, maxHeight);
     }
+}
+
+void Processor::moveLineTo(const QPointF &pos) {
+    qreal newX = qBound(m_movableLine->getMinX(), pos.x(), m_movableLine->getMaxX());
+    m_movableLine->setPos(newX, 0);
 }
 
 void Processor::logMatrix(const QVector<QVector<double>> &matrix, const QString &name) {
@@ -551,7 +624,6 @@ void Processor::toPostprocessor() {
     emit clickedToPostprocessor();
 }
 
-// исправить, можно находить стержень заранее и создать методы для нахождения по стержню и локальной координате
 void Processor::changePointEdit(QString value)
 {
     value.replace(",", ".");
