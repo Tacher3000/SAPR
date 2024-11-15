@@ -51,6 +51,11 @@ private:
     QCheckBox *m_checkBoxDistributedLoad;
     QCheckBox *m_checkBoxFocusedlLoad;
     QCheckBox *m_checkBoxSupport;
+    QCheckBox *m_checkBoxLengthKernelt;
+    QCheckBox *m_checkBoxSignatureDistributedLoad;
+    QCheckBox *m_checkBoxSignatureFocusedlLoad;
+    QCheckBox *m_checkBoxSignatureSection;
+    QCheckBox *m_checkBoxSignatureModulusValue;
 
     QCheckBox *m_checkBoxWidget;
 

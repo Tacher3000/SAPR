@@ -44,6 +44,12 @@ public:
     void clearScene();
     void setSceneSize(qreal width, qreal height);
 
+    void drawLengthKernel(const SizeTableModel* sizeModel);
+    void drawSignatureSectionAndModulusValue(const SizeTableModel* sizeModel);
+    void drawSignatureDistributedLoad(const SizeTableModel* sizeModel);
+    void drawSignatureFocusedlLoad(const SizeTableModel* sizeModel, const NodeModel* nodeModel);
+
+
     void drawKernelStripes(const SizeTableModel *sizeModel);
     void drawNx(const SizeTableModel *sizeModel, const QVector<double> *vectorNx);
     void drawUx(Processor* processor, const SizeTableModel *sizeModel, const QVector<double> *vectorUx, const QVector<double>* vectorNx);

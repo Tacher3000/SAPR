@@ -137,7 +137,8 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
 
     qreal minX = 0;
     qreal maxX = 0;
-    m_movableLine = new MovableLineItem(0, -100, 100, minX, maxX);
+    qreal maxHight = 0;
+    m_movableLine = new MovableLineItem(0, -maxHight / 2, maxHight + 20, minX, maxX);
     m_scene->addItem(m_movableLine);
 
     connect(m_scene, &QGraphicsScene::sceneRectChanged, [this](const QRectF &rect){
@@ -173,7 +174,8 @@ void Processor::updateScene()
     if (!m_scene->items().contains(m_movableLine)) {
         qreal minX = 0;
         qreal maxX = maxGlobalX() * RECT_WIDTH_MULTIPLIER;
-        m_movableLine = new MovableLineItem(0, -100, 100, minX, maxX);
+        qreal maxHight = m_sizeModel->getMaxSection() * RECT_HEIGHT_MULTIPLIER;
+        m_movableLine = new MovableLineItem(0, -maxHight / 2 - 20, maxHight / 2 + 20, minX, maxX);
         m_scene->addItem(m_movableLine);
         m_view->setLine(m_movableLine);
         connect(m_scene, &QGraphicsScene::sceneRectChanged, [this](const QRectF &rect){
@@ -518,6 +520,7 @@ void Processor::calculate() {
     m_vectorDelta = backSubstitution(A, B);
 
     // logVector(m_vectorDelta, "Vector Delta");
+    // DEBUG_MATRIX(m_vectorDelta);
 
 
 

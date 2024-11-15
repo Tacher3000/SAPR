@@ -1,4 +1,4 @@
-#include "SettingsDialog.h"
+#include "settingsdialog.h"
 
 SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent)
@@ -13,6 +13,11 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     m_checkBoxDistributedLoad = new QCheckBox("Распределенная продольная нагрузка", this);
     m_checkBoxFocusedlLoad = new QCheckBox("Сосредоточенная продольная нагрузка", this);
     m_checkBoxSupport = new QCheckBox("Опора", this);
+    m_checkBoxLengthKernelt = new QCheckBox("Подпись длины стержня", this);
+    m_checkBoxSignatureDistributedLoad = new QCheckBox("Подпись распределенной нагрузки", this);
+    m_checkBoxSignatureFocusedlLoad = new QCheckBox("Подпись сосредоточенной нагрузки", this);
+    m_checkBoxSignatureSection = new QCheckBox("Подпись значения сечения", this);
+    m_checkBoxSignatureModulusValue = new QCheckBox("Подпись модуль упругости", this);
 
     m_labelColor = new QLabel("Цвет", this);
     m_labelColor->setStyleSheet("font-size: 16px; font-weight: bold;");
@@ -56,7 +61,12 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     m_layout->addWidget(m_buttonFocusedLoadColor, 5, 1, 1, 1);
     m_layout->addWidget(m_checkBoxSupport, 6, 0, 1, 1);
     m_layout->addWidget(m_buttonSupportColor, 6, 1, 1, 1);
-    m_layout->addWidget(m_buttonBox, 7, 0, 1, 5, Qt::AlignCenter);
+    m_layout->addWidget(m_checkBoxLengthKernelt, 7, 0, 1, 1);
+    m_layout->addWidget(m_checkBoxSignatureDistributedLoad, 8, 0, 1, 1);
+    m_layout->addWidget(m_checkBoxSignatureFocusedlLoad, 9, 0, 1, 1);
+    m_layout->addWidget(m_checkBoxSignatureSection, 10, 0, 1, 1);
+    m_layout->addWidget(m_checkBoxSignatureModulusValue, 11, 0, 1, 1);
+    m_layout->addWidget(m_buttonBox, 12, 0, 1, 5, Qt::AlignCenter);
 
     m_layout->addWidget(m_labelDifferent, 0, 3, 1, 2);
     m_layout->addWidget(m_checkBoxWidget, 1, 3, 1, 2);
@@ -111,7 +121,13 @@ void SettingsDialog::saveSettings()
     settings->setValue("checkBoxDistributedLoad", m_checkBoxDistributedLoad->isChecked());
     settings->setValue("checkBoxFocusedLoad", m_checkBoxFocusedlLoad->isChecked());
     settings->setValue("checkBoxSupport", m_checkBoxSupport->isChecked());
+    settings->setValue("checkBoxLengthKernelt", m_checkBoxLengthKernelt->isChecked());
+    settings->setValue("checkBoxSignatureDistributedLoad", m_checkBoxSignatureDistributedLoad->isChecked());
+    settings->setValue("checkBoxSignatureFocusedlLoad", m_checkBoxSignatureFocusedlLoad->isChecked());
+    settings->setValue("checkBoxSignatureSection", m_checkBoxSignatureSection->isChecked());
+    settings->setValue("checkBoxSignatureModulusValue", m_checkBoxSignatureModulusValue->isChecked());
     settings->setValue("checkBoxWidget", m_checkBoxWidget->isChecked());
+
 
     settings->setValue("flyingTextCount", m_spinBoxFlyingTextCount->value());
 
@@ -134,6 +150,11 @@ void SettingsDialog::loadSettings()
     m_checkBoxDistributedLoad->setChecked(settings->value("checkBoxDistributedLoad", false).toBool());
     m_checkBoxFocusedlLoad->setChecked(settings->value("checkBoxFocusedLoad", false).toBool());
     m_checkBoxSupport->setChecked(settings->value("checkBoxSupport", false).toBool());
+    m_checkBoxLengthKernelt->setChecked(settings->value("checkBoxLengthKernelt", false).toBool());
+    m_checkBoxSignatureDistributedLoad->setChecked(settings->value("checkBoxSignatureDistributedLoad", false).toBool());
+    m_checkBoxSignatureFocusedlLoad->setChecked(settings->value("checkBoxSignatureFocusedlLoad", false).toBool());
+    m_checkBoxSignatureSection->setChecked(settings->value("checkBoxSignatureSection", false).toBool());
+    m_checkBoxSignatureModulusValue->setChecked(settings->value("checkBoxSignatureModulusValue", false).toBool());
     m_checkBoxWidget->setChecked(settings->value("checkBoxWidget", false).toBool());
 
     m_spinBoxFlyingTextCount->setValue(settings->value("flyingTextCount", 1).toInt());

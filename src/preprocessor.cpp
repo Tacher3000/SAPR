@@ -114,7 +114,20 @@ void Preprocessor::updateScene()
     QSettings* settings = app->settings();
     qreal maxHeight = RECT_HEIGHT_MULTIPLIER * m_sizeModel->getMaxSection();
 
+    // придумать
+    // for(int row = 0; row < m_sizeModel->rowCount() - 1; ++row){
+    //     int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt();
+    //     int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt();
+    //     if(width == 0 || height == 0) {
+    //         return;
+    //     }
+    // }
+
     if (settings->value("checkBoxWidget", false).toBool()) {
+        m_sceneDrawer->drawSignatureSectionAndModulusValue(m_sizeModel);
+        if (settings->value("checkBoxSignatureDistributedLoad", false).toBool()) m_sceneDrawer->drawSignatureDistributedLoad(m_sizeModel);
+        if (settings->value("checkBoxSignatureFocusedlLoad", false).toBool()) m_sceneDrawer->drawSignatureFocusedlLoad(m_sizeModel, m_nodeModel);
+        if (settings->value("checkBoxLengthKernelt", false).toBool()) m_sceneDrawer->drawLengthKernel(m_sizeModel);
         if (settings->value("checkBoxFocusedLoad", false).toBool()) m_sceneDrawer->drawFocusedLoad(m_sizeModel, m_nodeModel);
         if (settings->value("checkBoxKernelN", false).toBool()) m_sceneDrawer->drawKernelN(m_sizeModel, maxHeight);
         if (settings->value("checkBoxKernel", false).toBool()) m_sceneDrawer->drawKernelWidget(m_sizeModel);
@@ -122,12 +135,17 @@ void Preprocessor::updateScene()
         if (settings->value("checkBoxSupport", false).toBool()) m_sceneDrawer->drawSupport(m_sizeModel, m_nodeModel);
         if (settings->value("checkBoxNodeN", false).toBool()) m_sceneDrawer->drawNode(m_sizeModel, maxHeight);
     } else {
+        m_sceneDrawer->drawSignatureSectionAndModulusValue(m_sizeModel);
+        if (settings->value("checkBoxSignatureDistributedLoad", false).toBool()) m_sceneDrawer->drawSignatureDistributedLoad(m_sizeModel);
+        if (settings->value("checkBoxSignatureFocusedlLoad", false).toBool()) m_sceneDrawer->drawSignatureFocusedlLoad(m_sizeModel, m_nodeModel);
+        if (settings->value("checkBoxLengthKernelt", false).toBool()) m_sceneDrawer->drawLengthKernel(m_sizeModel);
         if (settings->value("checkBoxFocusedLoad", false).toBool()) m_sceneDrawer->drawFocusedLoad(m_sizeModel, m_nodeModel);
         if (settings->value("checkBoxKernelN", false).toBool()) m_sceneDrawer->drawKernelN(m_sizeModel, maxHeight);
         if (settings->value("checkBoxDistributedLoad", false).toBool()) m_sceneDrawer->drawDistributedLoad(m_sizeModel);
         if (settings->value("checkBoxKernel", false).toBool()) m_sceneDrawer->drawKernel(m_sizeModel);
         if (settings->value("checkBoxSupport", false).toBool()) m_sceneDrawer->drawSupport(m_sizeModel, m_nodeModel);
         if (settings->value("checkBoxNodeN", false).toBool()) m_sceneDrawer->drawNode(m_sizeModel, maxHeight);
+
     }
     m_sizeTableView->resizeColumnsToContents();
 }

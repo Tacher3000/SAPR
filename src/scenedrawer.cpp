@@ -18,6 +18,171 @@ void SceneDrawer::setSceneSize(qreal width, qreal height) {
     m_scene->setSceneRect(0, 0, width, height);
 }
 
+void SceneDrawer::drawLengthKernel(const SizeTableModel *sizeModel) {
+    qreal currentX = 0;
+    int rowCount = sizeModel->rowCount();
+
+    qreal stripeYStart = 0;
+    qreal stripeYEnd = stripeYStart + sizeModel->getMaxSection() * RECT_HEIGHT_MULTIPLIER / 2 + RECT_HEIGHT_MULTIPLIER;
+
+    QLineF stripeLine(0, stripeYStart, 0, stripeYEnd);
+    m_scene->addLine(stripeLine, QPen(Qt::black));
+
+    for (int row = 0; row < rowCount; ++row) {
+        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
+        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+
+        if (width == 0 || height == 0) {
+            continue;
+        }
+
+        qreal stripeX = currentX + width;
+
+        QLineF stripeLine(stripeX, stripeYStart, stripeX, stripeYEnd);
+        m_scene->addLine(stripeLine, QPen(Qt::black));
+
+        QLineF horizontalLine(currentX, stripeYEnd - 10, stripeX, stripeYEnd - 10);
+        QPen arrowPen(Qt::black);
+        arrowPen.setWidth(1);
+        m_scene->addLine(horizontalLine, arrowPen);
+
+        qreal arrowSize = 10.0;
+
+        QLineF leftArrow1(horizontalLine.p1(), QPointF(horizontalLine.p1().x() + arrowSize, horizontalLine.p1().y() - arrowSize / 2));
+        QLineF leftArrow2(horizontalLine.p1(), QPointF(horizontalLine.p1().x() + arrowSize, horizontalLine.p1().y() + arrowSize / 2));
+        m_scene->addLine(leftArrow1, arrowPen);
+        m_scene->addLine(leftArrow2, arrowPen);
+
+        QLineF rightArrow1(horizontalLine.p2(), QPointF(horizontalLine.p2().x() - arrowSize, horizontalLine.p2().y() - arrowSize / 2));
+        QLineF rightArrow2(horizontalLine.p2(), QPointF(horizontalLine.p2().x() - arrowSize, horizontalLine.p2().y() + arrowSize / 2));
+        m_scene->addLine(rightArrow1, arrowPen);
+        m_scene->addLine(rightArrow2, arrowPen);
+
+        QPointF midPoint = horizontalLine.pointAt(0.5);
+
+        QGraphicsTextItem* textItem = new QGraphicsTextItem(QString::number(width / RECT_WIDTH_MULTIPLIER) + "L");
+        QFont font;
+        font.setPointSize(10);
+        textItem->setFont(font);
+
+        textItem->setPos(midPoint.x() - textItem->boundingRect().width() / 2, midPoint.y() - 20);
+        m_scene->addItem(textItem);
+
+        currentX += width;
+    }
+}
+
+void SceneDrawer::drawSignatureSectionAndModulusValue(const SizeTableModel *sizeModel)
+{
+    App* app = App::theApp();
+    QSettings* settings = app->settings();
+
+    qreal currentX = 0;
+    for (int row = 0; row < sizeModel->rowCount() - 1; ++row) {
+        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
+        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        int modulusValue = sizeModel->getModulusValue().toInt();
+
+        if(width == 0 || height == 0){
+            continue;
+        }
+
+        qreal centerX = currentX + width / 2;
+
+        if (settings->value("checkBoxSignatureSection", false).toBool() && settings->value("checkBoxSignatureModulusValue", false).toBool()){
+            QGraphicsTextItem* textItem = new QGraphicsTextItem(QString::number(modulusValue) + "E, " + QString::number(height / RECT_HEIGHT_MULTIPLIER) + "A");
+            QFont font;
+            font.setPointSize(10);
+            textItem->setFont(font);
+            textItem->setPos(centerX - textItem->boundingRect().width() / 2, -height / 2 - 21);
+            m_scene->addItem(textItem);
+        }else if(settings->value("checkBoxSignatureSection", false).toBool() && !settings->value("checkBoxSignatureModulusValue", false).toBool()){
+            QGraphicsTextItem* textItem = new QGraphicsTextItem(QString::number(height / RECT_HEIGHT_MULTIPLIER) + "A");
+            QFont font;
+            font.setPointSize(10);
+            textItem->setFont(font);
+
+            textItem->setPos(centerX - textItem->boundingRect().width() / 2, -height / 2 - 21);
+            m_scene->addItem(textItem);
+        }else if(!settings->value("checkBoxSignatureSection", false).toBool() && settings->value("checkBoxSignatureModulusValue", false).toBool()){
+            QGraphicsTextItem* textItemModulusValue = new QGraphicsTextItem(QString::number(modulusValue) + "E");
+            QFont font;
+            font.setPointSize(10);
+            textItemModulusValue->setFont(font);
+
+            textItemModulusValue->setPos(centerX - textItemModulusValue->boundingRect().width() / 2, -height / 2 - 21);
+            m_scene->addItem(textItemModulusValue);
+        }
+        currentX += width;
+    }
+}
+
+void SceneDrawer::drawSignatureDistributedLoad(const SizeTableModel *sizeModel)
+{
+    App* app = App::theApp();
+    QSettings* settings = app->settings();
+
+    qreal currentX = 0;
+    for (int row = 0; row < sizeModel->rowCount() - 1; ++row) {
+        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
+        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        int direction = sizeModel->data(sizeModel->index(row, 2)).toInt();
+
+        if(width == 0 || height == 0){
+            continue;
+        }
+
+        if (direction != 0) {
+            qreal centerX = currentX + width / 2;
+            qreal arrowY = 0;
+
+            QGraphicsTextItem* textItem = new QGraphicsTextItem(QString::number(direction) + "q");
+            QFont font;
+            font.setPointSize(10);
+            textItem->setFont(font);
+            textItem->setPos(centerX - textItem->boundingRect().width() / 2, arrowY - 27);
+            m_scene->addItem(textItem);
+        }
+
+        currentX += width;
+    }
+}
+
+void SceneDrawer::drawSignatureFocusedlLoad(const SizeTableModel *sizeModel, const NodeModel *nodeModel)
+{
+    App* app = App::theApp();
+    QSettings* settings = app->settings();
+
+    QString FocusedColorString = settings->value("focusedLoadColor", QColor(Qt::black).name()).toString();
+    QColor focusedColor(FocusedColorString);
+
+    qreal currentX = 0;
+
+    int rowCount = sizeModel->rowCount();
+
+    qreal arrowY = 0;
+    qreal arrowX = 0;
+
+    for (int row = 0; row < rowCount; ++row) {
+        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
+        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        int focusedDirection = nodeModel->data(nodeModel->index(row, 0)).toInt();
+
+        if (focusedDirection != 0) {
+                qreal arrowY = 0;
+
+                QGraphicsTextItem* textItem = new QGraphicsTextItem(QString::number(focusedDirection) + "F");
+                QFont font;
+                font.setPointSize(10);
+                textItem->setFont(font);
+                textItem->setPos(currentX + (focusedDirection > 0 ? 35 : -55), arrowY - 27);
+                m_scene->addItem(textItem);
+        }
+        currentX += width;
+    }
+}
+
+
 void SceneDrawer::drawKernel(const SizeTableModel* sizeModel) {
     App* app = App::theApp();
     QSettings* settings = app->settings();
@@ -121,21 +286,34 @@ void SceneDrawer::drawKernelN(const SizeTableModel* sizeModel, qreal maxHeight) 
     for (int row = 0; row < sizeModel->rowCount() - 1; ++row) {
         int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
         int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        int modulusValue = sizeModel->getModulusValue().toInt();
+
         if(width == 0 || height == 0){
             continue;
         }
 
         qreal centerX = currentX + width / 2;
-        qreal centerY = -maxHeight / 2 - 30;
+        qreal centerY = 0;
 
-        QRectF circle(centerX - 15, centerY - 15, 30, 30);
-        m_scene->addEllipse(circle, QPen(Qt::black), QBrush(kernelColorN));
+        if (settings->value("checkBoxSignatureSection", false).toBool() || settings->value("checkBoxSignatureModulusValue", false).toBool()){
+            centerY = -maxHeight / 2 - 40;
+            QRectF circle(centerX - 15, centerY - 15, 30, 30);
+            m_scene->addEllipse(circle, QPen(Qt::black), QBrush(kernelColorN));
 
-        QString number = QString::number(row + 1);
-        QGraphicsTextItem *text = m_scene->addText(number);
-        QRectF textRect = text->boundingRect();
-        text->setPos(centerX - textRect.width() / 2, centerY - textRect.height() / 2);
+            QString number = QString::number(row + 1);
+            QGraphicsTextItem *text = m_scene->addText(number);
+            QRectF textRect = text->boundingRect();
+            text->setPos(centerX - textRect.width() / 2, centerY - textRect.height() / 2);
+        }else{
+            centerY = -maxHeight / 2 - 30;
+            QRectF circle(centerX - 15, centerY - 15, 30, 30);
+            m_scene->addEllipse(circle, QPen(Qt::black), QBrush(kernelColorN));
 
+            QString number = QString::number(row + 1);
+            QGraphicsTextItem *text = m_scene->addText(number);
+            QRectF textRect = text->boundingRect();
+            text->setPos(centerX - textRect.width() / 2, centerY - textRect.height() / 2);
+        }
         currentX += width;
     }
 }
