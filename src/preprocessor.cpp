@@ -147,6 +147,8 @@ void Preprocessor::updateScene()
         if (settings->value("checkBoxNodeN", false).toBool()) m_sceneDrawer->drawNode(m_sizeModel, maxHeight);
 
     }
+    m_sceneDrawer->drawPricol(m_sizeModel);
+
     m_sizeTableView->resizeColumnsToContents();
 }
 

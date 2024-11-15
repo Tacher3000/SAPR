@@ -188,6 +188,99 @@ void SceneDrawer::drawSignatureFocusedlLoad(const SizeTableModel *sizeModel, con
     }
 }
 
+bool doesIntersect(const QRectF& newRect, const QList<QGraphicsItem*>& existingItems) {
+    for (QGraphicsItem* item : existingItems) {
+        if (item->sceneBoundingRect().intersects(newRect)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void addRotatingImages(QGraphicsScene* scene, int imageCount, const QStringList& imagePaths, const QSizeF& sceneSize) {
+    scene->clear();
+    scene->setSceneRect(0, 0, sceneSize.width(), sceneSize.height());
+
+    QList<QGraphicsItem*> existingItems;
+    for (int i = 0; i < imageCount; ++i) {
+        QString imagePath = imagePaths.at(QRandomGenerator::global()->bounded(imagePaths.size()));
+        QPixmap pixmap(imagePath);
+        if (pixmap.isNull()) {
+            qWarning() << "Не удалось загрузить изображение:" << imagePath;
+            continue;
+        }
+
+        RotatingPixmapItem* pixmapItem = new RotatingPixmapItem(pixmap);
+        pixmapItem->setTransformationMode(Qt::SmoothTransformation);
+        pixmapItem->setTransformOriginPoint(pixmapItem->boundingRect().center());
+
+        QRectF boundingRect = pixmapItem->boundingRect();
+        QPointF position;
+        QRectF newRect;
+        bool foundPosition = false;
+        int maxAttempts = 100;
+        while (maxAttempts-- > 0) {
+            position = QPointF(
+                QRandomGenerator::global()->bounded(sceneSize.width() - boundingRect.width()),
+                QRandomGenerator::global()->bounded(sceneSize.height() - boundingRect.height()));
+            newRect = QRectF(position, boundingRect.size());
+            if (!doesIntersect(newRect, existingItems)) {
+                foundPosition = true;
+                break;
+            }
+        }
+
+        if (!foundPosition) {
+            qWarning() << "Не удалось найти подходящее место для изображения";
+            delete pixmapItem;
+            continue;
+        }
+
+        pixmapItem->setPos(position);
+        scene->addItem(pixmapItem);
+        existingItems.append(pixmapItem);
+
+        QPropertyAnimation* animation = new QPropertyAnimation(pixmapItem, "rotation");
+        animation->setDuration(1000);
+        animation->setStartValue(0);
+        animation->setEndValue(360);
+        animation->setLoopCount(-1);
+        animation->start(QAbstractAnimation::DeleteWhenStopped);
+    }
+}
+
+
+void SceneDrawer::drawPricol(const SizeTableModel *sizeModel)
+{
+    int rowCount = sizeModel->rowCount();
+    bool test1 = 0;
+    bool test2 = 0;
+    bool test3 = 0;
+
+
+    for (int row = 0; row < rowCount; ++row) {
+        int width = sizeModel->data(sizeModel->index(row, 0)).toInt();
+        int height = sizeModel->data(sizeModel->index(row, 1)).toInt();
+        if(row == 0 && width == 19 && height == 17){
+            test1 = 1;
+        }if(row == 1 && width == 10 && height == 15){
+            test2 = 3;
+        }if(row == 2 && width == 6 && height == 18){
+            test3 = 1;
+        }
+    }
+    if(test1 && test2 && test3){
+        QStringList imagePaths = { "C:\\Users\\pyanc\\Downloads\\pngimg.com - spinner_PNG99779.png", "C:\\Users\\pyanc\\Downloads\\pngimg.com - spinner_PNG99786.png",
+            "C:\\Users\\pyanc\\Downloads\\pngimg.com - spinner_PNG99781.png"/*, "C:\\Users\\pyanc\\Downloads\\pngimg.com - spinner_PNG99780.png"*/,
+            "C:\\Users\\pyanc\\Downloads\\pngimg.com - spinner_PNG99785.png"};
+        QSizeF sceneSize(80000, 60000);
+        int imageCount = 1000;
+
+        addRotatingImages(m_scene, imageCount, imagePaths, sceneSize);
+
+    }
+}
+
 
 void SceneDrawer::drawKernel(const SizeTableModel* sizeModel) {
     App* app = App::theApp();
