@@ -122,6 +122,9 @@ double SizeTableModel::getMaxSection() const {
             maxSection = sectionValue;
         }
     }
+    if(maxSection > 5){
+        maxSection = 5;
+    }
 
     return maxSection;
 }

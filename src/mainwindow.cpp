@@ -26,9 +26,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(openSettings, &QAction::triggered, this, &MainWindow::openSettings);
     mainMenu->addAction(openSettings);
 
+    mainMenu->addSeparator();
+
     QAction *clearAction = new QAction("Очистить", this);
     connect(clearAction, &QAction::triggered, m_preprocessor, &Preprocessor::clearData);
     mainMenu->addAction(clearAction);
+
+    mainMenu->addSeparator();
 
     QAction *loadAction = new QAction("Загрузить", this);
     connect(loadAction, &QAction::triggered, this, &MainWindow::loadFile);
@@ -42,9 +46,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveAsFile);
     mainMenu->addAction(saveAsAction);
 
+    mainMenu->addSeparator();
+
     QAction *saveReportAction = new QAction("Сохранить отчет", this);
     connect(saveReportAction, &QAction::triggered, this, &MainWindow::saveReport);
     mainMenu->addAction(saveReportAction);
+
+    mainMenu->addSeparator();
 
     QAction *exitAction = new QAction("Выход", this);
     connect(exitAction, &QAction::triggered, this, &MainWindow::close);
@@ -205,7 +213,8 @@ void MainWindow::saveReportPDF(const QString &filePath)
 
     QPainter painter(&pdfWriter);
 
-    auto printModel = [&](QAbstractItemModel *model, const QString &title, int &y, bool reduceRowCount = false) {
+    auto printModel = [&](QAbstractItemModel *model, const QString &title, int &y,
+                          bool reduceRowCount = false, std::function<void(int, int, QRect&)> cellFormatter = nullptr) {
         int rowCount = model->rowCount();
         if (reduceRowCount) {
             rowCount--;
@@ -251,13 +260,19 @@ void MainWindow::saveReportPDF(const QString &filePath)
             for (int col = 0; col < columnCount; ++col) {
                 QRect rect(x + (col + 1) * cellWidth, y, cellWidth, cellHeight);
                 painter.drawRect(rect);
-                painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, model->data(model->index(row, col)).toString());
+
+                if (cellFormatter) {
+                    cellFormatter(row, col, rect);
+                } else {
+                    painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, model->data(model->index(row, col)).toString());
+                }
             }
             y += cellHeight;
         }
 
         y += 50;
     };
+
 
     int y = 100;
 
@@ -269,8 +284,26 @@ void MainWindow::saveReportPDF(const QString &filePath)
 
     y = 100;
 
+    auto tableFormatter = [&](int row, int col, QRect &rect) {
+        if (col == 5) {
+            double sigmaValue = m_processor->getTableModel()->data(m_processor->getTableModel()->index(row, col)).toDouble();
+            double limitValue = m_processor->getTableModel()->data(m_processor->getTableModel()->index(row, 6)).toDouble();
+            QString text = m_processor->getTableModel()->data(m_processor->getTableModel()->index(row, col)).toString();
+
+            if (sigmaValue > limitValue) {
+                QColor lightRed(255, 100, 100, 150);
+                painter.fillRect(rect, lightRed);
+            }
+            painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, text);
+        } else {
+            QString text = m_processor->getTableModel()->data(m_processor->getTableModel()->index(row, col)).toString();
+            painter.drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, text);
+        }
+    };
+
+
     pdfWriter.newPage();
-    printModel(m_processor->getTableModel(), "Таблица расчетов", y);
+    printModel(m_processor->getTableModel(), "Таблица расчетов", y, false, tableFormatter);
 
     pdfWriter.newPage();
     m_postProcessor->getScene()->render(&painter);

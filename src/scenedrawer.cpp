@@ -36,6 +36,10 @@ void SceneDrawer::drawLengthKernel(const SizeTableModel *sizeModel) {
             continue;
         }
 
+        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
+            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        }
+
         qreal stripeX = currentX + width;
 
         QLineF stripeLine(stripeX, stripeYStart, stripeX, stripeYEnd);
@@ -86,18 +90,21 @@ void SceneDrawer::drawSignatureSectionAndModulusValue(const SizeTableModel *size
         if(width == 0 || height == 0){
             continue;
         }
+        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
+            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        }
 
         qreal centerX = currentX + width / 2;
 
         if (settings->value("checkBoxSignatureSection", false).toBool() && settings->value("checkBoxSignatureModulusValue", false).toBool()){
-            QGraphicsTextItem* textItem = new QGraphicsTextItem(QString::number(modulusValue) + "E, " + QString::number(height / RECT_HEIGHT_MULTIPLIER) + "A");
+            QGraphicsTextItem* textItem = new QGraphicsTextItem(QString::number(modulusValue) + "E, " + QString::number(sizeModel->data(sizeModel->index(row, 1)).toInt()) + "A");
             QFont font;
             font.setPointSize(10);
             textItem->setFont(font);
             textItem->setPos(centerX - textItem->boundingRect().width() / 2, -height / 2 - 21);
             m_scene->addItem(textItem);
         }else if(settings->value("checkBoxSignatureSection", false).toBool() && !settings->value("checkBoxSignatureModulusValue", false).toBool()){
-            QGraphicsTextItem* textItem = new QGraphicsTextItem(QString::number(height / RECT_HEIGHT_MULTIPLIER) + "A");
+            QGraphicsTextItem* textItem = new QGraphicsTextItem(QString::number(sizeModel->data(sizeModel->index(row, 1)).toInt()) + "A");
             QFont font;
             font.setPointSize(10);
             textItem->setFont(font);
@@ -165,7 +172,6 @@ void SceneDrawer::drawSignatureFocusedlLoad(const SizeTableModel *sizeModel, con
 
     for (int row = 0; row < rowCount; ++row) {
         int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
         int focusedDirection = nodeModel->data(nodeModel->index(row, 0)).toInt();
 
         if (focusedDirection != 0) {
@@ -196,6 +202,9 @@ void SceneDrawer::drawKernel(const SizeTableModel* sizeModel) {
         if(width == 0 || height == 0){
             continue;
         }
+        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
+            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        }
 
         QString kernelString = settings->value("kernelColor", QColor(Qt::black).name()).toString();
         QColor kernelColor(kernelString);
@@ -217,6 +226,9 @@ void SceneDrawer::drawKernelWidget(const SizeTableModel* sizeModel) {
 
         if(width == 0 || height == 0) {
             continue;
+        }
+        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
+            height = 5 * RECT_HEIGHT_MULTIPLIER;
         }
 
         QTextEdit* textField = new QTextEdit();
@@ -246,6 +258,9 @@ void SceneDrawer::drawNode(const SizeTableModel* sizeModel, qreal maxHeight) {
         int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
         if(width == 0 || height == 0){
             continue;
+        }
+        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
+            height = 5 * RECT_HEIGHT_MULTIPLIER;
         }
 
         qreal numberX = currentX;
@@ -291,6 +306,9 @@ void SceneDrawer::drawKernelN(const SizeTableModel* sizeModel, qreal maxHeight) 
         if(width == 0 || height == 0){
             continue;
         }
+        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
+            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        }
 
         qreal centerX = currentX + width / 2;
         qreal centerY = 0;
@@ -332,6 +350,9 @@ void SceneDrawer::drawDistributedLoad(const SizeTableModel* sizeModel) {
 
         if(width == 0 || height == 0){
             continue;
+        }
+        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
+            height = 5 * RECT_HEIGHT_MULTIPLIER;
         }
 
         if (direction != 0) {
@@ -379,6 +400,9 @@ void SceneDrawer::drawDistributedLoadWidget(const SizeTableModel* sizeModel) {
 
         if(width == 0 || height == 0) {
             continue;
+        }
+        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
+            height = 5 * RECT_HEIGHT_MULTIPLIER;
         }
         if (direction != 0) {
             QProgressBar* progressBar = new QProgressBar();
@@ -428,6 +452,10 @@ void SceneDrawer::drawSupport(const SizeTableModel* sizeModel, const NodeModel* 
         int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
         int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
         QString support = nodeModel->data(nodeModel->index(row, 1)).toString();
+
+        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
+            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        }
 
         if(height != 0){
             lastHeight = height;
@@ -534,6 +562,10 @@ void SceneDrawer::drawKernelStripes(const SizeTableModel* sizeModel) {
         if (width == 0 || height == 0) {
             continue;
         }
+        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
+            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        }
+
 
         qreal stripeX = currentX + width;
 
@@ -576,6 +608,10 @@ void SceneDrawer::drawNx(const SizeTableModel* sizeModel, const QVector<double>*
         if (width == 0 || height == 0) {
             continue;
         }
+        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
+            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        }
+
 
 
         qreal pointX1 = currentX;
@@ -595,21 +631,24 @@ void SceneDrawer::drawNx(const SizeTableModel* sizeModel, const QVector<double>*
 
         QLineF line(pointX1, pointY1, pointX2, pointY2);
         m_scene->addLine(line, QPen(Qt::red));
-
         QGraphicsTextItem *Nx1n = m_scene->addText(QString::number((*vectorNx)[2 * row]));
         QGraphicsTextItem *Nx2n = m_scene->addText(QString::number((*vectorNx)[2 * row + 1]));
 
-        if((*vectorNx)[2 * row] >= 0){
-            Nx1n->setPos(pointX1 , pointY1 - 20);
-        }else{
-            Nx1n->setPos(pointX1 , pointY1);
+        qreal widthNx2n = Nx2n->boundingRect().width();
+
+        if ((*vectorNx)[2 * row] >= 0) {
+            Nx1n->setPos(pointX1, pointY1 - 20);
+        } else {
+            Nx1n->setPos(pointX1, pointY1);
         }
 
-        if((*vectorNx)[2 * row + 1] >= 0){
-            Nx2n->setPos(pointX2 - 30, pointY2 - 20);
-        }else{
-            Nx2n->setPos(pointX2 - 30, pointY2);
+        if ((*vectorNx)[2 * row + 1] >= 0) {
+            Nx2n->setPos(pointX2 - widthNx2n, pointY2 - 20);
+        } else {
+            Nx2n->setPos(pointX2 - widthNx2n, pointY2);
         }
+
+
 
         qreal hatchStep = 5.0;
 
@@ -647,6 +686,10 @@ void SceneDrawer::drawUx(Processor* processor, const SizeTableModel* sizeModel, 
         if (width == 0 || height == 0) {
             continue;
         }
+        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
+            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        }
+
         double step = 0.005;
         for (int i = 0; i * step < width / RECT_WIDTH_MULTIPLIER; ++i) {
             double uxValue = processor->calculationUxAtPoint(row, step * i);
@@ -722,6 +765,9 @@ void SceneDrawer::drawUx(Processor* processor, const SizeTableModel* sizeModel, 
         QGraphicsTextItem *Ux1n = m_scene->addText(QString::number((*vectorUx)[2 * row]));
         QGraphicsTextItem *Ux2n = m_scene->addText(QString::number((*vectorUx)[2 * row + 1]));
 
+        qreal widthUx2n = Ux2n->boundingRect().width();
+
+
         if((*vectorUx)[2 * row] >= 0){
             Ux1n->setPos(pointX1 , pointY1 - 20);
         }else{
@@ -729,9 +775,9 @@ void SceneDrawer::drawUx(Processor* processor, const SizeTableModel* sizeModel, 
         }
 
         if((*vectorUx)[2 * row + 1] >= 0){
-            Ux2n->setPos(pointX2 - 30, pointY2 - 20);
+            Ux2n->setPos(pointX2 - widthUx2n, pointY2 - 20);
         }else{
-            Ux2n->setPos(pointX2 - 30, pointY2);
+            Ux2n->setPos(pointX2 - widthUx2n, pointY2);
         }
 
         QLineF lineOX(pointX1, 450, pointX2, 450);
@@ -772,6 +818,10 @@ void SceneDrawer::drawSigmax(const SizeTableModel *sizeModel, const QVector<doub
         if (width == 0 || height == 0) {
             continue;
         }
+        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
+            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        }
+
 
 
         qreal pointX1 = currentX;
@@ -795,6 +845,8 @@ void SceneDrawer::drawSigmax(const SizeTableModel *sizeModel, const QVector<doub
         QGraphicsTextItem *Sigmax1n = m_scene->addText(QString::number((*vectorSigmax)[2 * row]));
         QGraphicsTextItem *Sigmax2n = m_scene->addText(QString::number((*vectorSigmax)[2 * row + 1]));
 
+        qreal widthSigmax2n = Sigmax2n->boundingRect().width();
+
         if((*vectorSigmax)[2 * row] >= 0){
             Sigmax1n->setPos(pointX1 , pointY1 - 20);
         }else{
@@ -802,9 +854,9 @@ void SceneDrawer::drawSigmax(const SizeTableModel *sizeModel, const QVector<doub
         }
 
         if((*vectorSigmax)[2 * row + 1] >= 0){
-            Sigmax2n->setPos(pointX2 - 30, pointY2 - 20);
+            Sigmax2n->setPos(pointX2 - widthSigmax2n, pointY2 - 20);
         }else{
-            Sigmax2n->setPos(pointX2 - 30, pointY2);
+            Sigmax2n->setPos(pointX2 - widthSigmax2n, pointY2);
         }
 
         qreal hatchStep = 5.0;
