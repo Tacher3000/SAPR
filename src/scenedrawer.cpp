@@ -29,8 +29,8 @@ void SceneDrawer::drawLengthKernel(const SizeTableModel *sizeModel) {
     m_scene->addLine(stripeLine, QPen(Qt::black));
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
 
         if (width == 0 || height == 0) {
             continue;
@@ -83,8 +83,8 @@ void SceneDrawer::drawSignatureSectionAndModulusValue(const SizeTableModel *size
 
     qreal currentX = 0;
     for (int row = 0; row < sizeModel->rowCount() - 1; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
         int modulusValue = sizeModel->getModulusValue().toInt();
 
         if(width == 0 || height == 0){
@@ -131,9 +131,9 @@ void SceneDrawer::drawSignatureDistributedLoad(const SizeTableModel *sizeModel)
 
     qreal currentX = 0;
     for (int row = 0; row < sizeModel->rowCount() - 1; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
-        int direction = sizeModel->data(sizeModel->index(row, 2)).toInt();
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
+        double direction = sizeModel->data(sizeModel->index(row, 2)).toString().replace(',', '.').toDouble();
 
         if(width == 0 || height == 0){
             continue;
@@ -171,8 +171,8 @@ void SceneDrawer::drawSignatureFocusedlLoad(const SizeTableModel *sizeModel, con
     qreal arrowX = 0;
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int focusedDirection = nodeModel->data(nodeModel->index(row, 0)).toInt();
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double focusedDirection = nodeModel->data(nodeModel->index(row, 0)).toString().replace(',', '.').toDouble();
 
         if (focusedDirection != 0) {
                 qreal arrowY = 0;
@@ -288,8 +288,8 @@ void SceneDrawer::drawKernel(const SizeTableModel* sizeModel) {
     int rowCount = sizeModel->rowCount();
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
 
         if(width == 0 || height == 0){
             continue;
@@ -313,8 +313,8 @@ void SceneDrawer::drawKernelWidget(const SizeTableModel* sizeModel) {
     int rowCount = sizeModel->rowCount();
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
 
         if(width == 0 || height == 0) {
             continue;
@@ -346,8 +346,8 @@ void SceneDrawer::drawNode(const SizeTableModel* sizeModel, qreal maxHeight) {
 
     qreal currentX = 0;
     for (int row = 0; row < sizeModel->rowCount(); ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
         if(width == 0 || height == 0){
             continue;
         }
@@ -391,8 +391,8 @@ void SceneDrawer::drawKernelN(const SizeTableModel* sizeModel, qreal maxHeight) 
 
     qreal currentX = 0;
     for (int row = 0; row < sizeModel->rowCount() - 1; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
         int modulusValue = sizeModel->getModulusValue().toInt();
 
         if(width == 0 || height == 0){
@@ -436,9 +436,9 @@ void SceneDrawer::drawDistributedLoad(const SizeTableModel* sizeModel) {
     int rowCount = sizeModel->rowCount();
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
-        int direction = sizeModel->data(sizeModel->index(row, 2)).toInt();
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
+        double direction = sizeModel->data(sizeModel->index(row, 2)).toString().replace(',', '.').toDouble();
 
         if(width == 0 || height == 0){
             continue;
@@ -486,9 +486,9 @@ void SceneDrawer::drawDistributedLoadWidget(const SizeTableModel* sizeModel) {
     int rowCount = sizeModel->rowCount();
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
-        int direction = sizeModel->data(sizeModel->index(row, 2)).toInt();
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
+        double direction = sizeModel->data(sizeModel->index(row, 2)).toString().replace(',', '.').toDouble();
 
         if(width == 0 || height == 0) {
             continue;
@@ -541,8 +541,8 @@ void SceneDrawer::drawSupport(const SizeTableModel* sizeModel, const NodeModel* 
     int lastHeight = 0;
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
         QString support = nodeModel->data(nodeModel->index(row, 1)).toString();
 
         if(height > 5 * RECT_HEIGHT_MULTIPLIER){
@@ -611,10 +611,10 @@ void SceneDrawer::drawFocusedLoad(const SizeTableModel* sizeModel, const NodeMod
     qreal arrowX = 0;
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
-        int focusedDirection = nodeModel->data(nodeModel->index(row, 0)).toInt();
-        int direction = sizeModel->data(sizeModel->index(row, 2)).toInt();
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
+        double focusedDirection = nodeModel->data(nodeModel->index(row, 0)).toString().replace(',', '.').toDouble();
+        double direction = sizeModel->data(sizeModel->index(row, 2)).toString().replace(',', '.').toDouble();
 
         if (focusedDirection != 0) {
             // if(direction != 0){
@@ -648,8 +648,8 @@ void SceneDrawer::drawKernelStripes(const SizeTableModel* sizeModel) {
     m_scene->addLine(stripeLine, QPen(Qt::black));
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
 
         if (width == 0 || height == 0) {
             continue;
@@ -694,8 +694,8 @@ void SceneDrawer::drawNx(const SizeTableModel* sizeModel, const QVector<double>*
     text->setPos(-60, 235);
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
 
         if (width == 0 || height == 0) {
             continue;
@@ -772,8 +772,8 @@ void SceneDrawer::drawUx(Processor* processor, const SizeTableModel* sizeModel, 
     int rowCount = sizeModel->rowCount();
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
 
         if (width == 0 || height == 0) {
             continue;
@@ -799,11 +799,11 @@ void SceneDrawer::drawUx(Processor* processor, const SizeTableModel* sizeModel, 
     }
     const QString NxString = "Ux [qL^2/(EA)]";
     QGraphicsTextItem *text = m_scene->addText(NxString);
-    text->setPos(-80, 435);
+    text->setPos(-90, 435);
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
 
         if (width == 0 || height == 0) {
             continue;
@@ -904,8 +904,8 @@ void SceneDrawer::drawSigmax(const SizeTableModel *sizeModel, const QVector<doub
     text->setPos(-60, 635);
 
     for (int row = 0; row < rowCount; ++row) {
-        int width = sizeModel->data(sizeModel->index(row, 0)).toInt() * RECT_WIDTH_MULTIPLIER;
-        int height = sizeModel->data(sizeModel->index(row, 1)).toInt() * RECT_HEIGHT_MULTIPLIER;
+        double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
+        double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
 
         if (width == 0 || height == 0) {
             continue;

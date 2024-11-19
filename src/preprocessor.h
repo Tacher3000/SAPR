@@ -11,6 +11,7 @@
 #include "numericdelegate.h"
 #include "positivenumericdelegate.h"
 #include "positivedoubledelegate.h"
+#include "doubledelegate.h"
 
 #include <QWidget>
 #include <QMainWindow>

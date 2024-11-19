@@ -1,11 +1,11 @@
-#include "positivedoubledelegate.h"
+#include "doubledelegate.h"
 
-PositiveDoubleDelegate::PositiveDoubleDelegate(QObject *parent)
+DoubleDelegate::DoubleDelegate(QObject *parent)
     : QStyledItemDelegate(parent) {}
 
-QWidget *PositiveDoubleDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+QWidget *DoubleDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     QLineEdit *editor = new QLineEdit(parent);
-    QDoubleValidator *validator = new QDoubleValidator(0.0, std::numeric_limits<double>::max(), 4, editor);
+    QDoubleValidator *validator = new QDoubleValidator(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), 4, editor);
     validator->setNotation(QDoubleValidator::ScientificNotation);
     editor->setValidator(validator);
 
@@ -20,7 +20,7 @@ QWidget *PositiveDoubleDelegate::createEditor(QWidget *parent, const QStyleOptio
     return editor;
 }
 
-void PositiveDoubleDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+void DoubleDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     QStyleOptionViewItem itemOption(option);
 
     if (itemOption.state & QStyle::State_HasFocus) {

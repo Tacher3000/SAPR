@@ -6,8 +6,7 @@ Preprocessor::Preprocessor(QWidget* parent) : QWidget(parent) {
     QVBoxLayout* tablesLayput = new QVBoxLayout(this);
     QWidget* tablesWidget = new QWidget(this);
 
-    NumericDelegate *delegateNumeric = new NumericDelegate(this);
-    PositiveNumericDelegate *delegatePositive = new PositiveNumericDelegate(this);
+    DoubleDelegate *delegateDouble = new DoubleDelegate(this);
     PositiveDoubleDelegate *delegatePositiveDouble = new PositiveDoubleDelegate(this);
 
     m_sizeModel = new SizeTableModel;
@@ -16,11 +15,11 @@ Preprocessor::Preprocessor(QWidget* parent) : QWidget(parent) {
     m_sizeTableView->setModel(m_sizeModel);
     m_sizeTableView->resizeRowsToContents();
     m_sizeTableView->resizeColumnsToContents();
-    m_sizeTableView->setItemDelegateForColumn(0, delegatePositive);
-    m_sizeTableView->setItemDelegateForColumn(1, delegatePositive);
-    m_sizeTableView->setItemDelegateForColumn(2, delegateNumeric);
+    m_sizeTableView->setItemDelegateForColumn(0, delegatePositiveDouble);
+    m_sizeTableView->setItemDelegateForColumn(1, delegatePositiveDouble);
+    m_sizeTableView->setItemDelegateForColumn(2, delegateDouble);
     m_sizeTableView->setItemDelegateForColumn(3, delegatePositiveDouble);
-    m_sizeTableView->setItemDelegateForColumn(4, delegatePositive);
+    m_sizeTableView->setItemDelegateForColumn(4, delegatePositiveDouble);
     tablesLayput->addWidget(m_sizeTableView);
 
     m_nodeModel = new NodeModel;
@@ -29,8 +28,8 @@ Preprocessor::Preprocessor(QWidget* parent) : QWidget(parent) {
     m_nodeTableView->setModel(m_nodeModel);
     m_nodeTableView->resizeRowsToContents();
     m_nodeTableView->resizeColumnsToContents();
-    m_nodeTableView->setItemDelegateForColumn(0, delegateNumeric);
-    m_nodeTableView->setItemDelegateForColumn(1, delegateNumeric);
+    m_nodeTableView->setItemDelegateForColumn(0, delegateDouble);
+    // m_nodeTableView->setItemDelegateForColumn(1, delegateNumeric);
 
     tablesLayput->addWidget(m_nodeTableView);
 
@@ -265,8 +264,8 @@ void Preprocessor::toProcessor()
     if(m_nodeModel->data(m_nodeModel->index(0, 1)).toBool() || m_nodeModel->data(m_nodeModel->index(m_nodeModel->rowCount() - 1, 1)).toBool()){
         if(m_sizeModel->getModulusValue().toBool()){
             for(int row = 0; row < m_sizeModel->rowCount() - 1; ++row){
-                int width = m_sizeModel->data(m_sizeModel->index(row, 0)).toInt();
-                int height = m_sizeModel->data(m_sizeModel->index(row, 1)).toInt();
+                double width = m_sizeModel->data(m_sizeModel->index(row, 0)).toDouble();
+                double height = m_sizeModel->data(m_sizeModel->index(row, 1)).toDouble();
                 if(width == 0 || height == 0) {
                     return;
                 }
