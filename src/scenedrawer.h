@@ -5,6 +5,8 @@
 #include "nodemodel.h"
 #include "settingsdialog.h"
 #include "app.h"
+#include "rotatingpixmapitem.h"
+
 // #include "processor.h"
 
 #include <QGraphicsScene>
@@ -23,30 +25,6 @@
 #include <algorithm>
 
 class Processor;
-
-class RotatingPixmapItem : public QObject, public QGraphicsPixmapItem {
-    Q_OBJECT
-    Q_PROPERTY(qreal rotation READ rotation WRITE setRotation NOTIFY rotationChanged)
-
-public:
-    RotatingPixmapItem(const QPixmap& pixmap)
-        : QGraphicsPixmapItem(pixmap), m_rotation(0) {}
-
-    qreal rotation() const { return m_rotation; }
-    void setRotation(qreal angle) {
-        if (m_rotation != angle) {
-            m_rotation = angle;
-            QGraphicsPixmapItem::setRotation(angle);
-            emit rotationChanged();
-        }
-    }
-
-signals:
-    void rotationChanged();
-
-private:
-    qreal m_rotation;
-};
 
 const int RECT_WIDTH_MULTIPLIER = 100;
 const int RECT_HEIGHT_MULTIPLIER = 50;
@@ -82,6 +60,9 @@ public:
     void drawNx(const SizeTableModel *sizeModel, const QVector<double> *vectorNx);
     void drawUx(Processor* processor, const SizeTableModel *sizeModel, const QVector<double> *vectorUx, const QVector<double>* vectorNx);
     void drawSigmax(const SizeTableModel *sizeModel, const QVector<double> *vectorSigmax);
+
+    void addRotatingImages(QGraphicsScene *scene, int imageCount, const QStringList &imagePaths, const QSizeF &sceneSize);
+    bool doesIntersect(const QRectF &newRect, const QList<QGraphicsItem *> &existingItems);
 private:
     QGraphicsScene* m_scene;
 };

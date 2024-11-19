@@ -28,6 +28,7 @@ public:
               const NodeModel *nodeModel);
     void exportSceneToPdf(const QString &filePath);
     QGraphicsScene* getScene() const;
+    void clearData();
 private slots:
     void toProcessor();
 signals:

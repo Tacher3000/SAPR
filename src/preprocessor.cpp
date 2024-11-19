@@ -34,7 +34,7 @@ Preprocessor::Preprocessor(QWidget* parent) : QWidget(parent) {
 
     tablesLayput->addWidget(m_nodeTableView);
 
-    m_toProcessorButton = new QPushButton("Расчитать", this);
+    m_toProcessorButton = new QPushButton("Рассчитать", this);
     m_toProcessorButton->setMinimumHeight(40);
     connect(m_toProcessorButton, &QPushButton::clicked, this, &Preprocessor::toProcessor);
     tablesLayput->addWidget(m_toProcessorButton);

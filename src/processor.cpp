@@ -121,7 +121,7 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     m_tableModel->setHeaderData(1, Qt::Horizontal, "Локальная координата");
     m_tableModel->setHeaderData(2, Qt::Horizontal, "Глобальная координата");
     m_tableModel->setHeaderData(3, Qt::Horizontal, "Nx, [qL]");
-    m_tableModel->setHeaderData(4, Qt::Horizontal, "Ux, [qL^2/EA]");
+    m_tableModel->setHeaderData(4, Qt::Horizontal, "Ux, [qL^2/(EA)]");
     m_tableModel->setHeaderData(5, Qt::Horizontal, "σx, [qL/A]");
     m_tableModel->setHeaderData(6, Qt::Horizontal, "Допускаемое напряжение, [σ]");
 
@@ -284,7 +284,7 @@ const void Processor::fillTable()
             m_tableModel->setItem(rowIndex, 4, new QStandardItem(uxValueStr));
 
             QStandardItem *sigmaItem = new QStandardItem(sigmaValueStr);
-            if (sigmaValue > limitValue) {
+            if (std::abs(sigmaValue) > limitValue) {
                 sigmaItem->setData(QColor(Qt::red), Qt::BackgroundRole);
             }
             m_tableModel->setItem(rowIndex, 5, sigmaItem);
@@ -713,4 +713,15 @@ void Processor::changePointEdit(QString value)
         }
         currentX += width;
     }
+}
+
+void Processor::clearData()
+{
+    m_sceneDrawer->clearScene();
+    delete m_scene;
+
+    m_scene = new QGraphicsScene(this);
+    m_sceneDrawer->setScene(m_scene);
+    m_view->setScene(m_scene);
+    updateScene();
 }

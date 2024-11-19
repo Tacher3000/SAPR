@@ -30,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     QAction *clearAction = new QAction("Очистить", this);
     connect(clearAction, &QAction::triggered, m_preprocessor, &Preprocessor::clearData);
+    connect(clearAction, &QAction::triggered, m_processor, &Processor::clearData);
+    connect(clearAction, &QAction::triggered, m_postProcessor, &PostProcessor::clearData);
     mainMenu->addAction(clearAction);
 
     mainMenu->addSeparator();
@@ -290,7 +292,7 @@ void MainWindow::saveReportPDF(const QString &filePath)
             double limitValue = m_processor->getTableModel()->data(m_processor->getTableModel()->index(row, 6)).toDouble();
             QString text = m_processor->getTableModel()->data(m_processor->getTableModel()->index(row, col)).toString();
 
-            if (sigmaValue > limitValue) {
+            if (std::abs(sigmaValue) > limitValue) {
                 QColor lightRed(255, 100, 100, 150);
                 painter.fillRect(rect, lightRed);
             }

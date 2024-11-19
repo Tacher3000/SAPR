@@ -42,6 +42,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/positivedoubledelegate.h src/positivedoubledelegate.cpp
         src/movablelineitem.h src/movablelineitem.cpp
         src/movablelineview.h src/movablelineview.cpp
+        src/rotatingpixmapitem.h src/rotatingpixmapitem.cpp
+        resources/resources.qrc
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET SAPR APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

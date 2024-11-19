@@ -188,7 +188,7 @@ void SceneDrawer::drawSignatureFocusedlLoad(const SizeTableModel *sizeModel, con
     }
 }
 
-bool doesIntersect(const QRectF& newRect, const QList<QGraphicsItem*>& existingItems) {
+bool SceneDrawer::doesIntersect(const QRectF& newRect, const QList<QGraphicsItem*>& existingItems) {
     for (QGraphicsItem* item : existingItems) {
         if (item->sceneBoundingRect().intersects(newRect)) {
             return true;
@@ -197,7 +197,7 @@ bool doesIntersect(const QRectF& newRect, const QList<QGraphicsItem*>& existingI
     return false;
 }
 
-void addRotatingImages(QGraphicsScene* scene, int imageCount, const QStringList& imagePaths, const QSizeF& sceneSize) {
+void SceneDrawer::addRotatingImages(QGraphicsScene* scene, int imageCount, const QStringList& imagePaths, const QSizeF& sceneSize) {
     scene->clear();
     scene->setSceneRect(0, 0, sceneSize.width(), sceneSize.height());
 
@@ -270,9 +270,8 @@ void SceneDrawer::drawPricol(const SizeTableModel *sizeModel)
         }
     }
     if(test1 && test2 && test3){
-        QStringList imagePaths = { "C:\\Users\\pyanc\\Downloads\\pngimg.com - spinner_PNG99779.png", "C:\\Users\\pyanc\\Downloads\\pngimg.com - spinner_PNG99786.png",
-            "C:\\Users\\pyanc\\Downloads\\pngimg.com - spinner_PNG99781.png"/*, "C:\\Users\\pyanc\\Downloads\\pngimg.com - spinner_PNG99780.png"*/,
-            "C:\\Users\\pyanc\\Downloads\\pngimg.com - spinner_PNG99785.png"};
+        QStringList imagePaths = { ":/img/pngimg.com - spinner_PNG99779.png", ":/img/pngimg.com - spinner_PNG99781.png",
+            ":/img/pngimg.com - spinner_PNG99785.png", ":/img/pngimg.com - spinner_PNG99786.png"};
         QSizeF sceneSize(80000, 60000);
         int imageCount = 1000;
 
@@ -798,7 +797,7 @@ void SceneDrawer::drawUx(Processor* processor, const SizeTableModel* sizeModel, 
         maxEleventUx /= 2;
         ++ratio;
     }
-    const QString NxString = "Ux [qL^2/EA]";
+    const QString NxString = "Ux [qL^2/(EA)]";
     QGraphicsTextItem *text = m_scene->addText(NxString);
     text->setPos(-80, 435);
 

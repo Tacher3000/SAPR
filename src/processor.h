@@ -67,6 +67,7 @@ public:
     const double maxGlobalX();
     void updateScene();
     void moveLineTo(const QPointF &pos);
+    void clearData();
 public slots:
     void toPreprocessor();
     void toPostprocessor();

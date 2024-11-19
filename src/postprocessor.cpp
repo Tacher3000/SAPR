@@ -76,3 +76,14 @@ QGraphicsScene *PostProcessor::getScene() const
 {
     return m_scene;
 }
+
+
+void PostProcessor::clearData()
+{
+    m_sceneDrawer->clearScene();
+    delete m_scene;
+
+    m_scene = new QGraphicsScene(this);
+    m_sceneDrawer->setScene(m_scene);
+    m_view->setScene(m_scene);
+}
