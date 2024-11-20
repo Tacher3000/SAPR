@@ -46,17 +46,17 @@ void PostProcessor::draw(Processor *processor, const SizeTableModel *sizeModel,
 
     if (settings->value("checkBoxWidget", false).toBool()) {
         if (settings->value("checkBoxLengthKernelt", false).toBool()) m_sceneDrawer->drawLengthKernel(sizeModel);
-        if (settings->value("checkBoxFocusedLoad", false).toBool())m_sceneDrawer->drawFocusedLoad(sizeModel, nodeModel);
         if (settings->value("checkBoxKernelN", false).toBool())m_sceneDrawer->drawKernelN(sizeModel, maxHeight);
         if (settings->value("checkBoxKernel", false).toBool())m_sceneDrawer->drawKernelWidget(sizeModel);
         if (settings->value("checkBoxDistributedLoad", false).toBool())m_sceneDrawer->drawDistributedLoadWidget(sizeModel);
+        if (settings->value("checkBoxFocusedLoad", false).toBool())m_sceneDrawer->drawFocusedLoad(sizeModel, nodeModel);
         if (settings->value("checkBoxSupport", false).toBool())m_sceneDrawer->drawSupport(sizeModel, nodeModel);
         if (settings->value("checkBoxNodeN", false).toBool())m_sceneDrawer->drawNode(sizeModel, maxHeight);
     } else {
         if (settings->value("checkBoxLengthKernelt", false).toBool()) m_sceneDrawer->drawLengthKernel(sizeModel);
-        if (settings->value("checkBoxFocusedLoad", false).toBool()) m_sceneDrawer->drawFocusedLoad(sizeModel, nodeModel);
         if (settings->value("checkBoxKernelN", false).toBool())m_sceneDrawer->drawKernelN(sizeModel, maxHeight);
         if (settings->value("checkBoxDistributedLoad", false).toBool())m_sceneDrawer->drawDistributedLoad(sizeModel);
+        if (settings->value("checkBoxFocusedLoad", false).toBool()) m_sceneDrawer->drawFocusedLoad(sizeModel, nodeModel);
         if (settings->value("checkBoxKernel", false).toBool())m_sceneDrawer->drawKernel(sizeModel);
         if (settings->value("checkBoxSupport", false).toBool())m_sceneDrawer->drawSupport(sizeModel, nodeModel);
         if (settings->value("checkBoxNodeN", false).toBool())m_sceneDrawer->drawNode(sizeModel, maxHeight);

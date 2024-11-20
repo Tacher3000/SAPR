@@ -22,8 +22,17 @@ void SceneDrawer::drawLengthKernel(const SizeTableModel *sizeModel) {
     qreal currentX = 0;
     int rowCount = sizeModel->rowCount();
 
+    double maxHeight = sizeModel->getMaxSection() * RECT_HEIGHT_MULTIPLIER;
+
+    if(maxHeight < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+        maxHeight = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+    }
+
+    if(maxHeight > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+        maxHeight = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+    }
     qreal stripeYStart = 0;
-    qreal stripeYEnd = stripeYStart + sizeModel->getMaxSection() * RECT_HEIGHT_MULTIPLIER / 2 + RECT_HEIGHT_MULTIPLIER;
+    qreal stripeYEnd = stripeYStart + maxHeight / 2 + RECT_HEIGHT_MULTIPLIER;
 
     QLineF stripeLine(0, stripeYStart, 0, stripeYEnd);
     m_scene->addLine(stripeLine, QPen(Qt::black));
@@ -36,8 +45,11 @@ void SceneDrawer::drawLengthKernel(const SizeTableModel *sizeModel) {
             continue;
         }
 
-        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
-            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        if(height > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
+        if(height < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
         }
 
         qreal stripeX = currentX + width;
@@ -90,21 +102,24 @@ void SceneDrawer::drawSignatureSectionAndModulusValue(const SizeTableModel *size
         if(width == 0 || height == 0){
             continue;
         }
-        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
-            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        if(height > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
+        if(height < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
         }
 
         qreal centerX = currentX + width / 2;
 
         if (settings->value("checkBoxSignatureSection", false).toBool() && settings->value("checkBoxSignatureModulusValue", false).toBool()){
-            QGraphicsTextItem* textItem = new QGraphicsTextItem(QString::number(modulusValue) + "E, " + QString::number(sizeModel->data(sizeModel->index(row, 1)).toInt()) + "A");
+            QGraphicsTextItem* textItem = new QGraphicsTextItem(QString::number(modulusValue) + "E, " + QString::number(sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble()) + "A");
             QFont font;
             font.setPointSize(10);
             textItem->setFont(font);
             textItem->setPos(centerX - textItem->boundingRect().width() / 2, -height / 2 - 21);
             m_scene->addItem(textItem);
         }else if(settings->value("checkBoxSignatureSection", false).toBool() && !settings->value("checkBoxSignatureModulusValue", false).toBool()){
-            QGraphicsTextItem* textItem = new QGraphicsTextItem(QString::number(sizeModel->data(sizeModel->index(row, 1)).toInt()) + "A");
+            QGraphicsTextItem* textItem = new QGraphicsTextItem(QString::number(sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble()) + "A");
             QFont font;
             font.setPointSize(10);
             textItem->setFont(font);
@@ -138,7 +153,12 @@ void SceneDrawer::drawSignatureDistributedLoad(const SizeTableModel *sizeModel)
         if(width == 0 || height == 0){
             continue;
         }
-
+        if(height > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
+        if(height < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
         if (direction != 0) {
             qreal centerX = currentX + width / 2;
             qreal arrowY = 0;
@@ -294,10 +314,12 @@ void SceneDrawer::drawKernel(const SizeTableModel* sizeModel) {
         if(width == 0 || height == 0){
             continue;
         }
-        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
-            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        if(height > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
         }
-
+        if(height < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
         QString kernelString = settings->value("kernelColor", QColor(Qt::black).name()).toString();
         QColor kernelColor(kernelString);
 
@@ -319,10 +341,12 @@ void SceneDrawer::drawKernelWidget(const SizeTableModel* sizeModel) {
         if(width == 0 || height == 0) {
             continue;
         }
-        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
-            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        if(height > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
         }
-
+        if(height < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
         QTextEdit* textField = new QTextEdit();
         textField->setFixedSize(width, height);
         textField->setText(QString("Row %1").arg(row + 1));
@@ -345,16 +369,27 @@ void SceneDrawer::drawNode(const SizeTableModel* sizeModel, qreal maxHeight) {
     QColor nodeColorN(nodeNString);
 
     qreal currentX = 0;
+
+    if(maxHeight < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+        maxHeight = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+    }
+
+    if(maxHeight > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+        maxHeight = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+    }
+
     for (int row = 0; row < sizeModel->rowCount(); ++row) {
         double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
         double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
         if(width == 0 || height == 0){
             continue;
         }
-        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
-            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        if(height > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
         }
-
+        if(height < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
         qreal numberX = currentX;
         qreal numberY = maxHeight / 2 + 10;
 
@@ -390,6 +425,15 @@ void SceneDrawer::drawKernelN(const SizeTableModel* sizeModel, qreal maxHeight) 
     QColor kernelColorN(kernelNString);
 
     qreal currentX = 0;
+
+    if(maxHeight < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+        maxHeight = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+    }
+
+    if(maxHeight > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+        maxHeight = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+    }
+
     for (int row = 0; row < sizeModel->rowCount() - 1; ++row) {
         double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
         double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
@@ -398,10 +442,12 @@ void SceneDrawer::drawKernelN(const SizeTableModel* sizeModel, qreal maxHeight) 
         if(width == 0 || height == 0){
             continue;
         }
-        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
-            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        if(height > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
         }
-
+        if(height < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
         qreal centerX = currentX + width / 2;
         qreal centerY = 0;
 
@@ -443,10 +489,12 @@ void SceneDrawer::drawDistributedLoad(const SizeTableModel* sizeModel) {
         if(width == 0 || height == 0){
             continue;
         }
-        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
-            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        if(height > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
         }
-
+        if(height < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
         if (direction != 0) {
             QString distributedLoadString = settings->value("distributedLoadColor", QColor(Qt::black).name()).toString();
             QColor distributedLoadColor(distributedLoadString);
@@ -493,9 +541,13 @@ void SceneDrawer::drawDistributedLoadWidget(const SizeTableModel* sizeModel) {
         if(width == 0 || height == 0) {
             continue;
         }
-        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
-            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        if(height > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
         }
+        if(height < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
+
         if (direction != 0) {
             QProgressBar* progressBar = new QProgressBar();
             progressBar->setRange(0, 100);
@@ -545,8 +597,11 @@ void SceneDrawer::drawSupport(const SizeTableModel* sizeModel, const NodeModel* 
         double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
         QString support = nodeModel->data(nodeModel->index(row, 1)).toString();
 
-        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
-            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        if(height > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
+        if(height < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
         }
 
         if(height != 0){
@@ -654,10 +709,12 @@ void SceneDrawer::drawKernelStripes(const SizeTableModel* sizeModel) {
         if (width == 0 || height == 0) {
             continue;
         }
-        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
-            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        if(height > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
         }
-
+        if(height < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
 
         qreal stripeX = currentX + width;
 
@@ -700,10 +757,12 @@ void SceneDrawer::drawNx(const SizeTableModel* sizeModel, const QVector<double>*
         if (width == 0 || height == 0) {
             continue;
         }
-        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
-            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        if(height > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
         }
-
+        if(height < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
 
 
         qreal pointX1 = currentX;
@@ -778,10 +837,12 @@ void SceneDrawer::drawUx(Processor* processor, const SizeTableModel* sizeModel, 
         if (width == 0 || height == 0) {
             continue;
         }
-        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
-            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        if(height > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
         }
-
+        if(height < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
         double step = 0.005;
         for (int i = 0; i * step < width / RECT_WIDTH_MULTIPLIER; ++i) {
             double uxValue = processor->calculationUxAtPoint(row, step * i);
@@ -910,10 +971,12 @@ void SceneDrawer::drawSigmax(const SizeTableModel *sizeModel, const QVector<doub
         if (width == 0 || height == 0) {
             continue;
         }
-        if(height > 5 * RECT_HEIGHT_MULTIPLIER){
-            height = 5 * RECT_HEIGHT_MULTIPLIER;
+        if(height > MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MAX_HEIGHT * RECT_HEIGHT_MULTIPLIER;
         }
-
+        if(height < MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER){
+            height = MIN_HEIGHT * RECT_HEIGHT_MULTIPLIER;
+        }
 
 
         qreal pointX1 = currentX;

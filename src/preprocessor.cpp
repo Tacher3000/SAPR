@@ -127,10 +127,10 @@ void Preprocessor::updateScene()
         if (settings->value("checkBoxSignatureDistributedLoad", false).toBool()) m_sceneDrawer->drawSignatureDistributedLoad(m_sizeModel);
         if (settings->value("checkBoxSignatureFocusedlLoad", false).toBool()) m_sceneDrawer->drawSignatureFocusedlLoad(m_sizeModel, m_nodeModel);
         if (settings->value("checkBoxLengthKernelt", false).toBool()) m_sceneDrawer->drawLengthKernel(m_sizeModel);
-        if (settings->value("checkBoxFocusedLoad", false).toBool()) m_sceneDrawer->drawFocusedLoad(m_sizeModel, m_nodeModel);
         if (settings->value("checkBoxKernelN", false).toBool()) m_sceneDrawer->drawKernelN(m_sizeModel, maxHeight);
         if (settings->value("checkBoxKernel", false).toBool()) m_sceneDrawer->drawKernelWidget(m_sizeModel);
         if (settings->value("checkBoxDistributedLoad", false).toBool()) m_sceneDrawer->drawDistributedLoadWidget(m_sizeModel);
+        if (settings->value("checkBoxFocusedLoad", false).toBool()) m_sceneDrawer->drawFocusedLoad(m_sizeModel, m_nodeModel);
         if (settings->value("checkBoxSupport", false).toBool()) m_sceneDrawer->drawSupport(m_sizeModel, m_nodeModel);
         if (settings->value("checkBoxNodeN", false).toBool()) m_sceneDrawer->drawNode(m_sizeModel, maxHeight);
     } else {
@@ -138,9 +138,9 @@ void Preprocessor::updateScene()
         if (settings->value("checkBoxSignatureDistributedLoad", false).toBool()) m_sceneDrawer->drawSignatureDistributedLoad(m_sizeModel);
         if (settings->value("checkBoxSignatureFocusedlLoad", false).toBool()) m_sceneDrawer->drawSignatureFocusedlLoad(m_sizeModel, m_nodeModel);
         if (settings->value("checkBoxLengthKernelt", false).toBool()) m_sceneDrawer->drawLengthKernel(m_sizeModel);
-        if (settings->value("checkBoxFocusedLoad", false).toBool()) m_sceneDrawer->drawFocusedLoad(m_sizeModel, m_nodeModel);
         if (settings->value("checkBoxKernelN", false).toBool()) m_sceneDrawer->drawKernelN(m_sizeModel, maxHeight);
         if (settings->value("checkBoxDistributedLoad", false).toBool()) m_sceneDrawer->drawDistributedLoad(m_sizeModel);
+        if (settings->value("checkBoxFocusedLoad", false).toBool()) m_sceneDrawer->drawFocusedLoad(m_sizeModel, m_nodeModel);
         if (settings->value("checkBoxKernel", false).toBool()) m_sceneDrawer->drawKernel(m_sizeModel);
         if (settings->value("checkBoxSupport", false).toBool()) m_sceneDrawer->drawSupport(m_sizeModel, m_nodeModel);
         if (settings->value("checkBoxNodeN", false).toBool()) m_sceneDrawer->drawNode(m_sizeModel, maxHeight);
@@ -264,8 +264,8 @@ void Preprocessor::toProcessor()
     if(m_nodeModel->data(m_nodeModel->index(0, 1)).toBool() || m_nodeModel->data(m_nodeModel->index(m_nodeModel->rowCount() - 1, 1)).toBool()){
         if(m_sizeModel->getModulusValue().toBool()){
             for(int row = 0; row < m_sizeModel->rowCount() - 1; ++row){
-                double width = m_sizeModel->data(m_sizeModel->index(row, 0)).toDouble();
-                double height = m_sizeModel->data(m_sizeModel->index(row, 1)).toDouble();
+                double width = m_sizeModel->data(m_sizeModel->index(row, 0)).toString().replace(',', '.').toDouble();
+                double height = m_sizeModel->data(m_sizeModel->index(row, 1)).toString().replace(',', '.').toDouble();
                 if(width == 0 || height == 0) {
                     return;
                 }

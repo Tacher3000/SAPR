@@ -29,6 +29,12 @@ class Processor;
 const int RECT_WIDTH_MULTIPLIER = 100;
 const int RECT_HEIGHT_MULTIPLIER = 50;
 
+const int MIN_WIDTH = 1;
+const int MAX_WIDTH = 5;
+
+const int MIN_HEIGHT = 1;
+const int MAX_HEIGHT = 5;
+
 class SceneDrawer : public QObject {
     Q_OBJECT
 
