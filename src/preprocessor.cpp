@@ -183,8 +183,8 @@ void Preprocessor::saveModels(const QString &filePath) {
             }
         }
 
-        QVariant modulusValue = m_sizeModel->getModulusValue();
-        out << modulusValue;
+        // QVariant modulusValue = m_sizeModel->getModulusValue();
+        // out << modulusValue;
 
         int nodeRowCount = m_nodeModel->rowCount();
         int nodeColCount = m_nodeModel->columnCount();
@@ -221,9 +221,9 @@ void Preprocessor::loadModels(const QString &filePath) {
             }
         }
 
-        QVariant modulusValue;
-        in >> modulusValue;
-        m_sizeModel->setModulusValue(modulusValue);
+        // QVariant modulusValue;
+        // in >> modulusValue;
+        // m_sizeModel->setModulusValue(modulusValue);
 
         int nodeRowCount, nodeColCount;
         in >> nodeRowCount >> nodeColCount;
@@ -262,7 +262,7 @@ void Preprocessor::clearData()
 void Preprocessor::toProcessor()
 {
     if(m_nodeModel->data(m_nodeModel->index(0, 1)).toBool() || m_nodeModel->data(m_nodeModel->index(m_nodeModel->rowCount() - 1, 1)).toBool()){
-        if(m_sizeModel->getModulusValue().toBool()){
+        // if(m_sizeModel->getModulusValue().toBool()){
             for(int row = 0; row < m_sizeModel->rowCount() - 1; ++row){
                 double width = m_sizeModel->data(m_sizeModel->index(row, 0)).toString().replace(',', '.').toDouble();
                 double height = m_sizeModel->data(m_sizeModel->index(row, 1)).toString().replace(',', '.').toDouble();
@@ -271,7 +271,7 @@ void Preprocessor::toProcessor()
                 }
             }
             emit clickedToProcessor();
-        }
+        // }
     }
 }
 

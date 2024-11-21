@@ -20,34 +20,17 @@ bool SizeTableModel::setData(const QModelIndex& index, const QVariant& value, in
 {
     if (index.isValid() && nRole == Qt::EditRole) {
         QVariant oldValue = m_hash.value(index, QVariant(""));
-
-        if (index.column() == 4) {
-            m_modulusValue = value;
-            for (int row = 0; row < m_nRows - 1; ++row) {
-                QModelIndex modIndex = this->index(row, 4);
-                m_hash[modIndex] = value;
-                emit dataChanged(modIndex, modIndex);
-            }
-        } else {
-            m_hash[index] = value;
-            emit dataChanged(index, index);
-        }
+        m_hash[index] = value;
+        emit dataChanged(index, index);
 
         if (index.row() == m_nRows - 1 && !value.toString().isEmpty() && oldValue.toString().isEmpty()) {
             beginInsertRows(QModelIndex(), m_nRows, m_nRows);
             ++m_nRows;
-
-            if (!m_modulusValue.toString().isEmpty()) {
-                QModelIndex modIndex = this->index(m_nRows - 2, 4);
-                m_hash[modIndex] = m_modulusValue;
-            }
-
             endInsertRows();
         }
         if (index.row() == m_nRows - 2 && value.toString().isEmpty()) {
             bool areFirstThreeColumnsEmpty = true;
-            // Проверяем только первые три столбца (индексы 0, 1, 2)
-            for (int col = 0; col < 4; ++col) {
+            for (int col = 0; col < 6; ++col) {
                 QModelIndex checkIndex = this->index(index.row(), col);
                 if (!m_hash.value(checkIndex, QVariant("")).toString().isEmpty()) {
                     areFirstThreeColumnsEmpty = false;
@@ -55,7 +38,6 @@ bool SizeTableModel::setData(const QModelIndex& index, const QVariant& value, in
                 }
             }
 
-            // Удаляем строку только если первые три столбца пусты
             if (areFirstThreeColumnsEmpty) {
                 beginRemoveRows(QModelIndex(), m_nRows - 1, m_nRows - 1);
                 --m_nRows;
@@ -179,16 +161,16 @@ bool SizeTableModel::isEmpty() const {
     return true;
 }
 
-QVariant SizeTableModel::getModulusValue() const {
-    return m_modulusValue;
-}
+// QVariant SizeTableModel::getModulusValue() const {
+//     return m_modulusValue;
+// }
 
-void SizeTableModel::setModulusValue(const QVariant &value) {
-    m_modulusValue = value;
+// void SizeTableModel::setModulusValue(const QVariant &value) {
+//     m_modulusValue = value;
 
-    for (int row = 0; row < m_nRows - 1; ++row) {
-        QModelIndex modIndex = this->index(row, 4);
-        m_hash[modIndex] = value;
-        emit dataChanged(modIndex, modIndex);
-    }
-}
+//     for (int row = 0; row < m_nRows - 1; ++row) {
+//         QModelIndex modIndex = this->index(row, 4);
+//         m_hash[modIndex] = value;
+//         emit dataChanged(modIndex, modIndex);
+//     }
+// }

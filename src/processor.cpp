@@ -242,12 +242,12 @@ const void Processor::fillTable()
     double cumulativeWidth = 0;
     double globalCoordinate = 0;
     double globalCoordinateRepeated = 0;
-    double modulusValue = m_sizeModel->getModulusValue().toDouble();
 
     while (true) {
         double width = m_sizeModel->data(m_sizeModel->index(deltaIndex, 0)).toString().replace(',', '.').toDouble();
         double height = m_sizeModel->data(m_sizeModel->index(deltaIndex, 1)).toString().replace(',', '.').toDouble();
         double loadDirection = m_sizeModel->data(m_sizeModel->index(deltaIndex, 2)).toString().replace(',', '.').toDouble();
+        double modulusValue = m_sizeModel->data(m_sizeModel->index(deltaIndex, 4)).toString().replace(',', '.').toDouble();
         QString limitValueStr  = m_sizeModel->data(m_sizeModel->index(deltaIndex, 3)).toString();
         limitValueStr.replace(",", ".");
         double limitValue = limitValueStr.toDouble();
@@ -308,7 +308,7 @@ const double Processor::calculationUxAtPoint(int number, double x)
     double width = m_sizeModel->data(m_sizeModel->index(number, 0)).toString().replace(',', '.').toDouble();
     double height = m_sizeModel->data(m_sizeModel->index(number, 1)).toString().replace(',', '.').toDouble();
     double loadDirection = m_sizeModel->data(m_sizeModel->index(number, 2)).toString().replace(',', '.').toDouble();
-    double modulusValue = m_sizeModel->getModulusValue().toString().replace(',', '.').toDouble();
+    double modulusValue = m_sizeModel->data(m_sizeModel->index(number, 4)).toString().replace(',', '.').toDouble();
     return m_vectorDelta[number] + (x / width) * (m_vectorDelta[number + 1] - m_vectorDelta[number]) +
            (loadDirection * width * x) / (2 * modulusValue * height) * (1 - x / width);
 }
@@ -337,7 +337,7 @@ const double Processor::calculationUxAtGlobalPoint(double globalX)
     double width = m_sizeModel->data(m_sizeModel->index(number, 0)).toString().replace(',', '.').toDouble();
     double height = m_sizeModel->data(m_sizeModel->index(number, 1)).toString().replace(',', '.').toDouble();
     double loadDirection = m_sizeModel->data(m_sizeModel->index(number, 2)).toString().replace(',', '.').toDouble();
-    double modulusValue = m_sizeModel->getModulusValue().toDouble();
+    double modulusValue = m_sizeModel->data(m_sizeModel->index(number, 4)).toString().replace(',', '.').toDouble();
 
     return (m_vectorDelta[number] + (localX / width) * (m_vectorDelta[number + 1] - m_vectorDelta[number]) +
             (loadDirection * width * localX) / (2 * modulusValue * height) * (1 - localX / width));
@@ -349,7 +349,7 @@ const double Processor::calculationNxAtPoint(int number, double x)
     double width = m_sizeModel->data(m_sizeModel->index(number, 0)).toString().replace(',', '.').toDouble();
     double height = m_sizeModel->data(m_sizeModel->index(number, 1)).toString().replace(',', '.').toDouble();
     double loadDirection = m_sizeModel->data(m_sizeModel->index(number, 2)).toString().replace(',', '.').toDouble();
-    double modulusValue = m_sizeModel->getModulusValue().toDouble();
+    double modulusValue = m_sizeModel->data(m_sizeModel->index(number, 4)).toString().replace(',', '.').toDouble();
 
     return modulusValue * height / width * (m_vectorDelta[number + 1] - m_vectorDelta[number]) +
            loadDirection * width * (1.0 - 2.0 * x / width) / 2.0;
@@ -360,7 +360,7 @@ const double Processor::calculationSigmaxAtPoint(int number, double x)
     double width = m_sizeModel->data(m_sizeModel->index(number, 0)).toString().replace(',', '.').toDouble();
     double height = m_sizeModel->data(m_sizeModel->index(number, 1)).toString().replace(',', '.').toDouble();
     double loadDirection = m_sizeModel->data(m_sizeModel->index(number, 2)).toString().replace(',', '.').toDouble();
-    double modulusValue = m_sizeModel->getModulusValue().toString().replace(',', '.').toDouble();
+    double modulusValue = m_sizeModel->data(m_sizeModel->index(number, 4)).toString().replace(',', '.').toDouble();
 
     return (modulusValue * height / width * (m_vectorDelta[number + 1] - m_vectorDelta[number]) +
             loadDirection * width * (1.0 - 2.0 * x / width) / 2.0) / height;
@@ -412,7 +412,6 @@ void Processor::setSizeModel(const SizeTableModel *sizeModel) {
 void Processor::calculate() {
 
     // m_textEdit->clear();
-    double modulusValue = m_sizeModel->getModulusValue().toDouble();
 
     int nSizeMatrix = m_nodeModel->rowCount();
     m_matrixA.resize(nSizeMatrix);
@@ -430,6 +429,8 @@ void Processor::calculate() {
     for (int i = 0; i < nSizeMatrix - 1; ++i) {
         double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toString().replace(',', '.').toDouble();
         double height = m_sizeModel->data(m_sizeModel->index(i, 1)).toString().replace(',', '.').toDouble();
+        double modulusValue = m_sizeModel->data(m_sizeModel->index(i, 4)).toString().replace(',', '.').toDouble();
+
         if (i == 0 && supportLeft.isEmpty()) {
             m_matrixA[i][i] = height / width * modulusValue;
             m_matrixA[i + 1][i] = -(height / width * modulusValue);
@@ -532,6 +533,8 @@ void Processor::calculate() {
         double width = m_sizeModel->data(m_sizeModel->index(i / 2, 0)).toString().replace(',', '.').toDouble();
         double height = m_sizeModel->data(m_sizeModel->index(i / 2, 1)).toString().replace(',', '.').toDouble();
         double loadDirection = m_sizeModel->data(m_sizeModel->index(i / 2, 2)).toString().replace(',', '.').toDouble();
+        double modulusValue = m_sizeModel->data(m_sizeModel->index(i / 2, 4)).toString().replace(',', '.').toDouble();
+
         double nxValue;
 
         if (i % 2 == 0) {
@@ -558,6 +561,8 @@ void Processor::calculate() {
         double width = m_sizeModel->data(m_sizeModel->index(i / 2, 0)).toString().replace(',', '.').toDouble();
         double height = m_sizeModel->data(m_sizeModel->index(i / 2, 1)).toString().replace(',', '.').toDouble();
         double loadDirection = m_sizeModel->data(m_sizeModel->index(i / 2, 2)).toString().replace(',', '.').toDouble();
+        double modulusValue = m_sizeModel->data(m_sizeModel->index(i / 2, 4)).toString().replace(',', '.').toDouble();
+
         double uxValue;
         if (i % 2 == 0) {
             uxValue = m_vectorDelta[k] + 0 + 0;

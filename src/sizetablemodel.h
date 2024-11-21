@@ -23,13 +23,13 @@ public:
     void clearData();
     bool removeRows(int position, int rows, const QModelIndex &parent) override;
     bool isEmpty() const;
-    void setModulusValue(const QVariant &value);
-    QVariant getModulusValue() const;
+    // void setModulusValue(const QVariant &value);
+    // QVariant getModulusValue() const;
 private:
     int m_nRows;
     int m_nColumns;
     QHash<QModelIndex, QVariant> m_hash;
-    QVariant m_modulusValue;
+    // QVariant m_modulusValue;
 };
 
 #endif // SIZETABLEMODEL_H

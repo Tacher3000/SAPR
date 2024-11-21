@@ -97,7 +97,7 @@ void SceneDrawer::drawSignatureSectionAndModulusValue(const SizeTableModel *size
     for (int row = 0; row < sizeModel->rowCount() - 1; ++row) {
         double width = sizeModel->data(sizeModel->index(row, 0)).toString().replace(',', '.').toDouble() * RECT_WIDTH_MULTIPLIER;
         double height = sizeModel->data(sizeModel->index(row, 1)).toString().replace(',', '.').toDouble() * RECT_HEIGHT_MULTIPLIER;
-        int modulusValue = sizeModel->getModulusValue().toInt();
+        int modulusValue = sizeModel->data(sizeModel->index(row, 4)).toString().replace(',', '.').toDouble();
 
         if(width == 0 || height == 0){
             continue;
