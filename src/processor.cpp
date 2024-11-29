@@ -26,16 +26,36 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     connect(m_pointEdit, &QLineEdit::textEdited, this, &Processor::changePointEdit);
     connect(m_pointEdit, &QLineEdit::textEdited, [this](const QString &text) {
         bool ok;
-        qreal x = text.toDouble(&ok);
+        double x = text.toDouble(&ok);
+        double currentX = 0;
+        double grafX = 0;
         if (ok) {
-            if(x > maxGlobalX()){
+            if(x > maxRealX()){
                 m_view->setLinePosition(QString::number(maxGlobalX()));
                 return;
             }else if(x < 0){
                 m_view->setLinePosition("0");
                 return;
             }
-            m_view->setLinePosition(text);
+            // for (int i = 0; i < m_sizeModel->rowCount(); ++i) {
+            //     double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toString().replace(',', '.').toDouble();
+            //     double expansionСoefficient = 1;
+            //     if(width < MIN_WIDTH){
+            //         expansionСoefficient = width / MIN_WIDTH;
+            //         // width = MIN_WIDTH;
+            //     }
+            //     if(width > MAX_WIDTH){
+            //         expansionСoefficient = width / MAX_WIDTH;
+            //         // width = MAX_WIDTH;
+            //     }
+
+            //     if(x <= currentX + width){
+                    m_view->setLinePosition(text);
+            //         return;
+            //     }
+            //     grafX += x * expansionСoefficient;
+            //     currentX += width;
+            // }
         }
     });
     m_nxInPoint = new QLabel("Nx:", this);
@@ -150,9 +170,30 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     m_view->setFrameStyle(0);
     m_view->setScene(m_scene);
     connect(m_view, &MovableLineView::lineMoved, [this](const QString &x){
-        changePointEdit(x);
-        m_pointEdit->setText(QString::number(x.toDouble(), 'f', 4).remove(QRegularExpression("\\.?0+$")));
+        double currentX = 0;
+        double localX = 0;
+        double realX = 0;
+        for (int i = 0; i < m_sizeModel->rowCount(); ++i) {
+            double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toString().replace(',', '.').toDouble();
+            double expansionСoefficient = 1;
+            if(width < MIN_WIDTH){
+                expansionСoefficient = width / MIN_WIDTH;
+                width = MIN_WIDTH;
+            }
+            if(width > MAX_WIDTH){
+                expansionСoefficient = width / MAX_WIDTH;
+                width = MAX_WIDTH;
+            }
+            localX = x.toDouble() - currentX;
 
+            if(localX <= width){
+                changePointEdit(QString::number(localX * expansionСoefficient + realX));
+                m_pointEdit->setText(QString::number(localX * expansionСoefficient + realX, 'f', 4).remove(QRegularExpression("\\.?0+$")));
+                return;
+            }
+            realX += (width * expansionСoefficient);
+            currentX += width;
+        }
     });
 
     QHBoxLayout *midleLayout = new QHBoxLayout();
@@ -164,6 +205,10 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     layout->addLayout(midleLayout);
     layout->addLayout(buttonLayout);
     setLayout(layout);
+}
+
+void Processor::test(const QString &x){
+
 }
 
 void Processor::updateScene()
@@ -309,6 +354,7 @@ const double Processor::calculationUxAtPoint(int number, double x)
     double height = m_sizeModel->data(m_sizeModel->index(number, 1)).toString().replace(',', '.').toDouble();
     double loadDirection = m_sizeModel->data(m_sizeModel->index(number, 2)).toString().replace(',', '.').toDouble();
     double modulusValue = m_sizeModel->data(m_sizeModel->index(number, 4)).toString().replace(',', '.').toDouble();
+
     return m_vectorDelta[number] + (x / width) * (m_vectorDelta[number + 1] - m_vectorDelta[number]) +
            (loadDirection * width * x) / (2 * modulusValue * height) * (1 - x / width);
 }
@@ -368,12 +414,28 @@ const double Processor::calculationSigmaxAtPoint(int number, double x)
 
 const double Processor::maxGlobalX()
 {
-    double currentX = 0.0;
-    for (int i = 0; i < m_sizeModel->rowCount(); ++i) {
+    double maxX = 0;
+    for (int i = 0; i < m_sizeModel->rowCount() - 1; ++i) {
         double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toString().replace(',', '.').toDouble();
-        currentX += width;
+        if(width < MIN_WIDTH){
+            width = MIN_WIDTH;
+        }
+        if(width > MAX_WIDTH){
+            width = MAX_WIDTH;
+        }
+        maxX += width;
     }
-    return currentX;
+    return maxX;
+}
+
+const double Processor::maxRealX()
+{
+    double maxX = 0;
+    for (int i = 0; i < m_sizeModel->rowCount() - 1; ++i) {
+        double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toString().replace(',', '.').toDouble();
+        maxX += width;
+    }
+    return maxX;
 }
 
 QStandardItemModel *Processor::getTableModel() const
@@ -646,20 +708,33 @@ void Processor::changePointEdit(QString value)
 {
     value.replace(",", ".");
 
-    if(value.toDouble() > maxGlobalX()){
-        m_pointEdit->setText(QString::number(maxGlobalX()));
+
+    if(value.toDouble() > maxRealX()){
+        m_pointEdit->setText(QString::number(maxRealX()));
         return;
     }else if(value.toDouble() < 0){
         m_pointEdit->setText("0");
         return;
     }
 
+
     int number = -1;
     double localX = 0.0;
     double currentX = 0.0;
 
+    // return;
     for (int i = 0; i < m_sizeModel->rowCount(); ++i) {
-        double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toDouble();
+        double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toString().replace(',', '.').toDouble();
+        // double expansionСoefficient = 1;
+
+        // if(width < MIN_WIDTH){
+        //     expansionСoefficient = width / MIN_WIDTH;
+        //     width = MIN_WIDTH;
+        // }
+        // if(width > MAX_WIDTH){
+        //     expansionСoefficient = width / MAX_WIDTH;
+        //     width = MAX_WIDTH;
+        // }
 
         if (value.toDouble() < currentX + width) {
             number = i;
@@ -680,7 +755,7 @@ void Processor::changePointEdit(QString value)
         }else if(value.toDouble() == currentX + width){
             number = i;
             localX = value.toDouble() - currentX;
-            if(value.toDouble() == maxGlobalX()){
+            if(value.toDouble() == maxRealX()){
                 QString nxValueStr = QString::number(calculationNxAtPoint(number, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
                 QString uxValueStr = QString::number(calculationUxAtPoint(number, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
                 QString sigmaValueStr = QString::number(calculationSigmaxAtPoint(number, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
@@ -702,9 +777,9 @@ void Processor::changePointEdit(QString value)
             if (uxValueStr1 == "-0") uxValueStr1 = "0";
             if (sigmaValueStr1 == "-0") sigmaValueStr1 = "0";
 
-            QString nxValueStr2 = QString::number(calculationNxAtPoint(number + 1, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
-            QString uxValueStr2 = QString::number(calculationUxAtPoint(number + 1, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
-            QString sigmaValueStr2 = QString::number(calculationSigmaxAtPoint(number + 1, localX), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+            QString nxValueStr2 = QString::number(calculationNxAtPoint(number + 1, 0), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+            QString uxValueStr2 = QString::number(calculationUxAtPoint(number + 1, 0), 'f', 4).remove(QRegularExpression("\\.?0+$"));
+            QString sigmaValueStr2 = QString::number(calculationSigmaxAtPoint(number + 1, 0), 'f', 4).remove(QRegularExpression("\\.?0+$"));
 
             if (nxValueStr2 == "-0") nxValueStr2 = "0";
             if (uxValueStr2 == "-0") uxValueStr2 = "0";
@@ -716,7 +791,7 @@ void Processor::changePointEdit(QString value)
 
             break;
         }
-        currentX += width;
+        currentX +=(width);
     }
 }
 

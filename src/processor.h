@@ -68,10 +68,12 @@ public:
     void updateScene();
     void moveLineTo(const QPointF &pos);
     void clearData();
+    const double maxRealX();
 public slots:
     void toPreprocessor();
     void toPostprocessor();
     void changePointEdit(QString value);
+    void test(const QString &x);
 signals:
     void clickedToPreprocessor();
     void clickedToPostprocessor();
