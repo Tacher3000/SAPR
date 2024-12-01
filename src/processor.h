@@ -73,7 +73,7 @@ public slots:
     void toPreprocessor();
     void toPostprocessor();
     void changePointEdit(QString value);
-    void test(const QString &x);
+    void test( QString &x);
 signals:
     void clickedToPreprocessor();
     void clickedToPostprocessor();

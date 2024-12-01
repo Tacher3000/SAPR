@@ -24,39 +24,8 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     m_pointEdit->setValidator(validator);
 
     connect(m_pointEdit, &QLineEdit::textEdited, this, &Processor::changePointEdit);
-    connect(m_pointEdit, &QLineEdit::textEdited, [this](const QString &text) {
-        bool ok;
-        double x = text.toDouble(&ok);
-        double currentX = 0;
-        double grafX = 0;
-        if (ok) {
-            if(x > maxRealX()){
-                m_view->setLinePosition(QString::number(maxGlobalX()));
-                return;
-            }else if(x < 0){
-                m_view->setLinePosition("0");
-                return;
-            }
-            // for (int i = 0; i < m_sizeModel->rowCount(); ++i) {
-            //     double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toString().replace(',', '.').toDouble();
-            //     double expansionСoefficient = 1;
-            //     if(width < MIN_WIDTH){
-            //         expansionСoefficient = width / MIN_WIDTH;
-            //         // width = MIN_WIDTH;
-            //     }
-            //     if(width > MAX_WIDTH){
-            //         expansionСoefficient = width / MAX_WIDTH;
-            //         // width = MAX_WIDTH;
-            //     }
-
-            //     if(x <= currentX + width){
-                    m_view->setLinePosition(text);
-            //         return;
-            //     }
-            //     grafX += x * expansionСoefficient;
-            //     currentX += width;
-            // }
-        }
+    connect(m_pointEdit, &QLineEdit::textEdited, [this](QString text) {
+        test(text);
     });
     m_nxInPoint = new QLabel("Nx:", this);
     m_nxInPoint->setFixedWidth(60);
@@ -207,8 +176,40 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
     setLayout(layout);
 }
 
-void Processor::test(const QString &x){
+void Processor::test(QString &text){
+    text.replace(',', '.');
+    bool ok;
+    double x = text.toDouble(&ok);
+    double currentX = 0;
+    double grafX = 0;
+    if (ok) {
+        if(x > maxRealX()){
+            m_view->setLinePosition(QString::number(maxGlobalX()));
+            return;
+        }else if(x < 0){
+            m_view->setLinePosition("0");
+            return;
+        }
+        for (int i = 0; i < m_sizeModel->rowCount(); ++i) {
+            double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toString().replace(',', '.').toDouble();
+            double expansionСoefficient = 1;
+            if(width < MIN_WIDTH){
+                expansionСoefficient = width / MIN_WIDTH;
+                x += width * expansionСoefficient - width;
+                width = MIN_WIDTH;
+            }
+            if(width > MAX_WIDTH){
+                expansionСoefficient = width / MAX_WIDTH;
+                width = MAX_WIDTH;
+            }
 
+            if(x <= currentX + width){
+                m_view->setLinePosition(QString::number(x));
+                return;
+            }
+            currentX += width;
+        }
+    }
 }
 
 void Processor::updateScene()
@@ -725,16 +726,6 @@ void Processor::changePointEdit(QString value)
     // return;
     for (int i = 0; i < m_sizeModel->rowCount(); ++i) {
         double width = m_sizeModel->data(m_sizeModel->index(i, 0)).toString().replace(',', '.').toDouble();
-        // double expansionСoefficient = 1;
-
-        // if(width < MIN_WIDTH){
-        //     expansionСoefficient = width / MIN_WIDTH;
-        //     width = MIN_WIDTH;
-        // }
-        // if(width > MAX_WIDTH){
-        //     expansionСoefficient = width / MAX_WIDTH;
-        //     width = MAX_WIDTH;
-        // }
 
         if (value.toDouble() < currentX + width) {
             number = i;

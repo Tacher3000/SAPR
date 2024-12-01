@@ -32,6 +32,8 @@ void PostProcessor::toProcessor()
 
 void PostProcessor::draw(Processor *processor, const SizeTableModel *sizeModel,
                          const NodeModel *nodeModel) {
+
+
     m_sceneDrawer->clearScene();
     m_sceneDrawer->setSceneSize(0, 0);
 

@@ -99,8 +99,17 @@ void Preprocessor::updateNodeModel()
 
 void Preprocessor::updateScene()
 {
+
     m_sceneDrawer->clearScene();
-    m_sceneDrawer->setSceneSize(0, 0);
+    delete m_scene;
+
+    m_scene = new QGraphicsScene(this);
+    connect(m_timer, &QTimer::timeout, m_scene, &QGraphicsScene::advance);
+    m_sceneDrawer->setScene(m_scene);
+    m_view->resetView();
+    m_view->setScene(m_scene);
+    // m_sceneDrawer->clearScene();
+    // m_sceneDrawer->setSceneSize(0, 0);
 
 
     if (m_nodeModel->isEmpty() && m_sizeModel->isEmpty()) {
@@ -266,7 +275,8 @@ void Preprocessor::toProcessor()
             for(int row = 0; row < m_sizeModel->rowCount() - 1; ++row){
                 double width = m_sizeModel->data(m_sizeModel->index(row, 0)).toString().replace(',', '.').toDouble();
                 double height = m_sizeModel->data(m_sizeModel->index(row, 1)).toString().replace(',', '.').toDouble();
-                if(width == 0 || height == 0) {
+                double modulValue = m_sizeModel->data(m_sizeModel->index(row, 4)).toString().replace(',', '.').toDouble();
+                if(width == 0 || height == 0 || modulValue == 0) {
                     return;
                 }
             }
