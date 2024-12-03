@@ -100,7 +100,7 @@ void Preprocessor::updateNodeModel()
 void Preprocessor::updateScene()
 {
 
-    m_sceneDrawer->clearScene();
+    // m_sceneDrawer->clearScene();
     delete m_scene;
 
     m_scene = new QGraphicsScene(this);
@@ -108,8 +108,6 @@ void Preprocessor::updateScene()
     m_sceneDrawer->setScene(m_scene);
     m_view->resetView();
     m_view->setScene(m_scene);
-    // m_sceneDrawer->clearScene();
-    // m_sceneDrawer->setSceneSize(0, 0);
 
 
     if (m_nodeModel->isEmpty() && m_sizeModel->isEmpty()) {
@@ -257,31 +255,22 @@ void Preprocessor::clearData()
     m_nodeModel->clearData();
     m_sizeModel->clearData();
 
-    m_sceneDrawer->clearScene();
-    delete m_scene;
-
-    m_scene = new QGraphicsScene(this);
-    connect(m_timer, &QTimer::timeout, m_scene, &QGraphicsScene::advance);
-    m_sceneDrawer->setScene(m_scene);
-    m_view->resetView();
-    m_view->setScene(m_scene);
     updateScene();
 }
 
 void Preprocessor::toProcessor()
 {
     if(m_nodeModel->data(m_nodeModel->index(0, 1)).toBool() || m_nodeModel->data(m_nodeModel->index(m_nodeModel->rowCount() - 1, 1)).toBool()){
-        // if(m_sizeModel->getModulusValue().toBool()){
             for(int row = 0; row < m_sizeModel->rowCount() - 1; ++row){
                 double width = m_sizeModel->data(m_sizeModel->index(row, 0)).toString().replace(',', '.').toDouble();
                 double height = m_sizeModel->data(m_sizeModel->index(row, 1)).toString().replace(',', '.').toDouble();
+                double limitValue = m_sizeModel->data(m_sizeModel->index(row, 3)).toString().replace(',', '.').toDouble();
                 double modulValue = m_sizeModel->data(m_sizeModel->index(row, 4)).toString().replace(',', '.').toDouble();
-                if(width == 0 || height == 0 || modulValue == 0) {
+                if(width == 0 || height == 0 || modulValue == 0 || limitValue == 0) {
                     return;
                 }
             }
             emit clickedToProcessor();
-        // }
     }
 }
 

@@ -30,7 +30,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     QAction *clearAction = new QAction("Очистить", this);
     connect(clearAction, &QAction::triggered, m_preprocessor, &Preprocessor::clearData);
-    connect(clearAction, &QAction::triggered, m_processor, &Processor::clearData);
+    connect(clearAction, &QAction::triggered, [this](){
+        if(m_stackWidget->currentWidget() == m_processor){
+            m_processor->clearData();
+        }
+    });
     connect(clearAction, &QAction::triggered, m_postProcessor, &PostProcessor::clearData);
     mainMenu->addAction(clearAction);
 
@@ -126,12 +130,8 @@ void MainWindow::saveAsFile()
 
 void MainWindow::saveReport()
 {
-    QString filePath = QFileDialog::getSaveFileName(this, "Сохранить файл как", "", "All Files (*)");
+    QString filePath = QFileDialog::getSaveFileName(this, "Сохранить файл как", "", "PDF files (*.pdf)");
     if (!filePath.isEmpty()) {
-
-        // m_preprocessor->exportModelToPdf(filePath);
-        // m_postProcessor->exportSceneToPdf(filePath);
-        // mergePdfFiles("C:\\Users\\pyanc\\Desktop\\1231.pdf", "C:\\Users\\pyanc\\Desktop\\1232.pdf", filePath);
         saveReportPDF(filePath);
     }
 }
