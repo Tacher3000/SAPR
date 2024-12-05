@@ -29,13 +29,10 @@ MainWindow::MainWindow(QWidget *parent)
     mainMenu->addSeparator();
 
     QAction *clearAction = new QAction("Очистить", this);
-    connect(clearAction, &QAction::triggered, m_preprocessor, &Preprocessor::clearData);
     connect(clearAction, &QAction::triggered, [this](){
-        if(m_stackWidget->currentWidget() == m_processor){
-            m_processor->clearData();
-        }
+        m_preprocessor->clearData();
+        m_stackWidget->setCurrentWidget(m_preprocessor);
     });
-    connect(clearAction, &QAction::triggered, m_postProcessor, &PostProcessor::clearData);
     mainMenu->addAction(clearAction);
 
     mainMenu->addSeparator();
@@ -106,6 +103,7 @@ void MainWindow::loadFile()
     if (!filePath.isEmpty()) {
         m_preprocessor->loadModels(filePath);
         m_currentFilePath = filePath;
+        m_stackWidget->setCurrentWidget(m_preprocessor);
     }
 }
 

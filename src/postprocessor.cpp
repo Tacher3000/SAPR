@@ -1,7 +1,7 @@
 #include "postprocessor.h"
 
 PostProcessor::PostProcessor(QWidget *parent) : QWidget(parent)
-{
+{    
     m_scene = new QGraphicsScene(this);
     m_sceneDrawer = new SceneDrawer(m_scene, this);
 

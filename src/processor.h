@@ -20,6 +20,7 @@
 #include <QLabel>
 #include <QGraphicsView>
 #include <QSettings>
+#include <QSplitter>
 
 class SceneDrawer;
 

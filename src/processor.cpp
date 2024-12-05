@@ -6,7 +6,7 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
 
     m_stepSelector = new QDoubleSpinBox(this);
     m_stepSelector->setMinimum(0.01);
-    m_stepSelector->setMaximum(1.0);
+    m_stepSelector->setMaximum(10000);
     m_stepSelector->setSingleStep(0.01);
     m_stepSelector->setValue(0.25);
     m_stepSelector->setMinimumHeight(40);
@@ -165,13 +165,18 @@ Processor::Processor(QWidget *parent) : QWidget(parent) {
         }
     });
 
-    QHBoxLayout *midleLayout = new QHBoxLayout();
-    midleLayout->addWidget(m_tableView);
-    midleLayout->addWidget(m_view);
+    QSplitter* splitter = new QSplitter(Qt::Horizontal, this);
+
+    splitter->addWidget(m_tableView);
+    splitter->addWidget(m_view);
+
+    QList<int> sizes;
+    sizes << 950 << 1100;
+    splitter->setSizes(sizes);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addLayout(topLayout);
-    layout->addLayout(midleLayout);
+    layout->addWidget(splitter);
     layout->addLayout(buttonLayout);
     setLayout(layout);
 }

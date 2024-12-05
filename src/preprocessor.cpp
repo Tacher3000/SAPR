@@ -64,6 +64,7 @@ Preprocessor::Preprocessor(QWidget* parent) : QWidget(parent) {
 
     flyText();
     mainLayput->addWidget(splitter);
+    setLayout(mainLayput);
 }
 
 Preprocessor::~Preprocessor()
@@ -261,16 +262,27 @@ void Preprocessor::clearData()
 void Preprocessor::toProcessor()
 {
     if(m_nodeModel->data(m_nodeModel->index(0, 1)).toBool() || m_nodeModel->data(m_nodeModel->index(m_nodeModel->rowCount() - 1, 1)).toBool()){
-            for(int row = 0; row < m_sizeModel->rowCount() - 1; ++row){
-                double width = m_sizeModel->data(m_sizeModel->index(row, 0)).toString().replace(',', '.').toDouble();
-                double height = m_sizeModel->data(m_sizeModel->index(row, 1)).toString().replace(',', '.').toDouble();
-                double limitValue = m_sizeModel->data(m_sizeModel->index(row, 3)).toString().replace(',', '.').toDouble();
-                double modulValue = m_sizeModel->data(m_sizeModel->index(row, 4)).toString().replace(',', '.').toDouble();
-                if(width == 0 || height == 0 || modulValue == 0 || limitValue == 0) {
-                    return;
-                }
+        if(m_sizeModel->rowCount() == 1){
+            QMessageBox::information(nullptr, tr("Уведомление"), tr("Задайте стержень"));
+            return;
+        }
+        for(int row = 0; row < m_sizeModel->rowCount() - 1; ++row){
+            double width = m_sizeModel->data(m_sizeModel->index(row, 0)).toString().replace(',', '.').toDouble();
+            double height = m_sizeModel->data(m_sizeModel->index(row, 1)).toString().replace(',', '.').toDouble();
+            double limitValue = m_sizeModel->data(m_sizeModel->index(row, 3)).toString().replace(',', '.').toDouble();
+            double modulValue = m_sizeModel->data(m_sizeModel->index(row, 4)).toString().replace(',', '.').toDouble();
+            if(width == 0 || height == 0 || modulValue == 0 || limitValue == 0) {
+                QMessageBox::information(nullptr, tr("Уведомление"), tr("Для рассчета нужно корректно задать следующие величины:\n"
+                                                                        "Длина стержня\n"
+                                                                        "Сечение\n"
+                                                                        "Допускаемое напряжение\n"
+                                                                        "Модуль упругости"));
+                return;
             }
-            emit clickedToProcessor();
+        }
+        emit clickedToProcessor();
+    } else {
+        QMessageBox::information(nullptr, tr("Уведомление"), tr("Нужно задать хотя бы 1 опору"));
     }
 }
 
