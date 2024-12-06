@@ -926,12 +926,10 @@ void SceneDrawer::drawUx(Processor* processor, const SizeTableModel* sizeModel, 
         }else{
             double hatchStep = 5.0;
             double step = 0.001;
-            if(expansionСoefficient < 0,01){
-                step = 0.0005;
-            }
-            if(expansionСoefficient >= 2 && expansionСoefficient != 1){
-                step = 0.01;
-            }
+
+            step *= expansionСoefficient;
+
+
             qreal yOX = 450;
             for (int i = 0; i * step / expansionСoefficient < width / RECT_WIDTH_MULTIPLIER; ++i) {
                 double uxValue = processor->calculationUxAtPoint(row, step * i) * RECT_HEIGHT_MULTIPLIER;
